@@ -12,10 +12,10 @@ namespace AMS.Shared
         {
             Id = Guid.NewGuid().ToString();
         }
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public double Amount { get; set; }
-        public string Description { get; set; }
-        public string AgentId { get; set; }
-        public Agent Agent { get; set; }
+        public string? Description { get; set; }
+        public string? AgentId { get; set; }
+        public Agent Agent { get; set; } = new Agent();
     }
 }

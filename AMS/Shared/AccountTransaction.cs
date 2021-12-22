@@ -12,12 +12,12 @@ namespace AMS.Shared
         {
             Id = Guid.NewGuid().ToString();
         }
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public decimal Amount { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
-        public string Description { get; set; }
-        public string AccountId { get; set; }
-        public Account Account { get; set; }
+        public string? Description { get; set; }
+        public string? AccountId { get; set; }
+        public Account Account { get; set; } = new Account();
     }
 }

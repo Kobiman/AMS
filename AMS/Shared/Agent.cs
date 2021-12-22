@@ -13,10 +13,10 @@ namespace AMS.Shared
             AgentId = Guid.NewGuid().ToString();
             Transactions = new List<AgentTransaction>();
         }
-        public string AgentId { get; set; }
-        public string Name { get; set; }
-        public string Region { get; set; }
-        public string Contact { get; set; }
+        public string? AgentId { get; set; }
+        public string? Name { get; set; }
+        public string? Region { get; set; }
+        public string? Contact { get; set; }
         public IList<AgentTransaction> Transactions { get; set; }
     }
 }
