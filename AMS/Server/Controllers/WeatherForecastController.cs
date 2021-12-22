@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AMS.Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase

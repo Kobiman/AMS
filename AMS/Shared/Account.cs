@@ -15,6 +15,8 @@ namespace AMS.Shared
         }
         public string? AccountId { get; set; }
         public string? AccountName { get; set; }
+        public string? Type { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public decimal Balance { get; set; }
         public IList<AccountTransaction> Transactions { get; set; }
     }
