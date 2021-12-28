@@ -1,0 +1,39 @@
+﻿@using System.Text.RegularExpressions
+@page "/addAccount"
+<h1>Add Account</h1>
+<MudPaper Width="100%">
+    <MudContainer MaxWidth="MaxWidth.Small">
+       <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+                <MudTextField T="string" Label="AccountName" Required="true" @bind-Value="model.AccountName" 
+                RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
+                <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
+                RequiredError="Type is required!" For="@(() => model.Type)"/>
+                <MudButton Variant="Variant.Filled">Default</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Primary</MudButton>
+            </EditForm>
+    </MudContainer>
+</MudPaper>
+
+
+@code {
+    bool success;
+    Account model = new Account();
+    string[] errors = { };
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+
+        var response = await Http.PostAsJsonAsync("api/Account/AddAccount",model);
+         var content = await response.Content.ReadFromJsonAsync<Account>();
+        //if (content.IsSucessful)
+        //{
+        //}
+        //else
+        //{
+        //}
+        success = true;
+        StateHasChanged();
+    }
+}
