@@ -1,9 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using AMS.Client.Pages
+@inherits LayoutComponentBase
 <MudThemeProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <MudThemeProvider />
-
+<CascadingBlazoredModal/>
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
@@ -17,8 +18,11 @@
         </MudDrawerHeader>*@
         <NavMenu2 />
     </MudDrawer>
-    <MudMainContent>
-        @Body
+    <MudMainContent>        
+        <div style="margin:8px">
+            <Alert Message="@toastService.Message" Type="@toastService.AlertType" />
+         @Body
+        </div>
     </MudMainContent>
 </MudLayout>
 @code {

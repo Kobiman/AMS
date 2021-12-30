@@ -1,4 +1,5 @@
-﻿using AMS.Shared;
+﻿using AMS.Server.Services;
+using AMS.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +9,25 @@ namespace AMS.Server.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        [HttpPost("AddAccount")]
-        public IActionResult AddAccount(Account account)
+        IAccountService _accountService;
+        public AccountController(IAccountService accountService)
         {
+            _accountService = accountService;
+        }
+        [HttpPost("AddAccount")]
+        public async Task<IActionResult> AddAccount([FromBody]Account account)
+        {
+            var result = await _accountService.AddAccount(account);
+            if(result.IsSucessful) return Ok(result);
+            return BadRequest(result);
+        }
 
-            return Ok(account);
+        [HttpGet("GetAccounts")]
+        public async Task<IActionResult> GetAccounts()
+        {
+            var result = await _accountService.GetAccounts();
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
         }
     }
 }

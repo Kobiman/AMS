@@ -1,22 +1,20 @@
 ﻿@using System.Text.RegularExpressions
 @page "/addAccount"
-<h1>Add Account</h1>
-<MudPaper Width="100%">
-    <MudContainer MaxWidth="MaxWidth.Small">
-       <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
-                <MudTextField T="string" Label="AccountName" Required="true" @bind-Value="model.AccountName" 
-                RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
-                <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
-                RequiredError="Type is required!" For="@(() => model.Type)"/>
-                <MudButton Variant="Variant.Filled">Default</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Primary</MudButton>
-            </EditForm>
-    </MudContainer>
-</MudPaper>
-
+            <MudTextField T="string" Label="AccountName" Required="true" @bind-Value="model.AccountName" 
+            RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
+            <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
+            RequiredError="Type is required!" For="@(() => model.Type)"/>  
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
 
 @code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     bool success;
     Account model = new Account();
     string[] errors = { };
@@ -24,16 +22,21 @@
 
     private async void OnValidSubmit(EditContext context)
     {
-
         var response = await Http.PostAsJsonAsync("api/Account/AddAccount",model);
-         var content = await response.Content.ReadFromJsonAsync<Account>();
-        //if (content.IsSucessful)
-        //{
-        //}
-        //else
-        //{
-        //}
-        success = true;
+        var content = await response.Content.ReadFromJsonAsync<Result>();
+        if (content is not null && content.IsSucessful)
+        {
+            Account model = new Account();
+            await ModalInstance.CloseAsync();
+            toastService.ShowAlert(this, "alert-success", content.Message);
+            toastService.CloseAlert(this);
+        }
+        else
+        {
+            await ModalInstance.CloseAsync();
+            toastService.ShowAlert(this, "alert-danger", content.Message);
+            toastService.CloseAlert(this);
+        }
         StateHasChanged();
     }
 }

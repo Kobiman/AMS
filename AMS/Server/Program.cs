@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using AMS.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+builder.Services.AddTransient<IAccountService, AccountService>();
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();

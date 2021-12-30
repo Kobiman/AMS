@@ -1,4 +1,5 @@
 ﻿using AMS.Server.Models;
+using AMS.Shared;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -13,5 +14,6 @@ namespace AMS.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+        public DbSet<Account> Accounts { get; set; }
     }
 }

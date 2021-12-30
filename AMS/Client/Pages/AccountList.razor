@@ -1,0 +1,71 @@
+﻿@page "/Accounts"
+@attribute [Authorize]
+@inject IModalService Modal 
+
+<MudText Typo="Typo.h6">Accounts</MudText>
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccount>("Add Account"))">Add Account</MudButton> 
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
+        
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>CreatedOn</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Balance</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="CreatedOn">@context.CreatedDate</MudTd>
+        <MudTd DataLabel="Name">@context.AccountName</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+        <MudTd DataLabel="Balance">@context.Balance</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+  </MudTable>
+</div>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private string searchString2 = "";
+    private AccountDto selectedItem1 = null;
+    private AccountDto selectedItem2 = null;
+    private HashSet<AccountDto> selectedItems = new HashSet<AccountDto>();
+    private IEnumerable<AccountDto> Elements = new List<AccountDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
+        if(result is not null)
+        {
+            Elements = result;
+        }
+        else
+        {
+            Elements = new List<AccountDto>();
+        }
+    }
+
+    private bool FilterFunc1(AccountDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(AccountDto element) => FilterFunc(element, searchString2);
+
+    private bool FilterFunc(AccountDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Type.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}
