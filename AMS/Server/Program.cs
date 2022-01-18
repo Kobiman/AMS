@@ -17,9 +17,15 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();

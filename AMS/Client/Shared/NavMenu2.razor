@@ -5,6 +5,11 @@
         <MudDivider Class="my-2"/>
         <MudNavLink Href="">Dashboard</MudNavLink>
         <MudNavLink Href="/Accounts">Accounts</MudNavLink>
+        @* <MudNavLink Href="/AccountTransactions">Account Transactions</MudNavLink>*@
+        <MudNavGroup Title="Account Transactions" Expanded=true>
+            <MudNavLink Href="/AccountTransactions">List</MudNavLink>
+            <MudNavLink Href="/AddAccountTransaction">New Transaction</MudNavLink>
+        </MudNavGroup>
         <MudNavLink Href="/fetchdata">Billing</MudNavLink>
         @*<MudNavGroup Title="Settings" Expanded="true">
             <MudNavLink Href="/users">Users</MudNavLink>

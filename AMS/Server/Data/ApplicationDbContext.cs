@@ -15,5 +15,7 @@ namespace AMS.Server.Data
         {
         }
         public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<AccountTransaction> AccountTransactions { get; set; }
     }
 }
