@@ -1,76 +1,62 @@
 ﻿@page "/AccountTransactions"
 
-@if(Elements == null)
-{
-    <div>Loading Data...</div>
-}
-else{
-
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AccountTransaction,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+<MudText Typo="Typo.h6">Account Transactions</MudText>
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccountTransaction>("Add Transaction"))">Add Transaction</MudButton> 
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountTransactionDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">Account Transactions</MudText>
+        
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>CreatedOn</MudTh>
         <MudTh>Account</MudTh>
-        <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
-        <MudTh>Debit</MudTh>
         <MudTh>Credit</MudTh>
-        <MudTh>TransactionDate</MudTh>
-
+        <MudTh>Debit</MudTh>
+        <MudTh>Description</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Account">@context.Account.AccountName</MudTd>
-        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+        <MudTd DataLabel="Account">@context.AccountName</MudTd>
         <MudTd DataLabel="Amount">@context.Amount</MudTd>
-        <MudTd DataLabel="Debit">@context.Debit</MudTd>
         <MudTd DataLabel="Credit">@context.Credit</MudTd>
-        <MudTd DataLabel="TransactionDate">@context.TransactionDate</MudTd>
+        <MudTd DataLabel="Debit">@context.Debit</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
     </PagerContent>
-</MudTable>
-
-<div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-    <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-    <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
-    <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
-    <MudSpacer />
-    <div style="min-width:200px;">
-        <MudText Inline="true" Class="align-self-center">Selected1: @selectedItem1?.Description</MudText>
-    </div>
+  </MudTable>
 </div>
-}
+
 @code {
     private bool dense = false;
     private bool hover = true;
     private bool striped = false;
     private bool bordered = false;
     private string searchString1 = "";
-    private AccountTransaction selectedItem1 = null;
+    private AccountTransactionDto selectedItem1 = null;
 
-    private IEnumerable<AccountTransaction> Elements { get; set; }
+    private IEnumerable<AccountTransactionDto> Elements { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<IList<AccountTransaction>>("/api/AccountTransaction");
+        Elements = await Http.GetFromJsonAsync<IList<AccountTransactionDto>>("/api/AccountTransaction/GetTransactions");
     }
 
 
-    private bool FilterFunc1(AccountTransaction element) => FilterFunc(element, searchString1);
+    private bool FilterFunc1(AccountTransactionDto element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(AccountTransaction element, string searchString)
+    private bool FilterFunc(AccountTransactionDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
         if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Account.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
+        //if (element.Account.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
 
         return false;
     }

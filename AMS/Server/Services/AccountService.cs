@@ -18,8 +18,8 @@ namespace AMS.Server.Services
             var originalAccount = _context.Accounts.FirstOrDefault(x=>x.AccountName == account.AccountName);
             if (originalAccount != null) return new Result(false,$"Account with name {account.AccountName} already exist.");
                _context.Accounts.Add(account);
-              var resul = await _context.SaveChangesAsync();
-            if(resul > 0) return new Result(true, "Account saved successfully.");
+              var result = await _context.SaveChangesAsync();
+            if(result > 0) return new Result(true, "Account saved successfully.");
             return new Result(false, "Operation failled.");
         }
 

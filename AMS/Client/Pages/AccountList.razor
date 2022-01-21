@@ -1,6 +1,5 @@
 ﻿@page "/Accounts"
-@attribute [Authorize]
-@inject IModalService Modal 
+@attribute [Authorize] 
 
 <MudText Typo="Typo.h6">Accounts</MudText>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccount>("Add Account"))">Add Account</MudButton> 

@@ -1,5 +1,6 @@
 ﻿using AMS.Server.Services;
 using AMS.Shared;
+using AMS.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AMS.Server.Controllers
@@ -14,7 +15,7 @@ namespace AMS.Server.Controllers
             accTransactionService = _accTransationService;
         }
 
-        [HttpGet]
+        [HttpGet("GetTransactions")]
         public async Task<IActionResult> GetAccountTransactions()
         {
             try
@@ -28,7 +29,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public async Task<IActionResult> AddAccountTransaction([FromBody]AccountTransaction accountTransaction)
+        public async Task<IActionResult> AddAccountTransaction([FromBody] AccountTransaction accountTransaction)
         {
             try
             {

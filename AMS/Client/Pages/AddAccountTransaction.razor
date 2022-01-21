@@ -28,14 +28,6 @@ else{
             <MudNumericField HideSpinButtons="true"  @bind-Value="model.Amount"
             Label="Amount" Variant="Variant.Text" />
 
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.Credit"
-            Label="Credit" Variant="Variant.Text" />
-
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.Debit"
-            Label="Debit" Variant="Variant.Text" Min="0" />
-
-            <MudDatePicker Label="Transaction Date" @bind-Date="model.TransactionDate" />
-
             <ValidationSummary />
      <div style="margin-top:15px"  class="mud-card-actions">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
@@ -47,8 +39,6 @@ else{
     //[CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     AccountTransaction model = new AccountTransaction();
 
-    private AccountTransaction AddedTransaction = null;
-
     private IEnumerable<AccountDto> accounts { get; set; }
     bool success;
     string[] errors = { };
@@ -59,26 +49,9 @@ else{
         var response = await Http.PostAsJsonAsync("api/AccountTransaction/AddTransaction", model);
         if(response.IsSuccessStatusCode)
         {
-            AddedTransaction = await response.Content.ReadFromJsonAsync<AccountTransaction>();
+            var result = await response.Content.ReadFromJsonAsync<Result>();
         }
-        //AccountTransaction                      
-        //var response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction",model);
-        //var content = await response.Content.ReadFromJsonAsync<Result>();
-        //if (content is not null && content.IsSucessful)
-        //{
-        //    AccountTransaction model = new AccountTransaction();
-        //    await ModalInstance.CloseAsync();
-        //    toastService.ShowAlert(this, "alert-success", content.Message);
-        //    toastService.CloseAlert(this);
-        //}
-        //else
-        //{
-        //    await ModalInstance.CloseAsync();
-        //    toastService.ShowAlert(this, "alert-danger", content.Message);
-        //    toastService.CloseAlert(this);
-        //}
-        //StateHasChanged();
-        //Console.WriteLine($"Create Transaction|| Id:{AddedTransaction.Id} || Description: {AddedTransaction.Description} || AccountId: {AddedTransaction.AccountId} || C:{AddedTransaction.Credit} || D: {AddedTransaction.Debit} || A: {AddedTransaction.Amount} || Acc: {AddedTransaction.Account} || Date: {AddedTransaction.TransactionDate}");
+        
     }
 
     protected override async Task OnInitializedAsync()

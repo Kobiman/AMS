@@ -1,5 +1,6 @@
 ﻿using AMS.Server.Data;
 using AMS.Shared;
+using AMS.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMS.Server.Services
@@ -15,17 +16,12 @@ namespace AMS.Server.Services
 
         public async Task<Shared.IResult> AddAccountTransaction(AccountTransaction accountTransaction)
         {
-            if(accountTransaction.Account != null)
-            {
-                appDbContext.Entry(accountTransaction.Account).State = EntityState.Unchanged;
-                accountTransaction.AccountId = accountTransaction.Account.AccountId;
-            }
-            var result = await appDbContext.AccountTransactions.AddAsync(accountTransaction);
-            await appDbContext.SaveChangesAsync();
-            if (result != null)
-            {
+            accountTransaction.Debit = accountTransaction.Amount < 0 ? accountTransaction.Amount : 0;
+            accountTransaction.Credit = accountTransaction.Amount > 0 ? accountTransaction.Amount : 0;
+            appDbContext.AccountTransactions.Add(accountTransaction);
+            var result = await appDbContext.SaveChangesAsync();
+            if (result > 0)
                 return new Result(true, "Transaction saved successfully.");
-            }
             return new Result(false, "Operation failled.");
         }
 
@@ -39,14 +35,10 @@ namespace AMS.Server.Services
             }
         }
 
-        public async Task<IEnumerable<AccountTransaction>> GetAccountTransactions()
+        public async Task<IEnumerable<AccountTransactionDto>> GetAccountTransactions()
         {
-            return await appDbContext.AccountTransactions
-                .Include(x => x.Account)
-                .ToListAsync();
-
-            //return await appDbContext.AccountTransactions
-            //    .ToListAsync();
+            var accounts = await appDbContext.Accounts.Include(x => x.Transactions).ToListAsync();
+            return CreateTransaction(accounts);
         }
 
         public async Task<AccountTransaction> UpdateAccountTrasaction(AccountTransaction accountTransaction)
@@ -54,7 +46,7 @@ namespace AMS.Server.Services
             var result = await appDbContext.AccountTransactions.FirstOrDefaultAsync(i => i.Id == accountTransaction.Id);
             if(result != null)
             {
-                result.Account = accountTransaction.Account;
+                result.AccountId = accountTransaction.AccountId;
                 result.Credit = accountTransaction.Credit;
                 result.Debit = accountTransaction.Debit;
                 result.Description = accountTransaction.Description;
@@ -71,6 +63,26 @@ namespace AMS.Server.Services
         {
             var result = await appDbContext.AccountTransactions.Where(i => i.AccountId == accountId).ToListAsync();
             return result;
+        }
+
+        private IEnumerable<AccountTransactionDto> CreateTransaction(List<Account> accounts)
+        {
+            foreach (var a in accounts)
+            {
+                foreach (var t in a.Transactions)
+                {
+                    yield return new AccountTransactionDto
+                    {
+                        AccountId = a.AccountId,
+                        AccountName = a.AccountName,
+                        Amount = t.Amount,
+                        Credit = t.Credit,
+                        Debit = t.Debit,
+                        Description = t.Description,
+                        TransactionDate = t.TransactionDate
+                    };
+                }
+            }
         }
     }
 }
