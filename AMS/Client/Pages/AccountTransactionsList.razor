@@ -1,7 +1,7 @@
 ﻿@page "/AccountTransactions"
 
 <MudText Typo="Typo.h6">Account Transactions</MudText>
-<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccountTransaction>("Add Transaction"))">Add Transaction</MudButton> 
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Transaction</MudButton>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountTransactionDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
@@ -16,6 +16,7 @@
         <MudTh>Credit</MudTh>
         <MudTh>Debit</MudTh>
         <MudTh>Description</MudTh>
+        <MudTh>Action</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
@@ -24,6 +25,10 @@
         <MudTd DataLabel="Credit">@context.Credit</MudTd>
         <MudTd DataLabel="Debit">@context.Debit</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="">
+            <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            <MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -39,11 +44,11 @@
     private string searchString1 = "";
     private AccountTransactionDto selectedItem1 = null;
 
-    private IEnumerable<AccountTransactionDto> Elements { get; set; }
+    private List<AccountTransactionDto> Elements { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<IList<AccountTransactionDto>>("/api/AccountTransaction/GetTransactions");
+        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>("/api/AccountTransaction/GetTransactions");
     }
 
 
@@ -59,5 +64,78 @@
         //    return true;
 
         return false;
+    }
+
+    async Task EditTransaction(string TransactionId)
+    {
+        AccountTransactionDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        if(transaction != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(EditAccountTransaction.Transaction), transaction);
+
+            var transactionModal = Modal.Show<EditAccountTransaction>("Edit Account Transaction", parameters);
+            var result = await transactionModal.Result;
+            if(result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                AccountTransactionDto updatedTransaction = (AccountTransactionDto)result.Data;
+                var originalTransaction = Elements.FirstOrDefault(t => t.Id == updatedTransaction.Id);
+                if(originalTransaction != null)
+                {
+                    originalTransaction.AccountId = updatedTransaction.AccountId;
+                    originalTransaction.AccountName = updatedTransaction.AccountName;
+                    originalTransaction.Amount = updatedTransaction.Amount;
+                    originalTransaction.Credit = updatedTransaction.Credit;
+                    originalTransaction.Debit = updatedTransaction.Debit;
+                    originalTransaction.Description = updatedTransaction.Description;
+                    StateHasChanged();
+                }         
+
+            }
+        }
+    }
+
+    async Task DeleteTransaction(string Id)
+    {
+        AccountTransactionDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
+        if(transaction != null)
+        {
+            var transactionModal = Modal.Show<ConfirmDelete>("Confirm Delete");
+            var result = await transactionModal.Result;
+            if(result.Cancelled == false)
+            {
+                var response = await Http.DeleteAsync($"/api/AccountTransaction/{Id}");
+                if(response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Deletion Was Successful", Severity.Info);
+                    Elements.Remove(transaction);
+                    StateHasChanged();
+                }
+                else
+                {
+                    Snackbar.Add("Deletion Failed", Severity.Error);   
+                }
+            }
+        }
+    }
+
+    async Task ShowModal()
+    {
+        var transactionModal = Modal.Show<AddAccountTransaction>("Add Transaction");
+        var result = await transactionModal.Result;
+        if(result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine(result.Data);
+            Elements.Add((AccountTransactionDto) result.Data);
+            StateHasChanged();
+        }
     }
 }

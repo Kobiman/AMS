@@ -1,0 +1,29 @@
+﻿@page "/ConfirmDelete"
+@inject MudBlazor.ISnackbar Snackbar
+
+
+<div class="simple-form">
+    <div class="form-group">
+        Are you sure you want to delete the record?
+    </div>
+    <br/>
+    <br/>
+    <button @onclick="Delete" class="btn btn-outline-danger">Delete</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+
+
+    async Task Cancel()
+    {
+        await ModalInstance.CancelAsync();
+    }
+    async Task Delete()
+    {
+        await ModalInstance.CloseAsync();
+    }
+}
