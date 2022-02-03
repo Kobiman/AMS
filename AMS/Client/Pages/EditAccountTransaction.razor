@@ -60,7 +60,7 @@ else{*@
 
     protected override async Task OnInitializedAsync()
     {
-        LoadAccounts();
+        await LoadAccounts();
         model = new AccountTransaction();
         model.Id = Transaction.Id;
         model.AccountId = Transaction.AccountId;

@@ -7,6 +7,11 @@
             RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
             <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
             RequiredError="Type is required!" For="@(() => model.Type)"/>  
+            <MudSelect T="string" Label="Select Account"  @bind-Value="model.Type"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Asset")">Asset</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Expense")">Expense</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Liability")">Liability</MudSelectItem>
+            </MudSelect>
      <div style="margin-top:15px"  class="mud-card-actions">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
     </div>
@@ -28,14 +33,12 @@
         {
             Account model = new Account();
             await ModalInstance.CloseAsync();
-            toastService.ShowAlert(this, "alert-success", content.Message);
-            toastService.CloseAlert(this);
+            Snackbar.Add(content.Message, Severity.Success);
         }
-        else
+        else if (content is not null && !content.IsSucessful)
         {
             await ModalInstance.CloseAsync();
-            toastService.ShowAlert(this, "alert-danger", content.Message);
-            toastService.CloseAlert(this);
+            Snackbar.Add(content.Message, Severity.Success);
         }
         StateHasChanged();
     }

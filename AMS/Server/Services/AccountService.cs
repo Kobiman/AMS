@@ -25,7 +25,7 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<AccountDto>> GetAccounts()
         {
-            var accounts = await _context.Accounts.ToListAsync();
+            var accounts = await _context.Accounts.Include(x=>x.Transactions).ToListAsync();
             return accounts.Select(x => new AccountDto
             (
                  x.AccountName,
