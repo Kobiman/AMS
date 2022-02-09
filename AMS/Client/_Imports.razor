@@ -1,13 +1,12 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
-@using Microsoft.AspNetCore.Components.Authorization
+@using AMS.Client.Events
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Components.WebAssembly.Http
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.JSInterop
 @using AMS.Client
 @using AMS.Client.Shared
@@ -21,3 +20,4 @@
 @inject ToastService toastService
 @inject IModalService Modal
 @inject MudBlazor.ISnackbar Snackbar
+@inject AccountEvents accountEvents

@@ -7,7 +7,7 @@
             RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
             <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
             RequiredError="Type is required!" For="@(() => model.Type)"/>  
-            <MudSelect T="string" Label="Select Account"  @bind-Value="model.Type"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            <MudSelect T="string" Label="Select Type"  @bind-Value="model.Type"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
               <MudSelectItem T="string" Value="@("Asset")">Asset</MudSelectItem>
               <MudSelectItem T="string" Value="@("Expense")">Expense</MudSelectItem>
               <MudSelectItem T="string" Value="@("Liability")">Liability</MudSelectItem>
@@ -34,6 +34,7 @@
             Account model = new Account();
             await ModalInstance.CloseAsync();
             Snackbar.Add(content.Message, Severity.Success);
+            accountEvents.OnAccountAdded(this);
         }
         else if (content is not null && !content.IsSucessful)
         {

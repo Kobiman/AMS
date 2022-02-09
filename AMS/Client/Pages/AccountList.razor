@@ -1,5 +1,6 @@
 ﻿@page "/Accounts"
-@attribute [Authorize] 
+@implements IDisposable
+@*@attribute [Authorize]*@ 
 
 <MudText Typo="Typo.h6">Accounts</MudText>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccount>("Add Account"))">Add Account</MudButton> 
@@ -43,6 +44,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetAccounts();
+    }
+
+    private async Task GetAccounts()
+    {
         var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
         if(result is not null)
         {
@@ -52,6 +59,19 @@
         {
             Elements = new List<AccountDto>();
         }
+    }
+    private async Task App_StateChanged(ComponentBase Source)
+    {
+        if (Source != this)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task ReloadAccounts(object source, EventArgs e)
+    {
+        await GetAccounts();
+        await App_StateChanged((ComponentBase)source);
     }
 
     private bool FilterFunc1(AccountDto element) => FilterFunc(element, searchString1);
@@ -66,5 +86,10 @@
         if (element.Type.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    void IDisposable.Dispose()
+    {
+        accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
     }
 }

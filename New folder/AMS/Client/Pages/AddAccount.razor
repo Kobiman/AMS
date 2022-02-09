@@ -1,0 +1,45 @@
+﻿@using System.Text.RegularExpressions
+@page "/addAccount"
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+            <MudTextField T="string" Label="AccountName" Required="true" @bind-Value="model.AccountName" 
+            RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
+            <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
+            RequiredError="Type is required!" For="@(() => model.Type)"/>  
+            <MudSelect T="string" Label="Select Type"  @bind-Value="model.Type"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Asset")">Asset</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Expense")">Expense</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Liability")">Liability</MudSelectItem>
+            </MudSelect>
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    bool success;
+    Account model = new Account();
+    string[] errors = { };
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PostAsJsonAsync("api/Account/AddAccount",model);
+        var content = await response.Content.ReadFromJsonAsync<Result>();
+        if (content is not null && content.IsSucessful)
+        {
+            Account model = new Account();
+            await ModalInstance.CloseAsync();
+            Snackbar.Add(content.Message, Severity.Success);
+        }
+        else if (content is not null && !content.IsSucessful)
+        {
+            await ModalInstance.CloseAsync();
+            Snackbar.Add(content.Message, Severity.Success);
+        }
+        StateHasChanged();
+    }
+}

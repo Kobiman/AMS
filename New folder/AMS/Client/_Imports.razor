@@ -1,0 +1,23 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.JSInterop
+@using AMS.Client
+@using AMS.Client.Shared
+@using AMS.Shared
+@using MudBlazor
+@using Blazored
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@using AMS.Shared.Dto
+@inject HttpClient Http
+@inject ToastService toastService
+@inject IModalService Modal
+@inject MudBlazor.ISnackbar Snackbar
