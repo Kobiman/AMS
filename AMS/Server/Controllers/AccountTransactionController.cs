@@ -15,14 +15,14 @@ namespace AMS.Server.Controllers
             accTransactionService = _accTransationService;
         }
 
-        [HttpGet("GetTransactions")]
-        public async Task<IActionResult> GetAccountTransactions()
+        [HttpGet("GetTransactions/{period}")]
+        public async Task<IActionResult> GetAccountTransactions(string? period="Today")
         {
             try
             {
-                return Ok(await accTransactionService.GetAccountTransactions());
+                return Ok(await accTransactionService.GetAccountTransactions(period));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
             }
