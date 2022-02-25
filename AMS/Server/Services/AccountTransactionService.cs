@@ -50,14 +50,16 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<AccountTransactionDto>> GetAccountTransactions(string period)
         {
             DateTime date = DateTime.Now.Date;
+            DateTime startDate = new DateTime();
+            DateTime endDate = new DateTime();
             if (period == "This Week")
             {
-                DateTime startOfWeek = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                DateTime endOfWeek = startOfWeek.AddDays(6);
+                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
+                endDate = startDate.AddDays(6);
 
                 var result = await (from t in appDbContext.AccountTransactions
                                     join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                    where t.TransactionDate >= startOfWeek.Date && t.TransactionDate <= endOfWeek.Date
+                                    where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
 
                                     select new AccountTransactionDto
                                     {
@@ -75,13 +77,13 @@ namespace AMS.Server.Services
 
             else if (period == "This Month")
             {
-                DateTime startOfMonth = new DateTime(date.Year, date.Month, 1);
+                startDate = new DateTime(date.Year, date.Month, 1);
                 int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                DateTime endOfMonth = startOfMonth.AddDays(daysInMonth - 1);
+                endDate = startDate.AddDays(daysInMonth - 1);
 
                 var result = await (from t in appDbContext.AccountTransactions
                                     join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                    where t.TransactionDate >= startOfMonth.Date && t.TransactionDate <= endOfMonth.Date
+                                    where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
 
                                     select new AccountTransactionDto
                                     {
