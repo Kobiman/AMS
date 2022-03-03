@@ -25,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //builder.Services.AddIdentityServer()
 //    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
 
 //builder.Services.AddAuthentication()

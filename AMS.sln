@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMS.Server", "AMS\Server\AMS.Server.csproj", "{DA34D1D7-C551-40A8-B2CE-45524F414E80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMS.Server", "AMS\Server\AMS.Server.csproj", "{DA34D1D7-C551-40A8-B2CE-45524F414E80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMS.Client", "AMS\Client\AMS.Client.csproj", "{5315BEA1-2170-456F-83B2-E94BAF5E1374}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMS.Client", "AMS\Client\AMS.Client.csproj", "{5315BEA1-2170-456F-83B2-E94BAF5E1374}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMS.Shared", "AMS\Shared\AMS.Shared.csproj", "{751A3D98-0747-4B19-B4B6-0239735AE0A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMS.Shared", "AMS\Shared\AMS.Shared.csproj", "{751A3D98-0747-4B19-B4B6-0239735AE0A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

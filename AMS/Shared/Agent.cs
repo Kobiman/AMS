@@ -11,12 +11,14 @@ namespace AMS.Shared
         public Agent()
         {
             AgentId = Guid.NewGuid().ToString();
-            Transactions = new List<AgentTransaction>();
+            CreatedDate = DateTime.Now;
+            //Transactions = new List<AgentTransaction>();
         }
         public string? AgentId { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public string? Name { get; set; }
         public string? Region { get; set; }
         public string? Contact { get; set; }
-        public IList<AgentTransaction> Transactions { get; set; }
+        //public IList<AgentTransaction> Transactions { get; set; }
     }
 }
