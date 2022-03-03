@@ -1,11 +1,11 @@
 ﻿@page "/EditAccountTransaction"
 @inject MudBlazor.ISnackbar Snackbar
 
-@*@if(accounts == null)
+@if(accounts == null)
 {
     <div>Loading Data...</div>
 }
-else{*@
+else{
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
@@ -28,7 +28,7 @@ else{*@
     </div>
     </EditForm>
 </div>
-@*}*@
+}
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public AccountTransactionDto Transaction { get; set; }

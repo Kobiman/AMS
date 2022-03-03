@@ -8,6 +8,14 @@
         
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
+            <MudSelectItem Value="@("Today")" />
+            <MudSelectItem Value="@("This Week")" />
+            <MudSelectItem Value="@("This Month")" />
+            
+        </MudSelect>
+
     </ToolBarContent>
     <HeaderContent>
         <MudTh>CreatedOn</MudTh>
@@ -44,11 +52,12 @@
     private string searchString1 = "";
     private AccountTransactionDto selectedItem1 = null;
 
-    private List<AccountTransactionDto> Elements { get; set; }
+    private List<AccountTransactionDto>? Elements { get; set; }
+    string period = "Today";
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>("/api/AccountTransaction/GetTransactions");
+        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AccountTransaction/GetTransactions/{period}");
     }
 
 
@@ -137,5 +146,10 @@
             Elements.Add((AccountTransactionDto) result.Data);
             StateHasChanged();
         }
+    }
+
+    async Task PeriodChanged()
+    {
+        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AccountTransaction/GetTransactions/{period}");
     }
 }

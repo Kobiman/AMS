@@ -2,6 +2,7 @@
 using AMS.Shared;
 using AMS.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
+using Z.EntityFramework.Plus;
 
 namespace AMS.Server.Services
 {
@@ -46,10 +47,77 @@ namespace AMS.Server.Services
             return null;
         }
 
-        public async Task<IEnumerable<AccountTransactionDto>> GetAccountTransactions()
+        public async Task<IEnumerable<AccountTransactionDto>> GetAccountTransactions(string period)
         {
-            var accounts = await appDbContext.Accounts.Include(x => x.Transactions).ToListAsync();
-            return CreateTransaction(accounts);
+            DateTime date = DateTime.Now.Date;
+            DateTime startDate = new DateTime();
+            DateTime endDate = new DateTime();
+            if (period == "This Week")
+            {
+                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
+                endDate = startDate.AddDays(6);
+
+                var result = await (from t in appDbContext.AccountTransactions
+                                    join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                    where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
+
+                                    select new AccountTransactionDto
+                                    {
+                                        AccountId = a.AccountId,
+                                        AccountName = a.AccountName,
+                                        Id = t.Id,
+                                        Amount = t.Amount,
+                                        Credit = t.Credit,
+                                        Debit = t.Debit,
+                                        Description = t.Description,
+                                        TransactionDate = t.TransactionDate
+                                    }).ToListAsync();
+                return result;
+            }
+
+            else if (period == "This Month")
+            {
+                startDate = new DateTime(date.Year, date.Month, 1);
+                int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
+                endDate = startDate.AddDays(daysInMonth - 1);
+
+                var result = await (from t in appDbContext.AccountTransactions
+                                    join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                    where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
+
+                                    select new AccountTransactionDto
+                                    {
+                                        AccountId = a.AccountId,
+                                        AccountName = a.AccountName,
+                                        Id = t.Id,
+                                        Amount = t.Amount,
+                                        Credit = t.Credit,
+                                        Debit = t.Debit,
+                                        Description = t.Description,
+                                        TransactionDate = t.TransactionDate
+                                    }).ToListAsync();
+                return result;
+            }
+            else
+            {
+                var result = await (from t in appDbContext.AccountTransactions
+                                    join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                    where t.TransactionDate >= date.Date && t.TransactionDate <= date.Date.AddHours(24)
+
+                                    select new AccountTransactionDto
+                                    {
+                                        AccountId = a.AccountId,
+                                        AccountName = a.AccountName,
+                                        Id = t.Id,
+                                        Amount = t.Amount,
+                                        Credit = t.Credit,
+                                        Debit = t.Debit,
+                                        Description = t.Description,
+                                        TransactionDate = t.TransactionDate
+                                    }).ToListAsync();
+                return result;
+            }
+            
         }
 
         public async Task<AccountTransactionDto> UpdateAccountTrasaction(AccountTransaction accountTransaction)
