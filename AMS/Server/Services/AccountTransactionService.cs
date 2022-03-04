@@ -38,7 +38,7 @@ namespace AMS.Server.Services
         public async Task<AccountTransactionDto> DeleteAccountTransaction(string accountTransactionId)
         {
             var result = await appDbContext.AccountTransactions.FirstOrDefaultAsync(i => i.Id == accountTransactionId);
-            if(result != null)
+            if (result != null)
             {
                 appDbContext.AccountTransactions.Remove(result);
                 await appDbContext.SaveChangesAsync();
@@ -56,23 +56,6 @@ namespace AMS.Server.Services
             {
                 startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
                 endDate = startDate.AddDays(6);
-
-                var result = await (from t in appDbContext.AccountTransactions
-                                    join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                    where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
-
-                                    select new AccountTransactionDto
-                                    {
-                                        AccountId = a.AccountId,
-                                        AccountName = a.AccountName,
-                                        Id = t.Id,
-                                        Amount = t.Amount,
-                                        Credit = t.Credit,
-                                        Debit = t.Debit,
-                                        Description = t.Description,
-                                        TransactionDate = t.TransactionDate
-                                    }).ToListAsync();
-                return result;
             }
 
             else if (period == "This Month")
@@ -80,50 +63,37 @@ namespace AMS.Server.Services
                 startDate = new DateTime(date.Year, date.Month, 1);
                 int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
                 endDate = startDate.AddDays(daysInMonth - 1);
-
-                var result = await (from t in appDbContext.AccountTransactions
-                                    join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                    where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
-
-                                    select new AccountTransactionDto
-                                    {
-                                        AccountId = a.AccountId,
-                                        AccountName = a.AccountName,
-                                        Id = t.Id,
-                                        Amount = t.Amount,
-                                        Credit = t.Credit,
-                                        Debit = t.Debit,
-                                        Description = t.Description,
-                                        TransactionDate = t.TransactionDate
-                                    }).ToListAsync();
-                return result;
             }
             else
             {
-                var result = await (from t in appDbContext.AccountTransactions
-                                    join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                    where t.TransactionDate >= date.Date && t.TransactionDate <= date.Date.AddHours(24)
-
-                                    select new AccountTransactionDto
-                                    {
-                                        AccountId = a.AccountId,
-                                        AccountName = a.AccountName,
-                                        Id = t.Id,
-                                        Amount = t.Amount,
-                                        Credit = t.Credit,
-                                        Debit = t.Debit,
-                                        Description = t.Description,
-                                        TransactionDate = t.TransactionDate
-                                    }).ToListAsync();
-                return result;
+                startDate = date.Date;
+                endDate = date.AddHours(24);
             }
-            
+            var result = await (from t in appDbContext.AccountTransactions
+                                join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId
+                                where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
+
+                                select new AccountTransactionDto
+                                {
+                                    AccountId = a.AccountId,
+                                    AccountName = a.AccountName,
+                                    AgentId = ag.AgentId,
+                                    Agent = ag.Name,
+                                    Id = t.Id,
+                                    Amount = t.Amount,
+                                    Credit = t.Credit,
+                                    Debit = t.Debit,
+                                    Description = t.Description,
+                                    TransactionDate = t.TransactionDate
+                                }).ToListAsync();
+            return result;
         }
 
         public async Task<AccountTransactionDto> UpdateAccountTrasaction(AccountTransaction accountTransaction)
         {
             var result = await appDbContext.AccountTransactions.FirstOrDefaultAsync(i => i.Id == accountTransaction.Id);
-            if(result != null)
+            if (result != null)
             {
                 result.Debit = accountTransaction.Amount < 0 ? accountTransaction.Amount : 0;
                 result.Credit = accountTransaction.Amount > 0 ? accountTransaction.Amount : 0;
@@ -168,27 +138,39 @@ namespace AMS.Server.Services
         public async Task<AccountTransactionDto> GetTransactionById(string transactionID)
         {
             var result = await (from t in appDbContext.AccountTransactions
-                          join a in appDbContext.Accounts on t.AccountId equals a.AccountId 
-                          where t.Id == transactionID
+                                join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId
+                                where t.Id == transactionID
 
-                          select new AccountTransactionDto
-                          {
-                              AccountId = a.AccountId,
-                              AccountName = a.AccountName,
-                              Id = t.Id,
-                              Amount = t.Amount,
-                              Credit = t.Credit,
-                              Debit = t.Debit,
-                              Description = t.Description,
-                              TransactionDate = t.TransactionDate
-                          }).FirstOrDefaultAsync();
+                                select new AccountTransactionDto
+                                {
+                                    AccountId = a.AccountId,
+                                    AccountName = a.AccountName,
+                                    AgentId = ag.AgentId,
+                                    Agent = ag.Name,
+                                    Id = t.Id,
+                                    Amount = t.Amount,
+                                    Credit = t.Credit,
+                                    Debit = t.Debit,
+                                    Description = t.Description,
+                                    TransactionDate = t.TransactionDate
+                                }).FirstOrDefaultAsync();
 
-            return result;            
+            return result;
         }
 
         public async Task<AccountTransaction> GetTransaction(string transactionID)
         {
-            return await  appDbContext.AccountTransactions.FirstOrDefaultAsync(t => t.Id == transactionID);
+            return await appDbContext.AccountTransactions.FirstOrDefaultAsync(t => t.Id == transactionID);
+        }
+
+        public async Task<IEnumerable<AccountTransactionDto>> GetTransactionsCashInCashOut(string inOut, string period)
+        {
+            var transactions = await GetAccountTransactions(period);
+            if (inOut == "CashIn")
+                return transactions.Where(x => x.Amount > 0);
+            else
+                return transactions.Where(x => x.Amount < 0);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace AMS.Shared
         public decimal Credit { get; set; }
         public string? Description { get; set; }
         public string? AccountId { get; set; }
+        public string? AgentId { get; set; }
         public DateTime? TransactionDate { get; set; }
     }
 }

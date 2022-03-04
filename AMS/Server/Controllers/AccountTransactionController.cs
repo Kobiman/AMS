@@ -28,6 +28,18 @@ namespace AMS.Server.Controllers
             }
         }
 
+        [HttpGet("{inOut}/{period}")]
+        public async Task<IActionResult> GetTransactionsCashInOut(string inOut, string? period)
+        {
+            try
+            {
+                return Ok(await accTransactionService.GetTransactionsCashInCashOut(inOut, period));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
+            }
+        }
         [HttpGet("Id")]
         public async Task<ActionResult<AccountTransactionDto>> GetAccountTransaction(string Id)
         {

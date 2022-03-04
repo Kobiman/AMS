@@ -20,6 +20,7 @@
     <HeaderContent>
         <MudTh>CreatedOn</MudTh>
         <MudTh>Account</MudTh>
+        <MudTh>Agent</MudTh>
         <MudTh>Amount</MudTh>
         <MudTh>Credit</MudTh>
         <MudTh>Debit</MudTh>
@@ -29,6 +30,7 @@
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
         <MudTd DataLabel="Account">@context.AccountName</MudTd>
+        <MudTd DataLabel="Agent">@context.Agent</MudTd>
         <MudTd DataLabel="Amount">@context.Amount</MudTd>
         <MudTd DataLabel="Credit">@context.Credit</MudTd>
         <MudTd DataLabel="Debit">@context.Debit</MudTd>
@@ -97,6 +99,8 @@
                 {
                     originalTransaction.AccountId = updatedTransaction.AccountId;
                     originalTransaction.AccountName = updatedTransaction.AccountName;
+                    originalTransaction.AgentId = updatedTransaction.AgentId;
+                    originalTransaction.Agent = updatedTransaction.Agent;
                     originalTransaction.Amount = updatedTransaction.Amount;
                     originalTransaction.Credit = updatedTransaction.Credit;
                     originalTransaction.Debit = updatedTransaction.Debit;

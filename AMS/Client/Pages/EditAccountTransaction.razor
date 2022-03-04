@@ -16,6 +16,13 @@ else{
                     }
                 </MudSelect>
 
+                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId" Text="@Transaction.Agent"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                    @foreach(var agent in agents)
+                    {
+                        <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
              <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
             RequiredError="Description is required!" For="@(() => model.Description)"/>
 
@@ -35,6 +42,7 @@ else{
     AccountTransaction model = new AccountTransaction();
 
     private IEnumerable<AccountDto> accounts { get; set; }
+    private IEnumerable<Agent> agents { get; set; } = new  List<Agent>();
     bool success;
     string[] errors = { };
 
@@ -61,9 +69,11 @@ else{
     protected override async Task OnInitializedAsync()
     {
         await LoadAccounts();
+        await GetAgents();
         model = new AccountTransaction();
         model.Id = Transaction.Id;
         model.AccountId = Transaction.AccountId;
+        model.AgentId = Transaction.AgentId;
         model.Amount = Transaction.Amount;
         model.Description = Transaction.Description;
     }
@@ -78,6 +88,18 @@ else{
         else
         {
             accounts = new List<AccountDto>();
+        }
+    }
+    private async Task GetAgents()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Agent>>("api/Agent/GetAgents");
+        if(result is not null)
+        {
+            agents = result;
+        }
+        else
+        {
+            agents = new List<Agent>();
         }
     }
 }
