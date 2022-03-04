@@ -46,6 +46,19 @@
   </MudTable>
 </div>
 
+
+<MudCard Outlined="true">
+    <MudCardContent>
+        <MudText Typo="Typo.h6">Summary</MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
+        
+        <MudText Typo="Typo.body2" >Total Credit:   GH₵ @TotalCredit</MudText>
+        <MudText Typo="Typo.body2" >Total Debit:    GH₵ @TotalDebit</MudText>
+        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
+    </MudCardContent>
+</MudCard>
+
 @code {
     private bool dense = false;
     private bool hover = true;
@@ -57,9 +70,18 @@
     private List<AccountTransactionDto>? Elements { get; set; }
     string period = "Today";
 
+    public int TotalNum { get; set; }
+    public decimal TotalCredit { get; set; }
+    public decimal TotalDebit { get; set; }
+    public decimal TotalBalance { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AccountTransaction/GetTransactions/{period}");
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalCredit = Elements.Sum(x => x.Credit);
+        TotalDebit = Elements.Sum(x => x.Debit);
+        TotalNum = Elements.Count;
     }
 
 
@@ -155,5 +177,9 @@
     async Task PeriodChanged()
     {
         Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AccountTransaction/GetTransactions/{period}");
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalCredit = Elements.Sum(x => x.Credit);
+        TotalDebit = Elements.Sum(x => x.Debit);
+        TotalNum = Elements.Count;
     }
 }
