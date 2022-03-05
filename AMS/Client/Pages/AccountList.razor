@@ -2,10 +2,21 @@
 @implements IDisposable
 @*@attribute [Authorize]*@ 
 
+@*<style type="text/css">
+    .mud-table-head .header-centered th {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+   .mud-table-foot .bold-text .mud-table-cell {
+       font-weight: 500;
+   }
+</style>*@
 <MudText Typo="Typo.h6">Accounts</MudText>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccount>("Add Account"))">Add Account</MudButton> 
     <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountDto,bool>(FilterFunc1)" 
+        @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
     <ToolBarContent>
         
         <MudSpacer />
@@ -23,6 +34,14 @@
         <MudTd DataLabel="Type">@context.Type</MudTd>
         <MudTd DataLabel="Balance">@context.Balance</MudTd>
     </RowTemplate>
+    <FooterContent>
+        <MudTFootRow Class="bold-text">
+          <MudTd></MudTd>
+          <MudTd></MudTd>
+          <MudTd></MudTd>
+          <MudTd>Total: @Elements.Sum(x=>x.Balance)</MudTd>
+        </MudTFootRow>
+    </FooterContent>
     <PagerContent>
         <MudTablePager />
     </PagerContent>
