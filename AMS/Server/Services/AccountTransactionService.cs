@@ -70,16 +70,17 @@ namespace AMS.Server.Services
                 endDate = date.AddHours(24);
             }
             var result = await (from t in appDbContext.AccountTransactions
-                                join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId
+                               join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
+                                from x in gj.DefaultIfEmpty()
                                 where t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
 
                                 select new AccountTransactionDto
                                 {
                                     AccountId = a.AccountId,
                                     AccountName = a.AccountName,
-                                    AgentId = ag.AgentId,
-                                    Agent = ag.Name,
+                                    AgentId = t.AgentId,
+                                    Agent = (x == null ? String.Empty : x.Name),
                                     Id = t.Id,
                                     Amount = t.Amount,
                                     Credit = t.Credit,
@@ -139,15 +140,16 @@ namespace AMS.Server.Services
         {
             var result = await (from t in appDbContext.AccountTransactions
                                 join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId
+                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
+                                from x in gj.DefaultIfEmpty()
                                 where t.Id == transactionID
 
                                 select new AccountTransactionDto
                                 {
                                     AccountId = a.AccountId,
                                     AccountName = a.AccountName,
-                                    AgentId = ag.AgentId,
-                                    Agent = ag.Name,
+                                    AgentId = t.AgentId,
+                                    Agent = (x == null? String.Empty : x.Name),
                                     Id = t.Id,
                                     Amount = t.Amount,
                                     Credit = t.Credit,

@@ -17,7 +17,7 @@ namespace AMS.Shared.Dto
         public DateTime? TransactionDate { get; set; }
         public string? AccountName { get; set; }
 
-        public string? AgentId { get; set; }
-        public string Agent { get; set; }
+        public string? AgentId { get; set; } = "";
+        public string Agent { get; set; } = "";
     }
 }
