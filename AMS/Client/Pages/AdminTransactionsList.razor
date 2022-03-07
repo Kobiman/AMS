@@ -1,0 +1,124 @@
+﻿@page "/AdminTransactions"
+<MudText Typo="Typo.h6">Account Transactions</MudText>
+
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Transaction</MudButton>
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AdministrativeTransactionDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
+        
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
+            <MudSelectItem Value="@("Today")" />
+            <MudSelectItem Value="@("This Week")" />
+            <MudSelectItem Value="@("This Month")" />
+            
+        </MudSelect>
+
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>CreatedOn</MudTh>
+        <MudTh>Source Account</MudTh>
+        <MudTh>Destination Account</MudTh>
+        <MudTh>Amount</MudTh>
+        <MudTh>Credit</MudTh>
+        <MudTh>Debit</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+        <MudTd DataLabel="Acc">@context.SourceAccount</MudTd>
+        <MudTd DataLabel="Destination Acc.">@context.DestinationAccount</MudTd>
+        <MudTd DataLabel="Amount">@context.Amount</MudTd>
+        <MudTd DataLabel="Credit">@context.Credit</MudTd>
+        <MudTd DataLabel="Debit">@context.Debit</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="">
+@*            <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            <MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />*@
+        </MudTd>
+    </RowTemplate>
+    
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+  </MudTable>
+</div>
+
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private AdministrativeTransactionDto selectedItem1 = null;
+
+    private List<AdministrativeTransactionDto>? Elements { get; set; }
+    string period = "Today";
+
+    public int TotalNum { get; set; }
+    public decimal TotalCredit { get; set; }
+    public decimal TotalDebit { get; set; }
+    public decimal TotalBalance { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await Http.GetFromJsonAsync<List<AdministrativeTransactionDto>>($"/api/AdministrativeTransaction/GetTransactions/{period}");
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalCredit = Elements.Sum(x => x.Credit);
+        TotalDebit = Elements.Sum(x => x.Debit);
+        TotalNum = Elements.Count;
+    }
+
+
+    private bool FilterFunc1(AdministrativeTransactionDto element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(AdministrativeTransactionDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (element.Account.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+
+        return false;
+    }
+
+    async Task EditTransaction(string TransactionId)
+    {
+
+    }
+
+    async Task DeleteTransaction(string Id)
+    {
+
+    }
+
+    async Task ShowModal()
+    {
+        var transactionModal = Modal.Show<AddAdminTransaction>("Add Transaction");
+        var result = await transactionModal.Result;
+        if(result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine(result.Data);
+            Elements.Add((AdministrativeTransactionDto) result.Data);
+            StateHasChanged();
+        }
+    }
+
+    async Task PeriodChanged()
+    {
+        Elements = await Http.GetFromJsonAsync<List<AdministrativeTransactionDto>>($"/api/AdministrativeTransaction/GetTransactions/{period}");
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalCredit = Elements.Sum(x => x.Credit);
+        TotalDebit = Elements.Sum(x => x.Debit);
+        TotalNum = Elements.Count;
+    }
+}

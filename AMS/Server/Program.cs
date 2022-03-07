@@ -27,6 +27,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
+builder.Services.AddTransient<IAdministrativeTransactionService, AdministrativeTransactionService>();
 
 //builder.Services.AddAuthentication()
 //    .AddIdentityServerJwt();
