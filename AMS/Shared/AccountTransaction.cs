@@ -31,5 +31,6 @@ namespace AMS.Shared
         public DateTime? TransactionDate { get; set; }
 
         public string? TransactionType { get; set; }
+        public decimal DailySales { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220310182625_dbn")]
+    partial class dbn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,9 +131,6 @@ namespace AMS.Server.Data.Migrations
                     b.Property<decimal>("Credit")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("DailySales")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("Debit")
                         .HasColumnType("decimal(18,2)");
 
@@ -153,42 +152,6 @@ namespace AMS.Server.Data.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("AccountTransactions");
-                });
-
-            modelBuilder.Entity("AMS.Shared.AdminTransaction", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AccountId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Credit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Debit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecondaryAccountId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TransactionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TransactionType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AdminTransactions");
                 });
 
             modelBuilder.Entity("AMS.Shared.Agent", b =>

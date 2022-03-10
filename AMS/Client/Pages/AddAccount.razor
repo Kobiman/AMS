@@ -3,7 +3,7 @@
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
-            <MudTextField T="string" Label="AccountName" Required="true" @bind-Value="model.AccountName" 
+            <MudTextField T="string" Label="Account Name" Required="true" @bind-Value="model.AccountName" 
             RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
             <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
             RequiredError="Type is required!" For="@(() => model.Type)"/>  
@@ -11,6 +11,9 @@
               <MudSelectItem T="string" Value="@("Asset")">Asset</MudSelectItem>
               <MudSelectItem T="string" Value="@("Expense")">Expense</MudSelectItem>
               <MudSelectItem T="string" Value="@("Liability")">Liability</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Revenue")">Revenue</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Equity")">Equity</MudSelectItem>
+
             </MudSelect>
      <div style="margin-top:15px"  class="mud-card-actions">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>

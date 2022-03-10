@@ -46,13 +46,13 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] AccountTransaction accountTransaction)
+        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] AdminTransaction adminTransaction)
         {
             try
             {
-                if (accountTransaction == null)
+                if (adminTransaction == null)
                     return BadRequest();
-                var result = await accTransactionService.AddAdministrativeTransaction(accountTransaction);
+                var result = await accTransactionService.AddAdministrativeTransaction(adminTransaction);
 
                 return CreatedAtAction(nameof(GetAdministrativeTransaction),new { id = result.Id },result);
                 //if (result.IsSucessful) 
@@ -67,14 +67,14 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPut()]
-        public async Task<ActionResult<AdministrativeTransactionDto>> EditTransaction(AccountTransaction accountTransaction)
+        public async Task<ActionResult<AdministrativeTransactionDto>> EditTransaction(AdminTransaction adminTransaction)
         {
             try
             {
-                var TransactionToEdit = await accTransactionService.GetTransaction(accountTransaction.Id);
+                var TransactionToEdit = await accTransactionService.GetTransaction(adminTransaction.Id);
                 if (TransactionToEdit == null)
                     return NotFound();
-                return await accTransactionService.UpdateAdministrativeTrasaction(accountTransaction);
+                return await accTransactionService.UpdateAdministrativeTrasaction(adminTransaction);
             }
             catch (Exception)
             {

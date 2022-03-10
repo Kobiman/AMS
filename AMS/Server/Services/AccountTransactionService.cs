@@ -85,6 +85,8 @@ namespace AMS.Server.Services
                                     Amount = t.Amount,
                                     Credit = t.Credit,
                                     Debit = t.Debit,
+                                    DailySales = t.DailySales,
+                                    OutstandingBalance = t.DailySales - t.Amount,
                                     Description = t.Description,
                                     TransactionDate = t.TransactionDate
                                 }).ToListAsync();
@@ -158,6 +160,8 @@ namespace AMS.Server.Services
                                     Amount = t.Amount,
                                     Credit = t.Credit,
                                     Debit = t.Debit,
+                                    DailySales = t.DailySales,
+                                    OutstandingBalance = t.DailySales - t.Amount,
                                     Description = t.Description,
                                     TransactionDate = t.TransactionDate
                                 }).FirstOrDefaultAsync();

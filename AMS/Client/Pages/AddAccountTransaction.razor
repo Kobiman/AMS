@@ -27,7 +27,10 @@ else{
             RequiredError="Description is required!" For="@(() => model.Description)"/>
 
             <MudNumericField HideSpinButtons="true"  @bind-Value="model.Amount"
-            Label="Amount" Variant="Variant.Text" />
+            Label="Pay-In Amount" Variant="Variant.Text" />
+
+            <MudNumericField HideSpinButtons="true"  @bind-Value="model.DailySales"
+            Label="Daily Sales" Variant="Variant.Text" />
 
             <ValidationSummary />
      <div style="margin-top:15px"  class="mud-card-actions">
