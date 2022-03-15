@@ -1,9 +1,9 @@
-﻿@page "/AccountTransactions"
+﻿@page "/AgentsTransactions"
 
 <MudText Typo="Typo.h6">Agent Transactions</MudText>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Transaction</MudButton>
     <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountTransactionDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentsTransactionDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
         
         <MudSpacer />
@@ -53,9 +53,6 @@
         <MudText Typo="Typo.h6">Summary</MudText>
         <MudSpacer />
         <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
-        
-        <MudText Typo="Typo.body2" >Total Credit:   GH₵ @TotalCredit</MudText>
-        <MudText Typo="Typo.body2" >Total Debit:    GH₵ @TotalDebit</MudText>
         <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
     </MudCardContent>
 </MudCard>
@@ -66,9 +63,9 @@
     private bool striped = false;
     private bool bordered = false;
     private string searchString1 = "";
-    private AccountTransactionDto selectedItem1 = null;
+    private AgentsTransactionDto selectedItem1 = null;
 
-    private List<AccountTransactionDto>? Elements { get; set; }
+    private List<AgentsTransactionDto>? Elements { get; set; }
     string period = "Today";
 
     public int TotalNum { get; set; }
@@ -78,17 +75,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AccountTransaction/GetTransactions/{period}");
+        Elements = await Http.GetFromJsonAsync<List<AgentsTransactionDto>>($"/api/AgentsTransaction/GetTransactions/{period}");
         TotalBalance = Elements.Sum(x => x.Amount);
-        TotalCredit = Elements.Sum(x => x.Credit);
-        TotalDebit = Elements.Sum(x => x.Debit);
         TotalNum = Elements.Count;
     }
 
 
-    private bool FilterFunc1(AccountTransactionDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc1(AgentsTransactionDto element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(AccountTransactionDto element, string searchString)
+    private bool FilterFunc(AgentsTransactionDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -102,13 +97,13 @@
 
     async Task EditTransaction(string TransactionId)
     {
-        AccountTransactionDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        AgentsTransactionDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
         if(transaction != null)
         {
             var parameters = new ModalParameters();
-            parameters.Add(nameof(EditAccountTransaction.Transaction), transaction);
+            parameters.Add(nameof(EditAgentsTransaction.Transaction), transaction);
 
-            var transactionModal = Modal.Show<EditAccountTransaction>("Edit Account Transaction", parameters);
+            var transactionModal = Modal.Show<EditAgentsTransaction>("Edit Agents Transaction", parameters);
             var result = await transactionModal.Result;
             if(result.Cancelled)
             {
@@ -116,7 +111,7 @@
             }
             else
             {
-                AccountTransactionDto updatedTransaction = (AccountTransactionDto)result.Data;
+                AgentsTransactionDto updatedTransaction = (AgentsTransactionDto)result.Data;
                 var originalTransaction = Elements.FirstOrDefault(t => t.Id == updatedTransaction.Id);
                 if(originalTransaction != null)
                 {
@@ -125,27 +120,25 @@
                     originalTransaction.AgentId = updatedTransaction.AgentId;
                     originalTransaction.Agent = updatedTransaction.Agent;
                     originalTransaction.Amount = updatedTransaction.Amount;
-                    originalTransaction.Credit = updatedTransaction.Credit;
-                    originalTransaction.Debit = updatedTransaction.Debit;
                     originalTransaction.DailySales = updatedTransaction.DailySales;
+                    originalTransaction.OutstandingBalance = updatedTransaction.OutstandingBalance;
                     originalTransaction.Description = updatedTransaction.Description;
                     StateHasChanged();
                 }         
-
             }
         }
     }
 
     async Task DeleteTransaction(string Id)
     {
-        AccountTransactionDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
+        AgentsTransactionDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
         if(transaction != null)
         {
             var transactionModal = Modal.Show<ConfirmDelete>("Confirm Delete");
             var result = await transactionModal.Result;
             if(result.Cancelled == false)
             {
-                var response = await Http.DeleteAsync($"/api/AccountTransaction/{Id}");
+                var response = await Http.DeleteAsync($"/api/AgentsTransaction/{Id}");
                 if(response.IsSuccessStatusCode)
                 {
                     Snackbar.Add("Deletion Was Successful", Severity.Info);
@@ -162,7 +155,7 @@
 
     async Task ShowModal()
     {
-        var transactionModal = Modal.Show<AddAccountTransaction>("Add Transaction");
+        var transactionModal = Modal.Show<AddAgentsTransaction>("Add Agent Transaction");
         var result = await transactionModal.Result;
         if(result.Cancelled)
         {
@@ -171,17 +164,15 @@
         else
         {
             Console.WriteLine(result.Data);
-            Elements.Add((AccountTransactionDto) result.Data);
+            Elements.Add((AgentsTransactionDto) result.Data);
             StateHasChanged();
         }
     }
 
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AccountTransaction/GetTransactions/{period}");
+        Elements = await Http.GetFromJsonAsync<List<AgentsTransactionDto>>($"/api/AgentsTransaction/GetTransactions/{period}");
         TotalBalance = Elements.Sum(x => x.Amount);
-        TotalCredit = Elements.Sum(x => x.Credit);
-        TotalDebit = Elements.Sum(x => x.Debit);
         TotalNum = Elements.Count;
     }
 }

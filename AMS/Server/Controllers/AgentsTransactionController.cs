@@ -7,20 +7,20 @@ namespace AMS.Server.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class AccountTransactionController : ControllerBase
+    public class AgentsTransactionController : ControllerBase
     {
-        private readonly IAccountTransactionService accTransactionService;
-        public AccountTransactionController(IAccountTransactionService _accTransationService)
+        private readonly IAgentsTransactionService accTransactionService;
+        public AgentsTransactionController(IAgentsTransactionService _accTransationService)
         {
             accTransactionService = _accTransationService;
         }
 
         [HttpGet("GetTransactions/{period}")]
-        public async Task<IActionResult> GetAccountTransactions(string? period="Today")
+        public async Task<IActionResult> GetAgentsTransactions(string? period="Today")
         {
             try
             {
-                return Ok(await accTransactionService.GetAccountTransactions(period));
+                return Ok(await accTransactionService.GetAgentsTransaction(period));
             }
             catch (Exception)
             {
@@ -41,7 +41,7 @@ namespace AMS.Server.Controllers
             }
         }
         [HttpGet("Id")]
-        public async Task<ActionResult<AccountTransactionDto>> GetAccountTransaction(string Id)
+        public async Task<ActionResult<AgentsTransactionDto>> GetAccountTransaction(string Id)
         {
             try
             {
@@ -57,13 +57,13 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public async Task<ActionResult<AccountTransactionDto>> AddAccountTransaction([FromBody] AccountTransaction accountTransaction)
+        public async Task<ActionResult<AgentsTransactionDto>> AddAgentsTransaction([FromBody] AgentsTransaction accountTransaction)
         {
             try
             {
                 if (accountTransaction == null)
                     return BadRequest();
-                var result = await accTransactionService.AddAccountTransaction(accountTransaction);
+                var result = await accTransactionService.AddAgentsTransaction(accountTransaction);
 
                 return CreatedAtAction(nameof(GetAccountTransaction),new { id = result.Id },result);
                 //if (result.IsSucessful) 
@@ -77,15 +77,15 @@ namespace AMS.Server.Controllers
             
         }
 
-        [HttpPut()]
-        public async Task<ActionResult<AccountTransactionDto>> EditTransaction(AccountTransaction accountTransaction)
+        [HttpPut]
+        public async Task<ActionResult<AgentsTransactionDto>> EditTransaction(AgentsTransaction accountTransaction)
         {
             try
             {
                 var TransactionToEdit = await accTransactionService.GetTransaction(accountTransaction.Id);
                 if (TransactionToEdit == null)
                     return NotFound();
-                return await accTransactionService.UpdateAccountTrasaction(accountTransaction);
+                return await accTransactionService.UpdateAgentsTrasaction(accountTransaction);
             }
             catch (Exception)
             {
@@ -94,14 +94,14 @@ namespace AMS.Server.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<ActionResult<AccountTransactionDto>> DeleteTransaction(string Id)
+        public async Task<ActionResult<AgentsTransactionDto>> DeleteTransaction(string Id)
         {
             try
             {
                 var TransactionToDelete = await accTransactionService.GetTransaction(Id);
                 if (TransactionToDelete == null)
                     return NotFound();
-                return await accTransactionService.DeleteAccountTransaction(Id);
+                return await accTransactionService.DeleteAgentsTransaction(Id);
             }
             catch (Exception)
             {

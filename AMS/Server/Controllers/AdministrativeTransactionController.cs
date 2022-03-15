@@ -46,7 +46,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] AdminTransaction adminTransaction)
+        public async Task<ActionResult<AgentsTransactionDto>> AddAdministrativeTransaction([FromBody] AdminTransaction adminTransaction)
         {
             try
             {

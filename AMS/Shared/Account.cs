@@ -12,7 +12,7 @@ namespace AMS.Shared
         public Account()
         {
             AccountId = Guid.NewGuid().ToString();
-            Transactions = new List<AccountTransaction>();
+            Transactions = new List<AgentsTransaction>();
             CreatedDate = DateTime.Now;
         }
         public string? AccountId { get; set; }
@@ -22,6 +22,6 @@ namespace AMS.Shared
         public string? Type { get; set; }
         public DateTime CreatedDate { get; set; }
         public decimal Balance { get; set; }
-        public IList<AccountTransaction> Transactions { get; set; }
+        public IList<AgentsTransaction> Transactions { get; set; }
     }
 }

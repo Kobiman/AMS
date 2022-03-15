@@ -1,5 +1,5 @@
-﻿@page "/EditAccountTransaction"
-@inject MudBlazor.ISnackbar Snackbar
+﻿@page "/AddAccountTransaction"
+
 
 @if(accounts == null)
 {
@@ -9,14 +9,14 @@ else{
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
-                <MudSelect T="string" Label="Select Account"  @bind-Value="model.AccountId" Text="@Transaction.AccountName"   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                <MudSelect T="string" Label="Select Account"  @bind-Value="model.AccountId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                     @foreach(var account in accounts)
                     {
                         <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
                     }
                 </MudSelect>
 
-                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId" Text="@Transaction.Agent"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                     @foreach(var agent in agents)
                     {
                         <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
@@ -41,48 +41,35 @@ else{
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    [Parameter] public AccountTransactionDto Transaction { get; set; }
-    AccountTransaction model = new AccountTransaction();
+    AgentsTransaction model = new AgentsTransaction();
 
     private IEnumerable<AccountDto> accounts { get; set; }
-    private IEnumerable<Agent> agents { get; set; } = new  List<Agent>();
+    private IEnumerable<Agent> agents = new List<Agent>();
     bool success;
     string[] errors = { };
 
     private async void OnValidSubmit(EditContext context)
     {
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-        var response = await Http.PutAsJsonAsync("api/AccountTransaction", model);
+        model.TransactionType = "Agent";
+        var response = await Http.PostAsJsonAsync("api/AgentsTransaction/AddTransaction", model);
         if(response.IsSuccessStatusCode)
         {
-            model = new AccountTransaction();
+            model = new AgentsTransaction();
             //var result = await response.Content.ReadFromJsonAsync<Result>();
-            var result = await response.Content.ReadFromJsonAsync<AccountTransactionDto>();
-            Snackbar.Add("Transaction Updated", Severity.Success);
+            var result = await response.Content.ReadFromJsonAsync<AgentsTransactionDto>();
+            Snackbar.Add("Transaction Saved", Severity.Success);
             await ModalInstance.CloseAsync(ModalResult.Ok(result));
         }
         else
         {
-            model = new AccountTransaction();
-            Snackbar.Add("Update Failed", Severity.Error);   
+            model = new AgentsTransaction();
+            Snackbar.Add("Save Transaction Failed", Severity.Error);   
         }
 
     }
 
     protected override async Task OnInitializedAsync()
-    {
-        await LoadAccounts();
-        await GetAgents();
-        model = new AccountTransaction();
-        model.Id = Transaction.Id;
-        model.AccountId = Transaction.AccountId;
-        model.AgentId = Transaction.AgentId;
-        model.Amount = Transaction.Amount;
-        model.DailySales = Transaction.DailySales;
-        model.Description = Transaction.Description;
-    }
-
-    async Task LoadAccounts()
     {
         var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
         if(result is not null)
@@ -93,7 +80,9 @@ else{
         {
             accounts = new List<AccountDto>();
         }
+        GetAgents();
     }
+
     private async Task GetAgents()
     {
         var result = await Http.GetFromJsonAsync<IList<Agent>>("api/Agent/GetAgents");

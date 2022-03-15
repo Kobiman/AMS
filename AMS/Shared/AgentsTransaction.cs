@@ -7,9 +7,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AMS.Shared
 {
-    public class AccountTransaction
+    public class AgentsTransaction
     {
-        public AccountTransaction()
+        public AgentsTransaction()
         {
             Id = Guid.NewGuid().ToString();
             TransactionDate = DateTime.Now;
@@ -19,14 +19,11 @@ namespace AMS.Shared
         public string? Id { get; set; }
         [Required]
         public decimal Amount { get; set; }
-        public decimal Debit { get; set; }
-        public decimal Credit { get; set; }
         [Required]
         public string? Description { get; set; }
         [Required]
         public string? AccountId { get; set; }
-
-        public string? SecondaryAccountId { get; set; }
+        [Required]
         public string? AgentId { get; set; }
         public DateTime? TransactionDate { get; set; }
 

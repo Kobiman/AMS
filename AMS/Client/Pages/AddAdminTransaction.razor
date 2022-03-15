@@ -38,7 +38,7 @@ else{
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    AccountTransaction model = new AccountTransaction();
+    AdminTransaction model = new AdminTransaction();
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<AccountDto> secondaryAccount { get; set; }
@@ -48,12 +48,12 @@ else{
 
     private async void OnValidSubmit(EditContext context)
     {
-        //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
+        //HttpResponseMessage response = await Http.PostAsJsonAsync<AdminTransaction>("api/AdminTransaction", model);
         model.TransactionType = "Administrative";
         var response = await Http.PostAsJsonAsync("api/AdministrativeTransaction/AddTransaction", model);
         if(response.IsSuccessStatusCode)
         {
-            model = new AccountTransaction();
+            model = new AdminTransaction();
             //var result = await response.Content.ReadFromJsonAsync<Result>();
             var result = await response.Content.ReadFromJsonAsync<AdministrativeTransactionDto>();
             Snackbar.Add("Transaction Saved", Severity.Success);
@@ -61,7 +61,7 @@ else{
         }
         else
         {
-            model = new AccountTransaction();
+            model = new AdminTransaction();
             Snackbar.Add("Save Transaction Failed", Severity.Error);   
         }
 

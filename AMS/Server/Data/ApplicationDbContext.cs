@@ -16,6 +16,6 @@ namespace AMS.Server.Data
         public DbSet<AdminTransaction> AdminTransactions { get; set; }
 
         public DbSet<Debtors> Debtors { get; set; }
-        public DbSet<AccountTransaction> AccountTransactions { get; set; }
+        public DbSet<AgentsTransaction> AgentsTransactions { get; set; }
     }
 }
