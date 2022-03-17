@@ -6,20 +6,18 @@ using System.Threading.Tasks;
 
 namespace AMS.Shared.Dto
 {
-    public class AgentsTransactionDto
+    public class AccountTransactionDto
     {
         public string? Id { get; set; }
         public decimal Amount { get; set; }
-
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
         public string? Description { get; set; }
         public string? AccountId { get; set; }
+        public string? SourceAccount { get; set; }
+        public string? SecondaryAccountId { get; set; }
+        public string? DestinationAccount { get; set; }
         public DateTime? TransactionDate { get; set; }
-        public string? AccountName { get; set; }
-        public string? AgentId { get; set; } = "";
-        public string Agent { get; set; } = "";
 
-        public decimal DailySales { get; set; }
-
-        public decimal OutstandingBalance { get; set; }
     }
 }

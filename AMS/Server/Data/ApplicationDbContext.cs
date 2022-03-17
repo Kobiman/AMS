@@ -13,9 +13,9 @@ namespace AMS.Server.Data
         }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Agent> Agents { get; set; }
-        public DbSet<AdminTransaction> AdminTransactions { get; set; }
-
-        public DbSet<Debtors> Debtors { get; set; }
-        public DbSet<AgentsTransaction> AgentsTransactions { get; set; }
+        public DbSet<AccountTransaction> AccountTransactions { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<Debtors> Debtors { get; set; }       
+        public DbSet<Sales> Sales { get; set; }
     }
 }

@@ -6,9 +6,9 @@ using Z.EntityFramework.Plus;
 
 namespace AMS.Server.Services
 {
-    public class AdministrativeTransactionService : IAdministrativeTransactionService
+    public class AccountTransactionService : IAccountTransactionService
     {
-        public AdministrativeTransactionService(ApplicationDbContext _appDbContext)
+        public AccountTransactionService(ApplicationDbContext _appDbContext)
         {
             appDbContext = _appDbContext;
         }
@@ -25,30 +25,30 @@ namespace AMS.Server.Services
         //        return new Result(true, "Transaction saved successfully.");
         //    return new Result(false, "Operation failled.");
         //}
-        public async Task<AdministrativeTransactionDto> AddAdministrativeTransaction(AdminTransaction adminTransactions)
+        public async Task<AccountTransactionDto> AddAdministrativeTransaction(AccountTransaction adminTransactions)
         {
             adminTransactions.Debit = adminTransactions.Amount < 0 ? adminTransactions.Amount : 0;
             adminTransactions.Credit = adminTransactions.Amount > 0 ? adminTransactions.Amount : 0;
 
-            var result = appDbContext.AdminTransactions.Add(adminTransactions);
+            var result = appDbContext.AccountTransactions.Add(adminTransactions);
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
             return null;
         }
 
-        public async Task<AdministrativeTransactionDto> DeleteAdministrativeTransaction(string accountTransactionId)
+        public async Task<AccountTransactionDto> DeleteAdministrativeTransaction(string accountTransactionId)
         {
-            var result = await appDbContext.AdminTransactions.FirstOrDefaultAsync(i => i.Id == accountTransactionId);
+            var result = await appDbContext.AccountTransactions.FirstOrDefaultAsync(i => i.Id == accountTransactionId);
             if (result != null)
             {
-                appDbContext.AdminTransactions.Remove(result);
+                appDbContext.AccountTransactions.Remove(result);
                 await appDbContext.SaveChangesAsync();
                 return await GetAdministrativeTransactionById(result.Id);
             }
             return null;
         }
 
-        public async Task<IEnumerable<AdministrativeTransactionDto>> GetAdmininistrativeTransactions(string period)
+        public async Task<IEnumerable<AccountTransactionDto>> GetAdmininistrativeTransactions(string period)
         {
             DateTime date = DateTime.Now.Date;
             DateTime startDate = new DateTime();
@@ -70,19 +70,19 @@ namespace AMS.Server.Services
                 startDate = date.Date;
                 endDate = date.AddHours(24);
             }
-            var result = await (from t in appDbContext.AdminTransactions
+            var result = await (from t in appDbContext.AccountTransactions
                                 join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                join sa in appDbContext.Accounts on t.SecondaryAccountId equals sa.AccountId into gj
-                                from x in gj.DefaultIfEmpty()
-                                where t.TransactionType == "Administrative"
-                                && (t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date)
+                                //join sa in appDbContext.Accounts on t.SecondaryAccountId equals sa.AccountId into gj
+                                //from x in gj.DefaultIfEmpty()
+                                where //t.TransactionType == "Administrative"
+                                 (t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date)
 
-                                select new AdministrativeTransactionDto
+                                select new AccountTransactionDto
                                 {
                                     AccountId = a.AccountId,
                                     SourceAccount = a.AccountName,
-                                    SecondaryAccountId = t.SecondaryAccountId,
-                                    DestinationAccount = (x == null ? String.Empty : x.AccountName),
+                                    //SecondaryAccountId = t.SecondaryAccountId,
+                                    //DestinationAccount = (x == null ? String.Empty : x.AccountName),
                                     Id = t.Id,
                                     Amount = t.Amount,
                                     Credit = t.Credit,
@@ -93,9 +93,9 @@ namespace AMS.Server.Services
             return result;
         }
 
-        public async Task<AdministrativeTransactionDto> UpdateAdministrativeTrasaction(AdminTransaction adminTransactions)
+        public async Task<AccountTransactionDto> UpdateAdministrativeTrasaction(AccountTransaction adminTransactions)
         {
-            var result = await appDbContext.AdminTransactions.FirstOrDefaultAsync(i => i.Id == adminTransactions.Id);
+            var result = await appDbContext.AccountTransactions.FirstOrDefaultAsync(i => i.Id == adminTransactions.Id);
             if (result != null)
             {
                 result.Debit = adminTransactions.Amount < 0 ? adminTransactions.Amount : 0;
@@ -103,7 +103,7 @@ namespace AMS.Server.Services
                 result.Amount = adminTransactions.Amount;
                 result.Description = adminTransactions.Description;
                 result.AccountId = adminTransactions.AccountId;
-                result.SecondaryAccountId = adminTransactions.SecondaryAccountId;
+                //result.SecondaryAccountId = adminTransactions.SecondaryAccountId;
                 result.TransactionDate = adminTransactions.TransactionDate;
 
                 await appDbContext.SaveChangesAsync();
@@ -113,20 +113,20 @@ namespace AMS.Server.Services
         }
 
        
-        public async Task<AdministrativeTransactionDto> GetAdministrativeTransactionById(string transactionID)
+        public async Task<AccountTransactionDto> GetAdministrativeTransactionById(string transactionID)
         {
-            var result = await (from t in appDbContext.AdminTransactions
+            var result = await (from t in appDbContext.AccountTransactions
                                 join a in appDbContext.Accounts on t.AccountId equals a.AccountId
-                                join sa in appDbContext.Accounts on t.SecondaryAccountId equals sa.AccountId into gj
-                                from x in gj.DefaultIfEmpty()
+                                //join sa in appDbContext.Accounts on t.SecondaryAccountId equals sa.AccountId into gj
+                                //from x in gj.DefaultIfEmpty()
                                 where t.Id == transactionID
 
-                                select new AdministrativeTransactionDto
+                                select new AccountTransactionDto
                                 {
                                     AccountId = a.AccountId,
                                     SourceAccount = a.AccountName,
-                                    SecondaryAccountId = t.SecondaryAccountId,
-                                    DestinationAccount = (x == null ? String.Empty : x.AccountName),
+                                    //SecondaryAccountId = t.SecondaryAccountId,
+                                   // DestinationAccount = (x == null ? String.Empty : x.AccountName),
                                     Id = t.Id,
                                     Amount = t.Amount,
                                     Credit = t.Credit,
@@ -137,9 +137,36 @@ namespace AMS.Server.Services
 
             return result;
         }
-        public async Task<AdminTransaction> GetTransaction(string transactionID)
+        public async Task<AccountTransaction> GetTransaction(string transactionID)
         {
-            return await appDbContext.AdminTransactions.FirstOrDefaultAsync(t => t.Id == transactionID);
+            return await appDbContext.AccountTransactions.FirstOrDefaultAsync(t => t.Id == transactionID);
+        }
+
+        public async Task<AccountTransactionDto> Transfer(Transfer transferDto)
+        {
+            //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
+            //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
+
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = -transferDto.Amount, Debit = transferDto.Amount, Description = "TRANSFER" });
+             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = transferDto.Amount, Credit = transferDto.Amount, Description = "TRANSFER" });
+             appDbContext.Transfers.Add(transferDto);
+            if (await appDbContext.SaveChangesAsync() > 0)
+                return await GetAdministrativeTransactionById(result.Entity.Id);
+            return null;
+        }
+
+        public async Task<IEnumerable<TransferDto>> TransferReport()//Should be by period
+        {
+            var transfers = await appDbContext.Transfers.ToListAsync();
+            var accounts = await appDbContext.Accounts.Select(x=>new { x.AccountName, x.AccountId}).ToDictionaryAsync(x=>x.AccountId,y=>y);
+            return transfers.Select(x=> new TransferDto {
+                Amount = x.Amount, 
+                Description= x.Description,
+                DestinationAccountId = x.DestinationAccountId, 
+                DestinationAccount = accounts[x.DestinationAccountId].AccountName,
+                SourceAccountId = x.SourceAccountId,
+                SourceAccount = accounts[x.SourceAccountId].AccountName,
+            });
         }
     }
 }

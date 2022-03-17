@@ -31,7 +31,7 @@ namespace AMS.Server.Services
                  x.AccountName,
                  x.AccountId,
                  x.Type,
-                 x.Balance,
+                 x.Transactions.Sum(x=>x.Amount),
                  x.CreatedDate
             )); 
         }

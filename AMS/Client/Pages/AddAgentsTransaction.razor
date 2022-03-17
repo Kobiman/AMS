@@ -26,7 +26,7 @@ else{
              <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
             RequiredError="Description is required!" For="@(() => model.Description)"/>
 
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.Amount"
+            <MudNumericField HideSpinButtons="true"  @bind-Value="model.PayInAmount"
             Label="Pay-In Amount" Variant="Variant.Text" />
 
             <MudNumericField HideSpinButtons="true"  @bind-Value="model.DailySales"
@@ -41,7 +41,7 @@ else{
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    AgentsTransaction model = new AgentsTransaction();
+    SalesDto model = new SalesDto();
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -51,19 +51,19 @@ else{
     private async void OnValidSubmit(EditContext context)
     {
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-        model.TransactionType = "Agent";
-        var response = await Http.PostAsJsonAsync("api/AgentsTransaction/AddTransaction", model);
+        //model.TransactionType = "Agent";
+        var response = await Http.PostAsJsonAsync("api/Sales/AddTransaction", model);
         if(response.IsSuccessStatusCode)
         {
-            model = new AgentsTransaction();
+            model = new SalesDto();
             //var result = await response.Content.ReadFromJsonAsync<Result>();
-            var result = await response.Content.ReadFromJsonAsync<AgentsTransactionDto>();
+            var result = await response.Content.ReadFromJsonAsync<SalesDto>();
             Snackbar.Add("Transaction Saved", Severity.Success);
             await ModalInstance.CloseAsync(ModalResult.Ok(result));
         }
         else
         {
-            model = new AgentsTransaction();
+            model = new SalesDto();
             Snackbar.Add("Save Transaction Failed", Severity.Error);   
         }
 

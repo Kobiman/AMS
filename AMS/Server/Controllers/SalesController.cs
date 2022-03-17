@@ -7,10 +7,10 @@ namespace AMS.Server.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class AgentsTransactionController : ControllerBase
+    public class SalesController : ControllerBase
     {
-        private readonly IAgentsTransactionService accTransactionService;
-        public AgentsTransactionController(IAgentsTransactionService _accTransationService)
+        private readonly ISalesService accTransactionService;
+        public SalesController(ISalesService _accTransationService)
         {
             accTransactionService = _accTransationService;
         }
@@ -41,7 +41,7 @@ namespace AMS.Server.Controllers
             }
         }
         [HttpGet("Id")]
-        public async Task<ActionResult<AgentsTransactionDto>> GetAccountTransaction(string Id)
+        public async Task<ActionResult<SalesDto>> GetAccountTransaction(string Id)
         {
             try
             {
@@ -57,13 +57,13 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public async Task<ActionResult<AgentsTransactionDto>> AddAgentsTransaction([FromBody] AgentsTransaction accountTransaction)
+        public async Task<ActionResult<SalesDto>> AddSale([FromBody] SalesDto accountTransaction)
         {
             try
             {
                 if (accountTransaction == null)
                     return BadRequest();
-                var result = await accTransactionService.AddAgentsTransaction(accountTransaction);
+                var result = await accTransactionService.AddSales(accountTransaction);
 
                 return CreatedAtAction(nameof(GetAccountTransaction),new { id = result.Id },result);
                 //if (result.IsSucessful) 
@@ -78,7 +78,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<AgentsTransactionDto>> EditTransaction(AgentsTransaction accountTransaction)
+        public async Task<ActionResult<SalesDto>> EditTransaction(Sales accountTransaction)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<ActionResult<AgentsTransactionDto>> DeleteTransaction(string Id)
+        public async Task<ActionResult<SalesDto>> DeleteTransaction(string Id)
         {
             try
             {

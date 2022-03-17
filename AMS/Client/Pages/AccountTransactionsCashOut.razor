@@ -2,7 +2,7 @@
 
 <MudText Typo="Typo.h6">Transactions (Cash In)</MudText>
     <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentsTransactionDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
         
         <MudSpacer />
@@ -26,7 +26,7 @@
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
         <MudTd DataLabel="Account">@context.AccountName</MudTd>
-        <MudTd DataLabel="Agent">@context.Agent</MudTd>
+        <MudTd DataLabel="Agent">@context.AgentName</MudTd>
         <MudTd DataLabel="Amount">@context.Amount</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         
@@ -51,9 +51,9 @@
     private bool striped = false;
     private bool bordered = false;
     private string searchString1 = "";
-    private AgentsTransactionDto selectedItem1 = null;
+    private SalesDto selectedItem1 = null;
 
-    private List<AgentsTransactionDto>? Elements { get; set; }
+    private List<SalesDto>? Elements { get; set; }
 
     public int TotalNum { get; set; }
     public decimal TotalAmount { get; set; }
@@ -63,15 +63,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<List<AgentsTransactionDto>>($"/api/AccountTransaction/CashOut/{period}");
+        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/AccountTransaction/CashOut/{period}");
         TotalAmount = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count;
     }
 
 
-    private bool FilterFunc1(AgentsTransactionDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(AgentsTransactionDto element, string searchString)
+    private bool FilterFunc(SalesDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -85,7 +85,7 @@
 
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<List<AgentsTransactionDto>>($"/api/AccountTransaction/CashOut/{period}");
+        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/AccountTransaction/CashOut/{period}");
         TotalAmount = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count;
     }

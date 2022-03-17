@@ -26,8 +26,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
-builder.Services.AddTransient<IAgentsTransactionService, AgentsTransactionService>();
-builder.Services.AddTransient<IAdministrativeTransactionService, AdministrativeTransactionService>();
+builder.Services.AddTransient<ISalesService, SalesService>();
+builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
 
 //builder.Services.AddAuthentication()
 //    .AddIdentityServerJwt();

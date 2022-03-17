@@ -7,10 +7,10 @@ namespace AMS.Server.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class AdministrativeTransactionController : ControllerBase
+    public class AccountTransactionController : ControllerBase
     {
-        private readonly IAdministrativeTransactionService accTransactionService;
-        public AdministrativeTransactionController(IAdministrativeTransactionService _accTransationService)
+        private readonly IAccountTransactionService accTransactionService;
+        public AccountTransactionController(IAccountTransactionService _accTransationService)
         {
             accTransactionService = _accTransationService;
         }
@@ -30,7 +30,7 @@ namespace AMS.Server.Controllers
 
 
         [HttpGet("Id")]
-        public async Task<ActionResult<AdministrativeTransactionDto>> GetAdministrativeTransaction(string Id)
+        public async Task<ActionResult<AccountTransactionDto>> GetAdministrativeTransaction(string Id)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("AddTransaction")]
-        public async Task<ActionResult<AgentsTransactionDto>> AddAdministrativeTransaction([FromBody] AdminTransaction adminTransaction)
+        public async Task<ActionResult<SalesDto>> AddAdministrativeTransaction([FromBody] AccountTransaction adminTransaction)
         {
             try
             {
@@ -66,8 +66,35 @@ namespace AMS.Server.Controllers
             
         }
 
+        [HttpPost("Transfer")]
+        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] Transfer transferDto)
+        {
+            try
+            {
+                if (transferDto == null)
+                    return BadRequest();
+                var result = await accTransactionService.Transfer(transferDto);
+
+                return CreatedAtAction(nameof(GetAdministrativeTransaction), new { id = result.Id }, result);
+                //if (result.IsSucessful) 
+                //    return Ok(result);
+                //return BadRequest(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+
+        }
+
+        [HttpGet("TransferReport")]
+        public async Task<IActionResult> TransferReport()//should be by period
+        {
+             return Ok(await accTransactionService.TransferReport());
+        }
+
         [HttpPut()]
-        public async Task<ActionResult<AdministrativeTransactionDto>> EditTransaction(AdminTransaction adminTransaction)
+        public async Task<ActionResult<AccountTransactionDto>> EditTransaction(AccountTransaction adminTransaction)
         {
             try
             {
@@ -83,7 +110,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<ActionResult<AdministrativeTransactionDto>> DeleteTransaction(string Id)
+        public async Task<ActionResult<AccountTransactionDto>> DeleteTransaction(string Id)
         {
             try
             {

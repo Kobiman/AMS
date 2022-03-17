@@ -1,0 +1,102 @@
+﻿@implements IDisposable
+@page "/TransferReport"
+<MudText Typo="Typo.h6">Transfer Report</MudText>
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAdminTransaction>("Transfer"))">Transfer</MudButton>
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<TransferDto,bool>(FilterFunc1)" 
+        @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
+    <ToolBarContent>
+        
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>CreatedOn</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Description</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Source Account">@context.SourceAccount</MudTd>
+        <MudTd DataLabel="Destination Account">@context.DestinationAccount</MudTd>
+        <MudTd DataLabel="Amount">@context.Amount</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow Class="bold-text">
+          <MudTd></MudTd>
+          <MudTd></MudTd>
+          <MudTd></MudTd>
+          <MudTd>Total: @Elements.Sum(x=>x.Amount)</MudTd>
+        </MudTFootRow>
+    </FooterContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+  </MudTable>
+</div>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private string searchString2 = "";
+    private TransferDto selectedItem1 = null;
+    private TransferDto selectedItem2 = null;
+    private HashSet<TransferDto> selectedItems = new HashSet<TransferDto>();
+    private IEnumerable<TransferDto> Elements = new List<TransferDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetTransferReport();
+    }
+
+    private async Task GetTransferReport()
+    {
+        var result = await Http.GetFromJsonAsync<IList<TransferDto>>("api/AccountTransaction/TransferReport");
+        if(result is not null)
+        {
+            Elements = result;
+        }
+        else
+        {
+            Elements = new List<TransferDto>();
+        }
+    }
+    private async Task App_StateChanged(ComponentBase Source)
+    {
+        if (Source != this)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task ReloadAccounts(object source, EventArgs e)
+    {
+        await GetTransferReport();
+        await App_StateChanged((ComponentBase)source);
+    }
+
+    private bool FilterFunc1(TransferDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(TransferDto element) => FilterFunc(element, searchString2);
+
+    private bool FilterFunc(TransferDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.DestinationAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    void IDisposable.Dispose()
+    {
+        accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
+    }
+}
