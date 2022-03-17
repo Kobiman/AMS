@@ -158,14 +158,14 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<TransferDto>> TransferReport()//Should be by period
         {
             var transfers = await appDbContext.Transfers.ToListAsync();
-            var accounts = await appDbContext.Accounts.Select(x=>new { x.AccountName, x.AccountId}).ToDictionaryAsync(x=>x.AccountId,y=>y);
+            var accounts = await appDbContext.Accounts.Select(x=>new { x.AccountName, x.AccountId}).ToDictionaryAsync(x=>x.AccountId,y=>y.AccountName);
             return transfers.Select(x=> new TransferDto {
                 Amount = x.Amount, 
                 Description= x.Description,
                 DestinationAccountId = x.DestinationAccountId, 
-                DestinationAccount = accounts[x.DestinationAccountId].AccountName,
+                DestinationAccount = accounts[x.DestinationAccountId],
                 SourceAccountId = x.SourceAccountId,
-                SourceAccount = accounts[x.SourceAccountId].AccountName,
+                SourceAccount = accounts[x.SourceAccountId],
             });
         }
     }
