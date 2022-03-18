@@ -1,29 +1,43 @@
 ﻿@implements IDisposable
-@page "/TransferReport"
-<MudText Typo="Typo.h6">Transfer Report</MudText>
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAdminTransaction>("Transfer"))">Transfer</MudButton>
+@page "/PayoutReport"
+<MudText Typo="Typo.h6">Payout Report</MudText>
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Add Payout"))">Payout</MudButton>
     <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<TransferDto,bool>(FilterFunc1)" 
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" 
         @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
     <ToolBarContent>
         
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+         <MudSpacer />
+        <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
+            <MudSelectItem Value="@("Today")" />
+            <MudSelectItem Value="@("This Week")" />
+            <MudSelectItem Value="@("This Month")" />           
+        </MudSelect>
     </ToolBarContent>
     <HeaderContent>
+        
+        <MudTh>Agent</MudTh>
+        <MudTh>Game</MudTh>
         <MudTh>Source Account</MudTh>
-        <MudTh>Destination Account</MudTh>        
+        <MudTh>Destination Account</MudTh>     
         <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Source Account">@context.SourceAccount</MudTd>
-        <MudTd DataLabel="Destination Account">@context.DestinationAccount</MudTd>       
+        
+        <MudTd DataLabel="Source Account">@context.Agent</MudTd>
+        <MudTd DataLabel="Game">@context.GameName</MudTd>
+        <MudTd DataLabel="Agent">@context.SourceAccount</MudTd>
+        <MudTd DataLabel="Destination Account">@context.DestinationAccount</MudTd>      
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@context.Amount</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
+          <MudTd></MudTd>
+          <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
@@ -44,27 +58,29 @@
     private bool bordered = false;
     private string searchString1 = "";
     private string searchString2 = "";
-    private TransferDto selectedItem1 = null;
-    private TransferDto selectedItem2 = null;
-    private HashSet<TransferDto> selectedItems = new HashSet<TransferDto>();
-    private IEnumerable<TransferDto> Elements = new List<TransferDto>();
+    private PayoutDto selectedItem1 = null;
+    private PayoutDto selectedItem2 = null;
+    private HashSet<PayoutDto> selectedItems = new HashSet<PayoutDto>();
+    private IEnumerable<PayoutDto> Elements = new List<PayoutDto>();
+
+    string period = "Today";
 
     protected override async Task OnInitializedAsync()
     {
         accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
-        await GetTransferReport();
+        await GetPayoutReport();
     }
 
-    private async Task GetTransferReport()
+    private async Task GetPayoutReport()
     {
-        var result = await Http.GetFromJsonAsync<IList<TransferDto>>("api/AccountTransaction/TransferReport");
+        var result = await Http.GetFromJsonAsync<IList<PayoutDto>>($"api/AccountTransaction/PayoutReport/{period}");
         if(result is not null)
         {
             Elements = result;
         }
         else
         {
-            Elements = new List<TransferDto>();
+            Elements = new List<PayoutDto>();
         }
     }
     private async Task App_StateChanged(ComponentBase Source)
@@ -77,14 +93,14 @@
 
     public async Task ReloadAccounts(object source, EventArgs e)
     {
-        await GetTransferReport();
+        await GetPayoutReport();
         await App_StateChanged((ComponentBase)source);
     }
 
-    private bool FilterFunc1(TransferDto element) => FilterFunc(element, searchString1);
-    private bool FilterFunc2(TransferDto element) => FilterFunc(element, searchString2);
+    private bool FilterFunc1(PayoutDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(PayoutDto element) => FilterFunc(element, searchString2);
 
-    private bool FilterFunc(TransferDto element, string searchString)
+    private bool FilterFunc(PayoutDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -98,5 +114,11 @@
     void IDisposable.Dispose()
     {
         accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
+    }
+
+    async Task PeriodChanged()
+    {
+        Elements = await Http.GetFromJsonAsync<IList<PayoutDto>>($"api/AccountTransaction/PayoutReport/{period}");
+
     }
 }

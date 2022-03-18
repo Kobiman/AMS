@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220317115643_Transfer")]
-    partial class Transfer
+    [Migration("20220318095621_payout")]
+    partial class payout
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -186,6 +186,48 @@ namespace AMS.Server.Migrations
                     b.ToTable("Debtors");
                 });
 
+            modelBuilder.Entity("AMS.Shared.Game", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("AMS.Shared.Payout", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AgentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationAccountId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SourceAccountId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payouts");
+                });
+
             modelBuilder.Entity("AMS.Shared.Sales", b =>
                 {
                     b.Property<string>("Id")
@@ -199,6 +241,10 @@ namespace AMS.Server.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -23,6 +23,7 @@ namespace AMS.Shared
         public string? Description { get; set; }
         [Required]
         public string? AgentId { get; set; }
+        public string GameId { get; set; }
         public DateTime? TransactionDate { get; set; }
         public decimal DailySales { get; set; }
         public string? ReceiptNumber { get; set; }

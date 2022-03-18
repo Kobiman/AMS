@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AMS.Server.Migrations
 {
-    public partial class Initial : Migration
+    public partial class INITIAL : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -93,6 +93,18 @@ namespace AMS.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Games",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sales",
                 columns: table => new
                 {
@@ -100,6 +112,7 @@ namespace AMS.Server.Migrations
                     PayInAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AgentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DailySales = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ReceiptNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -107,6 +120,21 @@ namespace AMS.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sales", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transfers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SourceAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DestinationAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transfers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -310,7 +338,13 @@ namespace AMS.Server.Migrations
                 name: "Debtors");
 
             migrationBuilder.DropTable(
+                name: "Games");
+
+            migrationBuilder.DropTable(
                 name: "Sales");
+
+            migrationBuilder.DropTable(
+                name: "Transfers");
 
             migrationBuilder.DropTable(
                 name: "Accounts");

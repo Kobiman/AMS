@@ -1,0 +1,55 @@
+﻿@page "/Games"
+@*@attribute [Authorize]*@ 
+
+<MudText Typo="Typo.h6">Games</MudText>
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add New Game</MudButton> 
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" CustomHeader="true" CustomFooter="true">
+    <HeaderContent>
+        <MudTh>Name of Game</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name of Game">@context.Name</MudTd>
+    </RowTemplate>
+</MudTable>
+
+</div>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+
+    private List<Game>? Elements { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+       var result = await Http.GetFromJsonAsync<List<Game>?>($"api/Game/GetGames");
+        if(result is not null)
+        {
+            Elements = result;
+        }
+        else
+        {
+            Elements = new List<Game>();
+        }
+    }
+
+    async Task ShowModal()
+    {
+        var gameModal = Modal.Show<AddGame>("Add New Game");
+        var result = await gameModal.Result;
+        if(result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Elements.Add((Game) result.Data);
+            StateHasChanged();
+        }
+    }
+
+}

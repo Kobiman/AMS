@@ -1,0 +1,42 @@
+﻿@using System.Text.RegularExpressions
+@page "/AddGame"
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+            <MudTextField T="string" Label="Name of Game" Required="true" @bind-Value="model.Name" 
+            RequiredError="Game name is required!" For="@(() => model.Name)"/>
+            
+            
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    bool success;
+    Game model = new Game();
+    string[] errors = { };
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PostAsJsonAsync("api/Game/AddGame",model);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            model = new Game();
+            var result = await response.Content.ReadFromJsonAsync<Game>();
+            Snackbar.Add("Transaction Saved", Severity.Success);
+            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+        }
+        else
+        {
+            model = new Game();
+            await ModalInstance.CloseAsync();            
+            Snackbar.Add("Save Transaction Failed", Severity.Error); 
+        }
+        StateHasChanged();
+    }
+}

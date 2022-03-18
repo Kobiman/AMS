@@ -124,5 +124,33 @@ namespace AMS.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Deleting Transaction");
             }
         }
+
+        //PAY OUT
+        [HttpPost("Payout")]
+        public async Task<ActionResult<AccountTransactionDto>> AddPayout([FromBody] Payout payout)
+        {
+            try
+            {
+                if (payout == null)
+                    return BadRequest();
+                var result = await accTransactionService.Payout(payout);
+
+                return CreatedAtAction(nameof(GetAdministrativeTransaction), new { id = result.Id }, result);
+                //if (result.IsSucessful) 
+                //    return Ok(result);
+                //return BadRequest(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+
+        }
+        //PayoutReport
+        [HttpGet("PayoutReport/{period}")]
+        public async Task<IActionResult> PayoutReport(string period)//should be by period
+        {
+            return Ok(await accTransactionService.PayoutReport(period));
+        }
     }
 }

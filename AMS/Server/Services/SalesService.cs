@@ -31,6 +31,7 @@ namespace AMS.Server.Services
                     DailySales = sales.DailySales, 
                     Description = sales.Description,
                     PayInAmount = sales.PayInAmount, 
+                    GameId = sales.GameId,
                     ReceiptNumber = sales.ReceiptNumber }
                 );
 
@@ -96,6 +97,8 @@ namespace AMS.Server.Services
                                //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
+                                join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
+                                from gme in _gme.DefaultIfEmpty()
                                 where
                                 t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
 
@@ -110,7 +113,9 @@ namespace AMS.Server.Services
                                     DailySales = t.DailySales,
                                     OutstandingBalance = t.DailySales - t.PayInAmount,
                                     Description = t.Description,
-                                    TransactionDate = t.TransactionDate
+                                    TransactionDate = t.TransactionDate,
+                                    GameId = t.GameId,
+                                    GameName = gme == null? string.Empty : gme.Name,
                                 }).ToListAsync();
             return result;
         }
@@ -199,6 +204,8 @@ namespace AMS.Server.Services
                                 //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
+                                join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
+                                from gme in _gme.DefaultIfEmpty()
                                 where t.Id == transactionID
 
                                 select new SalesDto
@@ -212,7 +219,9 @@ namespace AMS.Server.Services
                                     DailySales = t.DailySales,
                                     OutstandingBalance = t.DailySales - t.PayInAmount,
                                     Description = t.Description,
-                                    TransactionDate = t.TransactionDate
+                                    TransactionDate = t.TransactionDate,
+                                    GameId = t.GameId,
+                                    GameName = gme == null ? string.Empty : gme.Name,
                                 }).FirstOrDefaultAsync();
 
             return result;
