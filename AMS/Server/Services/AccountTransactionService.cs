@@ -147,8 +147,8 @@ namespace AMS.Server.Services
             //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
             //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
 
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = -transferDto.Amount, Debit = transferDto.Amount, Description = "TRANSFER" });
-             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = transferDto.Amount, Credit = transferDto.Amount, Description = "TRANSFER" });
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = -transferDto.Amount, Debit = transferDto.Amount, Description = transferDto.Description });
+             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = transferDto.Amount, Credit = transferDto.Amount, Description = transferDto.Description });
              appDbContext.Transfers.Add(transferDto);
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
@@ -194,8 +194,8 @@ namespace AMS.Server.Services
             //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
             //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
 
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = "PAYOUT" });
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = payout.Description });
+            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = payout.Description });
             appDbContext.Payouts.Add(payout);
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
