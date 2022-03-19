@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220318095621_payout")]
-    partial class payout
+    [Migration("20220319135755_kojo")]
+    partial class kojo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -221,7 +221,11 @@ namespace AMS.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SourceAccountId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -235,7 +239,7 @@ namespace AMS.Server.Migrations
 
                     b.Property<string>("AgentId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("DailySales")
                         .HasColumnType("decimal(18,2)");
@@ -259,6 +263,8 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AgentId");
+
                     b.ToTable("Sales");
                 });
 
@@ -278,6 +284,9 @@ namespace AMS.Server.Migrations
 
                     b.Property<string>("SourceAccountId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -426,6 +435,15 @@ namespace AMS.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AMS.Shared.Sales", b =>
+                {
+                    b.HasOne("AMS.Shared.Agent", null)
+                        .WithMany("Transactions")
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -478,6 +496,11 @@ namespace AMS.Server.Migrations
                 });
 
             modelBuilder.Entity("AMS.Shared.Account", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("AMS.Shared.Agent", b =>
                 {
                     b.Navigation("Transactions");
                 });

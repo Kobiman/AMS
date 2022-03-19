@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AMS.Server.Migrations
 {
-    public partial class INITIAL : Migration
+    public partial class kojo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -105,21 +105,21 @@ namespace AMS.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sales",
+                name: "Payouts",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PayInAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AgentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DailySales = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ReceiptNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AgentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GameId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SourceAccountId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DestinationAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sales", x => x.Id);
+                    table.PrimaryKey("PK_Payouts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,7 +130,8 @@ namespace AMS.Server.Migrations
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SourceAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DestinationAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DestinationAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -157,6 +158,30 @@ namespace AMS.Server.Migrations
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sales",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PayInAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AgentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DailySales = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ReceiptNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sales", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sales_Agents_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agents",
+                        principalColumn: "AgentId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -309,15 +334,17 @@ namespace AMS.Server.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sales_AgentId",
+                table: "Sales",
+                column: "AgentId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "AccountTransactions");
-
-            migrationBuilder.DropTable(
-                name: "Agents");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -341,6 +368,9 @@ namespace AMS.Server.Migrations
                 name: "Games");
 
             migrationBuilder.DropTable(
+                name: "Payouts");
+
+            migrationBuilder.DropTable(
                 name: "Sales");
 
             migrationBuilder.DropTable(
@@ -354,6 +384,9 @@ namespace AMS.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Agents");
         }
     }
 }
