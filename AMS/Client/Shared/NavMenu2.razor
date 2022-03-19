@@ -4,7 +4,7 @@
         @*<MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Secondary Text</MudText>*@
         <MudDivider Class="my-2"/>
          <MudNavLink Href="/" Icon="@Icons.Filled.Business">Home</MudNavLink>
-        <MudNavGroup Title="Chart of Accounts" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="true">
+        <MudNavGroup Title="Chart of Accounts" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
             <MudNavLink Href="/users" Icon="@Icons.Filled.AlignVerticalBottom">Trial Balance</MudNavLink>
             <MudNavLink Href="/security" Icon="@Icons.Filled.AssuredWorkload">Income Statement</MudNavLink>
              <MudNavLink Href="/security" Icon="@Icons.Filled.ChecklistRtl">Statement of Accounts</MudNavLink>
@@ -14,14 +14,16 @@
         <MudNavLink Href="/TransferReport" Icon="@Icons.Filled.CompareArrows">Transfer Report</MudNavLink>
         <MudNavLink Href="/PayoutReport" Icon="@Icons.Filled.ArrowForward">Pay-Out</MudNavLink>
         <MudNavLink Href="/PayinReport" Icon="@Icons.Filled.ArrowBack">Pay-In</MudNavLink>
-        <MudNavLink Href="/Games" Icon="@Icons.Filled.Apps">Games</MudNavLink>
+      
 
         @*<MudNavLink Href="/CashIn">Transactions (Cash-In)</MudNavLink>
         <MudNavLink Href="/CashOut">Transactions (Cash-Out)</MudNavLink>*@
-        <MudNavLink Href="/Agents" Icon="@Icons.Filled.AssignmentInd">Agents</MudNavLink>
-         <MudNavGroup Title="Account Setup" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="true">
+        
+         <MudNavGroup Title="System Setup" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
             <MudNavLink Href="/AddAccount" Icon="@Icons.Filled.AlignVerticalBottom">Add Accounts</MudNavLink>
-       
+              <MudNavLink Href="/Games" Icon="@Icons.Filled.Apps">Add Games</MudNavLink>
+              <MudNavLink Href="/Agents" Icon="@Icons.Filled.AssignmentInd">Add Agents</MudNavLink>
+                <MudNavLink Href="/Agents" Icon="@Icons.Filled.AssignmentInd">Manage Users</MudNavLink>
         </MudNavGroup>
 
     </MudNavMenu>
