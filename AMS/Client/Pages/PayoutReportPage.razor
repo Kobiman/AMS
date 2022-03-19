@@ -1,6 +1,6 @@
 ﻿@implements IDisposable
 @page "/PayoutReport"
-<MudText Typo="Typo.h6">Payout Report</MudText>
+<MudText Typo="Typo.h6">Payout Report (Wins)</MudText>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Add Payout"))">Payout</MudButton>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" 

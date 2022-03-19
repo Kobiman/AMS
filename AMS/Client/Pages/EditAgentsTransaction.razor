@@ -22,6 +22,12 @@ else{
                         <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
                     }
                 </MudSelect>
+                <MudSelect T="string" Label="Select Game"  @bind-Value="model.GameId" Text="@Transaction.GameName"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                    @foreach(var game in games)
+                    {
+                        <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+                    }
+                </MudSelect>
 
              <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
             RequiredError="Description is required!" For="@(() => model.Description)"/>
@@ -46,13 +52,14 @@ else{
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents { get; set; } = new  List<Agent>();
+    private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
 
     private async void OnValidSubmit(EditContext context)
     {
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-        var response = await Http.PutAsJsonAsync("api/AgentsTransaction", model);
+        var response = await Http.PutAsJsonAsync("api/Sales", model);
         if(response.IsSuccessStatusCode)
         {
             model = new SalesDto();
@@ -73,11 +80,13 @@ else{
     {
         await LoadAccounts();
         await GetAgents();
+        await GetGames();
         model = new SalesDto();
         model.Id = Transaction.Id;
         model.AccountId = Transaction.AccountId;
         model.AgentId = Transaction.AgentId;
-        //model.PayInAmount = Transaction.Amount;
+        model.GameId = Transaction.GameId;
+        model.PayInAmount = Transaction.Amount;
         model.DailySales = Transaction.DailySales;
         model.Description = Transaction.Description;
     }
@@ -104,6 +113,18 @@ else{
         else
         {
             agents = new List<Agent>();
+        }
+    }
+    private async Task GetGames()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+        if(result is not null)
+        {
+            games = result;
+        }
+        else
+        {
+            games = new List<Game>();
         }
     }
 }

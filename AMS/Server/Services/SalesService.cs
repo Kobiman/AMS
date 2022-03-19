@@ -94,7 +94,7 @@ namespace AMS.Server.Services
                 endDate = date.AddHours(24);
             }
             var result = await (from t in appDbContext.Sales
-                               //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
@@ -104,7 +104,7 @@ namespace AMS.Server.Services
 
                                 select new SalesDto
                                 {
-                                    //AccountId = a.AccountId,
+                                    //AccountId = t.AccountId,
                                     //AccountName = a.AccountName,
                                     AgentId = t.AgentId,
                                     AgentName = x == null ? string.Empty : x.Name,

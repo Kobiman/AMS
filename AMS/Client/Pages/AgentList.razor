@@ -3,7 +3,7 @@
 <MudText Typo="Typo.h6">Agents</MudText>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAgent>("Add Agent"))">Add Agent</MudButton> 
     <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<Agent,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
         
         <MudSpacer />
@@ -14,12 +14,18 @@
         <MudTh>Name</MudTh>
         <MudTh>Type</MudTh>
         <MudTh>Contact</MudTh>
+        <MudTh>Sales</MudTh>
+        <MudTh>Paid In</MudTh>
+        <MudTh>Outsanding Bal.</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.CreatedDate</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Region">@context.Region</MudTd>
         <MudTd DataLabel="Contact">@context.Contact</MudTd>
+        <MudTd DataLabel="Sales">@context.Sales</MudTd>
+        <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
+        <MudTd DataLabel="Balance">@context.OutstandingBalance</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -34,10 +40,10 @@
     private bool bordered = false;
     private string searchString1 = "";
     private string searchString2 = "";
-    private Agent selectedItem1 = null;
-    private Agent selectedItem2 = null;
-    private HashSet<Agent> selectedItems = new HashSet<Agent>();
-    private IEnumerable<Agent> Elements = new List<Agent>();
+    private AgentDto selectedItem1 = null;
+    private AgentDto selectedItem2 = null;
+    private HashSet<AgentDto> selectedItems = new HashSet<AgentDto>();
+    private IEnumerable<AgentDto> Elements = new List<AgentDto>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,14 +53,14 @@
 
     private async Task GetAccounts()
     {
-        var result = await Http.GetFromJsonAsync<IList<Agent>>("api/Agent/GetAgents");
+        var result = await Http.GetFromJsonAsync<IList<AgentDto>>("api/Agent/GetAgents");
         if(result is not null)
         {
             Elements = result;
         }
         else
         {
-            Elements = new List<Agent>();
+            Elements = new List<AgentDto>();
         }
     }
     private async Task App_StateChanged(ComponentBase Source)
@@ -71,10 +77,10 @@
         await App_StateChanged((ComponentBase)source);
     }
 
-    private bool FilterFunc1(Agent element) => FilterFunc(element, searchString1);
-    private bool FilterFunc2(Agent element) => FilterFunc(element, searchString2);
+    private bool FilterFunc1(AgentDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(AgentDto element) => FilterFunc(element, searchString2);
 
-    private bool FilterFunc(Agent element, string searchString)
+    private bool FilterFunc(AgentDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;

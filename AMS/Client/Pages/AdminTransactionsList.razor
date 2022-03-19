@@ -113,7 +113,7 @@
 
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"/api/AdministrativeTransaction/GetTransactions/{period}");
+        Elements = await Http.GetFromJsonAsync<List<AccountTransactionDto>>($"api/AccountTransaction/GetTransactions/{period}");
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalCredit = Elements.Sum(x => x.Credit);
         TotalDebit = Elements.Sum(x => x.Debit);

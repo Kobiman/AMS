@@ -9,6 +9,13 @@
         
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
+            <MudSelectItem Value="@("Today")" />
+            <MudSelectItem Value="@("This Week")" />
+            <MudSelectItem Value="@("This Month")" />
+            
+        </MudSelect>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Source Account</MudTh>
@@ -49,6 +56,8 @@
     private HashSet<TransferDto> selectedItems = new HashSet<TransferDto>();
     private IEnumerable<TransferDto> Elements = new List<TransferDto>();
 
+    string period = "Today";
+
     protected override async Task OnInitializedAsync()
     {
         accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
@@ -57,7 +66,7 @@
 
     private async Task GetTransferReport()
     {
-        var result = await Http.GetFromJsonAsync<IList<TransferDto>>("api/AccountTransaction/TransferReport");
+        var result = await Http.GetFromJsonAsync<IList<TransferDto>>($"api/AccountTransaction/TransferReport/{period}");
         if(result is not null)
         {
             Elements = result;
@@ -98,5 +107,10 @@
     void IDisposable.Dispose()
     {
         accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
+    }
+
+    async Task PeriodChanged()
+    {
+        Elements = await Http.GetFromJsonAsync<IList<TransferDto>>($"api/AccountTransaction/TransferReport/{period}");
     }
 }

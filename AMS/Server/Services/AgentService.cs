@@ -1,5 +1,6 @@
 ﻿using AMS.Server.Data;
 using AMS.Shared;
+using AMS.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMS.Server.Services
@@ -22,9 +23,20 @@ namespace AMS.Server.Services
             return new Result(false, "Operation failled.");
         }
 
-        public async Task<IEnumerable<Agent>> GetAgents()
+        public async Task<IEnumerable<AgentDto>> GetAgents()
         {
-            return await _context.Agents.ToListAsync();
+            var results =  await _context.Agents.Include(x=> x.Transactions).ToListAsync();
+            return results.Select(x => new AgentDto
+            {
+                AgentId = x.AgentId,
+                Name = x.Name,
+                Contact = x.Contact,
+                CreatedDate = x.CreatedDate,
+                Region = x.Region,
+                Sales = x.Transactions.Sum(x => x.DailySales),
+                AmountPaid = x.Transactions.Sum(x => x.PayInAmount),
+                OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.PayInAmount)
+            });
         }
     }
 }

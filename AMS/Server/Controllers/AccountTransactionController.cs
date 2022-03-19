@@ -87,10 +87,10 @@ namespace AMS.Server.Controllers
 
         }
 
-        [HttpGet("TransferReport")]
-        public async Task<IActionResult> TransferReport()//should be by period
+        [HttpGet("TransferReport/{period}")]
+        public async Task<IActionResult> TransferReport(string period)//should be by period
         {
-             return Ok(await accTransactionService.TransferReport());
+             return Ok(await accTransactionService.TransferReport(period));
         }
 
         [HttpPut()]

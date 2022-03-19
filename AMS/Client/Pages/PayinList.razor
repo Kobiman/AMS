@@ -95,11 +95,9 @@
     }
 
 
-
-
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/AgentsTransaction/GetTransactions/{period}");
+        Elements =  await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count;
     }

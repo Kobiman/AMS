@@ -4,21 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMS.Shared
+namespace AMS.Shared.Dto
 {
-    public class Agent
+    public class AgentDto
     {
-        public Agent()
-        {
-            AgentId = Guid.NewGuid().ToString();
-            CreatedDate = DateTime.Now;
-            Transactions = new List<Sales>();
-        }
+
         public string? AgentId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? Name { get; set; }
         public string? Region { get; set; }
         public string? Contact { get; set; }
-        public IList<Sales> Transactions { get; set; }
+        public decimal Sales { get; set; }
+
+        public decimal AmountPaid { get; set; }
+
+        public decimal OutstandingBalance { get; set; }
     }
 }

@@ -36,7 +36,7 @@
         <MudTd DataLabel="Sales">@context.OutstandingBalance</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="">
-            <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            @*<MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />*@
             <MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
         </MudTd>
     </RowTemplate>
@@ -180,7 +180,7 @@
 
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/AgentsTransaction/GetTransactions/{period}");
+        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count;
     }

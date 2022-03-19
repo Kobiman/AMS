@@ -155,9 +155,29 @@ namespace AMS.Server.Services
             return null;
         }
 
-        public async Task<IEnumerable<TransferDto>> TransferReport()//Should be by period
+        public async Task<IEnumerable<TransferDto>> TransferReport(string period)//Should be by period
         {
-            var transfers = await appDbContext.Transfers.ToListAsync();
+            DateTime date = DateTime.Now.Date;
+            DateTime startDate = new DateTime();
+            DateTime endDate = new DateTime();
+            if (period == "This Week")
+            {
+                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
+                endDate = startDate.AddDays(7);
+            }
+
+            else if (period == "This Month")
+            {
+                startDate = new DateTime(date.Year, date.Month, 1);
+                int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
+                endDate = startDate.AddDays(daysInMonth - 1);
+            }
+            else
+            {
+                startDate = date.Date;
+                endDate = date.AddHours(24);
+            }
+            var transfers = await appDbContext.Transfers.Where(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate).ToListAsync();
             var accounts = await appDbContext.Accounts.Select(x=>new { x.AccountName, x.AccountId}).ToDictionaryAsync(x=>x.AccountId,y=>y.AccountName);
             return transfers.Select(x=> new TransferDto {
                 Amount = x.Amount, 
