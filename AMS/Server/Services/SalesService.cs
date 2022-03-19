@@ -79,14 +79,14 @@ namespace AMS.Server.Services
             if (period == "This Week")
             {
                 startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(6);
+                endDate = startDate.AddDays(7);
             }
 
             else if (period == "This Month")
             {
                 startDate = new DateTime(date.Year, date.Month, 1);
                 int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth - 1);
+                endDate = startDate.AddDays(daysInMonth);
             }
             else
             {
