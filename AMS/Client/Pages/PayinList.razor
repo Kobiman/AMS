@@ -3,8 +3,7 @@
 <MudText Typo="Typo.h6">Pay-In Report</MudText>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
-    <ToolBarContent>
-        
+    <ToolBarContent> 
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudSpacer />
@@ -13,7 +12,6 @@
             <MudSelectItem Value="@("This Week")" />
             <MudSelectItem Value="@("This Month")" />           
         </MudSelect>
-
     </ToolBarContent>
     <HeaderContent>
         <MudTh>CreatedOn</MudTh>
@@ -21,8 +19,6 @@
         <MudTh>Game</MudTh>
         <MudTh>Description</MudTh>
         <MudTh>Paid</MudTh>
-
-
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
@@ -33,10 +29,10 @@
     </RowTemplate>
      <FooterContent>
         <MudTFootRow Class="bold-text">
-          <MudTd>&nbsp</MudTd>
-          <MudTd>&nbsp</MudTd>
-          <MudTd>&nbsp</MudTd>
-          <MudTd>&nbsp</MudTd>
+          <MudTd></MudTd>
+          <MudTd></MudTd>
+          <MudTd></MudTd>
+          <MudTd></MudTd>
           <MudTd>Total: @Elements.Sum(x=>x.Amount)</MudTd>
         </MudTFootRow>
     </FooterContent>
@@ -64,7 +60,7 @@
     private string searchString1 = "";
     private SalesDto selectedItem1 = null;
 
-    private List<SalesDto>? Elements { get; set; }
+    private IEnumerable<SalesDto> Elements = new List<SalesDto>();
     string period = "Today";
 
     public int TotalNum { get; set; }
@@ -74,9 +70,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        var result = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        if(result is not null)
+        {
+            Elements = result;
+        }
+        else
+        {
+            Elements = new List<SalesDto>();
+        }
         TotalBalance = Elements.Sum(x => x.Amount);
-        TotalNum = Elements.Count;
+        TotalNum = Elements.Count();
     }
 
 
@@ -97,8 +101,16 @@
 
     async Task PeriodChanged()
     {
-        Elements =  await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        var result =  await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        if(result is not null)
+        {
+            Elements = result;
+        }
+        else
+        {
+            Elements = new List<SalesDto>();
+        }
         TotalBalance = Elements.Sum(x => x.Amount);
-        TotalNum = Elements.Count;
+        TotalNum = Elements.Count();
     }
 }

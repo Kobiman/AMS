@@ -244,7 +244,7 @@ namespace AMS.Server.Services
             var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate<= endDate)
                                 join acc in appDbContext.Accounts on p.SourceAccountId equals acc.AccountId into sourceac
                                 from a in sourceac.DefaultIfEmpty()
-                                join dacc in appDbContext.Accounts on a.AccountId equals dacc.AccountId into desacc
+                                join dacc in appDbContext.Accounts on p.DestinationAccountId equals dacc.AccountId into desacc
                                 from d in desacc.DefaultIfEmpty()
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
                                 from agt in agac.DefaultIfEmpty()

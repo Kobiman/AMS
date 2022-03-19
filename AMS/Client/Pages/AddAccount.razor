@@ -35,13 +35,13 @@
         if (content is not null && content.IsSucessful)
         {
             Account model = new Account();
-            await ModalInstance.CloseAsync();
+            //await ModalInstance.CloseAsync();
             Snackbar.Add(content.Message, Severity.Success);
-            accountEvents.OnAccountAdded(this);
+            //accountEvents.OnAccountAdded(this);
         }
         else if (content is not null && !content.IsSucessful)
         {
-            await ModalInstance.CloseAsync();
+            //await ModalInstance.CloseAsync();
             Snackbar.Add(content.Message, Severity.Success);
         }
         StateHasChanged();
