@@ -56,14 +56,14 @@ namespace AMS.Server.Services
             if (period == "This Week")
             {
                 startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(6);
+                endDate = startDate.AddDays(7);
             }
 
             else if (period == "This Month")
             {
                 startDate = new DateTime(date.Year, date.Month, 1);
                 int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth - 1);
+                endDate = startDate.AddDays(daysInMonth);
             }
             else
             {
@@ -170,7 +170,7 @@ namespace AMS.Server.Services
             {
                 startDate = new DateTime(date.Year, date.Month, 1);
                 int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth - 1);
+                endDate = startDate.AddDays(daysInMonth);
             }
             else
             {
@@ -194,8 +194,9 @@ namespace AMS.Server.Services
             //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
             //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
 
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = payout.Description });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = payout.Description });
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
+            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = "PAYOUT" });
+            appDbContext.Transfers.Add(new Transfer { Amount = payout.Amount, SourceAccountId = payout.SourceAccountId, DestinationAccountId = payout.DestinationAccountId, Description = "PAYOUT" });
             appDbContext.Payouts.Add(payout);
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
@@ -227,14 +228,14 @@ namespace AMS.Server.Services
             if (period == "This Week")
             {
                 startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(6);
+                endDate = startDate.AddDays(7);
             }
 
             else if (period == "This Month")
             {
                 startDate = new DateTime(date.Year, date.Month, 1);
                 int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth - 1);
+                endDate = startDate.AddDays(daysInMonth);
             }
             else
             {
@@ -242,10 +243,10 @@ namespace AMS.Server.Services
                 endDate = date.AddHours(24);
             }
             var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate<= endDate)
-                                join acc in appDbContext.Accounts on p.SourceAccountId equals acc.AccountId into sourceac
-                                from a in sourceac.DefaultIfEmpty()
-                                join dacc in appDbContext.Accounts on p.DestinationAccountId equals dacc.AccountId into desacc
-                                from d in desacc.DefaultIfEmpty()
+                                //join acc in appDbContext.Accounts on p.SourceAccountId equals acc.AccountId into sourceac
+                                //from a in sourceac.DefaultIfEmpty()
+                                //join dacc in appDbContext.Accounts on p.DestinationAccountId equals dacc.AccountId into desacc
+                                //from d in desacc.DefaultIfEmpty()
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
                                 from agt in agac.DefaultIfEmpty()
                                 join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
@@ -258,11 +259,11 @@ namespace AMS.Server.Services
                                     AgentId = p.AgentId,
                                     Agent = agt==null?string.Empty: agt.Name,
                                     GameId = p.GameId,
-                                    GameName = gme.Name,
-                                    DestinationAccountId = p.DestinationAccountId,
-                                    DestinationAccount = d == null? string.Empty : d.AccountName,
-                                    SourceAccountId = p.SourceAccountId,
-                                    SourceAccount = a == null? string.Empty : a.AccountName
+                                    GameName = gme.Name
+                                    //DestinationAccountId = p.DestinationAccountId,
+                                    //DestinationAccount = d == null? string.Empty : d.AccountName,
+                                    //SourceAccountId = p.SourceAccountId,
+                                    //SourceAccount = a == null? string.Empty : a.AccountName
                                 }).ToListAsync();
             return result;
         }

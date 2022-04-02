@@ -16,28 +16,21 @@
             <MudSelectItem Value="@("This Month")" />           
         </MudSelect>
     </ToolBarContent>
-    <HeaderContent>
-        
+    <HeaderContent>        
         <MudTh>Agent</MudTh>
-        <MudTh>Game</MudTh>
-        <MudTh>Source Account</MudTh>
-        <MudTh>Destination Account</MudTh>     
+        <MudTh>Game</MudTh>   
         <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
     </HeaderContent>
     <RowTemplate>
         
-        <MudTd DataLabel="Source Account">@context.Agent</MudTd>
+        <MudTd DataLabel="Agent">@context.Agent</MudTd> 
         <MudTd DataLabel="Game">@context.GameName</MudTd>
-        <MudTd DataLabel="Agent">@context.SourceAccount</MudTd>
-        <MudTd DataLabel="Destination Account">@context.DestinationAccount</MudTd>      
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@context.Amount</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
-          <MudTd></MudTd>
-          <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
