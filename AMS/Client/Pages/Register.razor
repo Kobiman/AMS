@@ -1,0 +1,50 @@
+﻿@using System.Text.RegularExpressions
+@page "/Register"
+<PageTitle>Register</PageTitle>
+<h3>Register</h3>
+<MudPaper Class="pa-4" Width="450px">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+        <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email" 
+        RequiredError="Email is a required field" For="@(() => model.Email)" InputType="InputType.Email"/>
+
+        <MudTextField T="string" Label="Password" Required="true" @bind-Value="model.Password" 
+        RequiredError="Password is a required field" For="@(() => model.Password)" InputType="InputType.Password"/>
+
+        <MudTextField T="string" Label="Confirm Password" Required="true" @bind-Value="model.ConfirmPassword" 
+        RequiredError="Confirm Password is a required field" For="@(() => model.ConfirmPassword)" InputType="InputType.Password"/>
+            
+            
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Register</MudButton>
+    </div>
+    <ValidationSummary />
+    </EditForm>
+</MudPaper>
+
+@code {
+
+    bool success;
+    UserRegister model = new UserRegister();
+    string errors = "";
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        //Console.WriteLine($"Registeration for {model.Email}");
+        var response = await Http.PostAsJsonAsync("api/Auth/Register", model);
+        var content = await response.Content.ReadFromJsonAsync<Result<int>>();
+        if(content.IsSucessful)
+        {
+            errors = "";
+            model = new UserRegister();
+            Snackbar.Add(content.Message,Severity.Success);
+        }
+        else
+        {
+            errors = content.Message;
+            model = new UserRegister();
+            Snackbar.Add(errors, Severity.Error);
+        }
+    }
+}

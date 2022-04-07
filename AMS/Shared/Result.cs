@@ -15,9 +15,13 @@ namespace AMS.Shared
     public class Result<T> : IResult
     {
         public bool IsSucessful { get; set; }
-        public T Value { get; set; }
+        public T? Value { get; set; }
         public string Message { get; set; }
 
+        public Result()
+        {
+
+        }
         public Result(bool isSuccessful, T value, string message)
         {
             IsSucessful = isSuccessful;
