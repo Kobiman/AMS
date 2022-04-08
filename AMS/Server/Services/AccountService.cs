@@ -17,8 +17,10 @@ namespace AMS.Server.Services
         {
             var originalAccount = _context.Accounts.FirstOrDefault(x=>x.AccountName == account.AccountName);
             if (originalAccount != null) return new Result(false,$"Account with name {account.AccountName} already exist.");
-               _context.Accounts.Add(account);
-              var result = await _context.SaveChangesAsync();
+            var count = await _context.Accounts.Where(x => x.Type == account.Type).CountAsync();
+            account.Code = AccountConfig.GetAccountCode(account, count);
+            _context.Accounts.Add(account);
+            var result = await _context.SaveChangesAsync();
             if(result > 0) return new Result(true, "Account saved successfully.");
             return new Result(false, "Operation failled.");
         }
@@ -32,8 +34,9 @@ namespace AMS.Server.Services
                  x.AccountId,
                  x.Type,
                  x.Transactions.Sum(x=>x.Amount),
-                 x.CreatedDate
-            )); 
+                 x.CreatedDate,
+                 x.Code
+                 )); 
         }
     }
 }

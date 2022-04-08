@@ -7,13 +7,18 @@
             RequiredError="Account name is required!" For="@(() => model.AccountName)"/>
             <MudTextField T="string" Label="Type" Required="true" @bind-Value="model.Type" 
             RequiredError="Type is required!" For="@(() => model.Type)"/>  
-            <MudSelect T="string" Label="Select Type"  @bind-Value="model.Type"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            <MudSelect T="string" Label="Select Type"  @bind-Value="model.Type"  AnchorOrigin="Origin.BottomCenter"
+            Variant="Variant.Outlined" SelectedValuesChanged="@(() => GetSubAccounts())">
               <MudSelectItem T="string" Value="@("Asset")">Asset</MudSelectItem>
               <MudSelectItem T="string" Value="@("Expense")">Expense</MudSelectItem>
               <MudSelectItem T="string" Value="@("Liability")">Liability</MudSelectItem>
               <MudSelectItem T="string" Value="@("Revenue")">Revenue</MudSelectItem>
               <MudSelectItem T="string" Value="@("Equity")">Equity</MudSelectItem>
-
+            </MudSelect>
+            <MudSelect T="string" Label="Select Type"  @bind-Value="model.SubType"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+              @foreach(var subtype in SubAccounts){
+                <MudSelectItem T="string" Value="@subtype">@subtype</MudSelectItem>
+              }
             </MudSelect>
      <div style="margin-top:15px"  class="mud-card-actions">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
@@ -26,11 +31,19 @@
     bool success;
     Account model = new Account();
     string[] errors = { };
-
+    Dictionary<string, string[]> SubAccountsDictionary = new Dictionary<string, string[]>
+    {
+       { "Asset",new string[]{  "Current Assets","Inventory","Fixed Assets","Long-term Assets" } },
+       { "Liability",new string[]{  "Current Liabilities","Long-term Liabilities" } },
+       { "Equity",new string[]{   "Paid-in Capital","Treasury Stock","Retained Earnings" } },
+       { "Revenue ",new string[]{ } },
+       { "Expense",new string[]{   "Cost of Goods Sold","Selling Expenses","General or Administrative Expenses","Depreciation Expense","Research and Development","Non-Operating Section" } }
+    };
+    IEnumerable<string> SubAccounts = new string[] { };
 
     private async void OnValidSubmit(EditContext context)
     {
-        var response = await Http.PostAsJsonAsync("api/Account/AddAccount",model);
+        var response = await Http.PostAsJsonAsync("api/Account/AddAccount",context.Model);
         var content = await response.Content.ReadFromJsonAsync<Result>();
         if (content is not null && content.IsSucessful)
         {
@@ -46,4 +59,14 @@
         }
         StateHasChanged();
     }
+
+    private void GetSubAccounts()
+    {
+        if (model.Type != null)
+        {
+            SubAccounts = SubAccountsDictionary[model.Type];
+            //await InvokeAsync(StateHasChanged);
+        }
+    }
+
 }

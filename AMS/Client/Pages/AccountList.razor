@@ -24,18 +24,21 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>CreatedOn</MudTh>
+           <MudTh>Code</MudTh>
         <MudTh>Name</MudTh>
         <MudTh>Type</MudTh>
         <MudTh>Balance</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.CreatedDate</MudTd>
+        <MudTd DataLabel="Balance">@context.Code</MudTd>
         <MudTd DataLabel="Name">@context.AccountName</MudTd>
         <MudTd DataLabel="Type">@context.Type</MudTd>
         <MudTd DataLabel="Balance">@context.Balance</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
+          <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
@@ -72,7 +75,7 @@
         var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
         if(result is not null)
         {
-            Elements = result;
+            Elements = result.OrderBy(x=>x.Code);
         }
         else
         {
