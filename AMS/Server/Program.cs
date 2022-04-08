@@ -1,10 +1,13 @@
-using AMS.Server.Data;
+global using AMS.Server.Services;
+global using AMS.Shared;
+global using AMS.Server.Data;
 using AMS.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using AMS.Server.Services;
+using Microsoft.AspNetCore.ResponseCompression;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,7 @@ builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<ISalesService, SalesService>();
 builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
 builder.Services.AddTransient<IGameService, GameService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 //builder.Services.AddAuthentication()
 //    .AddIdentityServerJwt();
@@ -36,7 +40,11 @@ builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+app.UseSwaggerUI();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -50,7 +58,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseSwagger();
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();

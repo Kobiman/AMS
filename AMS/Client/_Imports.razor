@@ -16,8 +16,11 @@
 @using Blazored.Modal
 @using Blazored.Modal.Services
 @using AMS.Shared.Dto
+@using Blazored.LocalStorage;
+@using Microsoft.AspNetCore.Components.Authorization
 @inject HttpClient Http
 @inject ToastService toastService
 @inject IModalService Modal
 @inject MudBlazor.ISnackbar Snackbar
 @inject AccountEvents accountEvents
+
