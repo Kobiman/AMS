@@ -8,8 +8,8 @@
         @*<MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Secondary Text</MudText>*@
         <MudDivider Class="my-2"/>
          <MudNavLink Href="/" Icon="@Icons.Filled.Business">Home</MudNavLink>
-         <AuthorizeView>
-             <Authorized>
+@*         <AuthorizeView>
+             <Authorized>*@
                  <MudNavGroup Title="Accounts" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
                 <MudNavLink Href="/accounts" Icon="@Icons.Filled.AlignVerticalBottom">Chart of Accounts</MudNavLink>
                 <MudNavLink Href="/users" Icon="@Icons.Filled.AlignVerticalBottom">Trial Balance</MudNavLink>
@@ -32,20 +32,20 @@
                   <MudNavLink Href="/Agents" Icon="@Icons.Filled.AssignmentInd">Add Agents</MudNavLink>
                     @*<MudNavLink Href="/Register" Icon="@Icons.Filled.AssignmentInd">Manage Users</MudNavLink>*@
             </MudNavGroup>
-             </Authorized>
-         </AuthorizeView>
+   @*          </Authorized>
+         </AuthorizeView>*@
             
 
         <MudNavGroup Title="Users" Icon="@Icons.Filled.AssignmentInd" Color="Color.Primary" Expanded="true">
-            <AuthorizeView>
+@*            <AuthorizeView>
                 <Authorized>
                      <MudButton Variant="Variant.Text" DisableElevation="true" Color="Color.Primary" @onclick="Logout">Logout</MudButton>
                 </Authorized>
-                <NotAuthorized>
+                <NotAuthorized>*@
                     <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
                     <MudNavLink Href="/Login" Icon="@Icons.Filled.Login">Login</MudNavLink>
-                </NotAuthorized>
-            </AuthorizeView>
+       @*         </NotAuthorized>
+            </AuthorizeView>*@
         </MudNavGroup>
 
     </MudNavMenu>

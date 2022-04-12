@@ -195,7 +195,8 @@ namespace AMS.Server.Services
             //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
 
             var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = "PAYOUT" });
+            if(payout.DestinationAccountId != null)
+                appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = "PAYOUT" });
             appDbContext.Transfers.Add(new Transfer { Amount = payout.Amount, SourceAccountId = payout.SourceAccountId, DestinationAccountId = payout.DestinationAccountId, Description = "PAYOUT" });
             appDbContext.Payouts.Add(payout);
             if (await appDbContext.SaveChangesAsync() > 0)
