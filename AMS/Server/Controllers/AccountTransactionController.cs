@@ -65,9 +65,17 @@ namespace AMS.Server.Controllers
             }
             
         }
+        [HttpPost("AddAccountTransaction")]
+        public async Task<ActionResult> AddAccountTransaction([FromBody] AddTransactionDto  transactionDto)
+        {
+            var result = await accTransactionService.AddAccountTransaction(transactionDto);
+            if (result.IsSucessful)
+                return Ok(result);
+            return BadRequest(result);
+        }
 
         [HttpPost("Transfer")]
-        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] Transfer transferDto)
+        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] TransferDto transferDto)
         {
             try
             {

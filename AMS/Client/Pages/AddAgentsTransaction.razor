@@ -1,4 +1,4 @@
-﻿@page "/AddAccountTransaction"
+﻿@page "/AddAgentTransaction"
 
 
 @if(accounts == null)
@@ -85,7 +85,7 @@ else{
         var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
         if(result is not null)
         {
-            accounts = result;
+            accounts = result.Where(x=>x.Type == AccountTypes.Revenue);
         }
         else
         {

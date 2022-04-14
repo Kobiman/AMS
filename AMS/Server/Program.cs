@@ -31,8 +31,9 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<ISalesService, SalesService>();
 builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
-builder.Services.AddTransient<IGameService, GameService>();
+builder.Services.AddTransient<IGameService, GameService>(); 
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IExpenseService, ExpenseService>();
 
 //builder.Services.AddAuthentication()
 //    .AddIdentityServerJwt();

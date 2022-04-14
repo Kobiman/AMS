@@ -11,8 +11,10 @@ namespace AMS.Shared.Dto
         public decimal Amount { get; set; }
         public string? Description { get; set; }
         public string? SourceAccountId { get; set; }
+        public string? SourceAccountType { get; set; } = string.Empty;
         public string? DestinationAccountId { get; set; }
-        public string DestinationAccount { get; set; }
-        public string SourceAccount { get; set; }
+        public string? DestinationAccountType { get; set; } = string.Empty;
+        public string DestinationAccount { get; set; } = string.Empty;
+        public string SourceAccount { get; set; } = string.Empty;
     }
 }

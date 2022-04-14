@@ -15,16 +15,23 @@ namespace AMS.Server.Services
 
         private readonly ApplicationDbContext appDbContext;
 
-        //public async Task<Shared.IResult> AddAccountTransaction(AdminTransaction adminTransactions)
-        //{
-        //    adminTransactions.Debit = adminTransactions.Amount < 0 ? adminTransactions.Amount : 0;
-        //    adminTransactions.Credit = adminTransactions.Amount > 0 ? adminTransactions.Amount : 0;
-        //    appDbContext.AdminTransactions.Add(adminTransactions);
-        //    var result = await appDbContext.SaveChangesAsync();
-        //    if (result > 0)
-        //        return new Result(true, "Transaction saved successfully.");
-        //    return new Result(false, "Operation failled.");
-        //}
+        public async Task<Shared.IResult> AddAccountTransaction(AddTransactionDto transactionDto)
+        {
+            var journalEntryRule = new JournalEntryRules(transactionDto.Amount, transactionDto.AccountType, transactionDto.Operation);
+            var transaction = new AccountTransaction
+            {
+                 AccountId = transactionDto.AccountId,
+                 Debit = journalEntryRule.Debit,
+                 Credit = journalEntryRule.Credit,
+                 Amount = journalEntryRule.Amount,
+                 Description = transactionDto.Description
+            };
+            appDbContext.AccountTransactions.Add(transaction);
+            var result = await appDbContext.SaveChangesAsync();
+            if (result > 0)
+                return new Result(true, "Transaction saved successfully.");
+            return new Result(false, "Operation failled.");
+        }
         public async Task<AccountTransactionDto> AddAdministrativeTransaction(AccountTransaction adminTransactions)
         {
             adminTransactions.Debit = adminTransactions.Amount < 0 ? adminTransactions.Amount : 0;
@@ -142,14 +149,20 @@ namespace AMS.Server.Services
             return await appDbContext.AccountTransactions.FirstOrDefaultAsync(t => t.Id == transactionID);
         }
 
-        public async Task<AccountTransactionDto> Transfer(Transfer transferDto)
+        public async Task<AccountTransactionDto> Transfer(TransferDto transferDto)
         {
-            //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
-            //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
+            var decrease = new JournalEntryRules(transferDto.Amount, transferDto.SourceAccountType, JournalEntryRules.Decrease);
+            var increase = new JournalEntryRules(transferDto.Amount, transferDto.DestinationAccountType, JournalEntryRules.Increase);
 
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = -transferDto.Amount, Debit = transferDto.Amount, Description = transferDto.Description });
-             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = transferDto.Amount, Credit = transferDto.Amount, Description = transferDto.Description });
-             appDbContext.Transfers.Add(transferDto);
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = decrease.Amount, Credit = decrease.Credit, Debit = decrease.Debit, Description = transferDto.Description });
+             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = increase.Amount, Credit = increase.Credit, Debit = increase.Debit, Description = transferDto.Description });
+             appDbContext.Transfers.Add(new Transfer
+             {
+                 Amount = transferDto.Amount,
+                 Description = transferDto.Description,
+                 DestinationAccountId = transferDto.DestinationAccountId,
+                 SourceAccountId = transferDto.SourceAccountId
+             });
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
             return null;
@@ -195,7 +208,7 @@ namespace AMS.Server.Services
             //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
 
             var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = payout.Amount, Credit = payout.Amount, Description = "PAYOUT" });
+            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
             appDbContext.Transfers.Add(new Transfer { Amount = payout.Amount, SourceAccountId = payout.SourceAccountId, DestinationAccountId = payout.DestinationAccountId, Description = "PAYOUT" });
             appDbContext.Payouts.Add(payout);
             if (await appDbContext.SaveChangesAsync() > 0)

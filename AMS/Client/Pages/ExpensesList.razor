@@ -1,21 +1,9 @@
-﻿@page "/Accounts"
+﻿@page "/Expenses"
 @implements IDisposable
-@*@attribute [Authorize]*@ 
-
-@*<style type="text/css">
-    .mud-table-head .header-centered th {
-        text-align: center;
-        font-size: 1.2em;
-    }
-
-   .mud-table-foot .bold-text .mud-table-cell {
-       font-weight: 500;
-   }
-</style>*@
-<MudText Typo="Typo.h6">Accounts</MudText>
-@*<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccount>("Add Account"))">Add Account</MudButton>*@ 
-    <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AccountDto,bool>(FilterFunc1)" 
+<MudText Typo="Typo.h6">Expenses</MudText>
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddExpenses>("Add Expenses"))">Add Expenses</MudButton> 
+<div style="margin-top:10px">
+     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<GetExpenseDto,bool>(FilterFunc1)" 
         @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
     <ToolBarContent>
         
@@ -23,22 +11,19 @@
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>CreatedOn</MudTh>
-           <MudTh>Code</MudTh>
+        <MudTh>Date</MudTh>
+           <MudTh>Account Name</MudTh>
         <MudTh>Name</MudTh>
-        <MudTh>Type</MudTh>
-        <MudTh>Balance</MudTh>
+        <MudTh>Description</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.CreatedDate</MudTd>
-        <MudTd DataLabel="Balance">@context.Code</MudTd>
-        <MudTd DataLabel="Name">@context.AccountName</MudTd>
-        <MudTd DataLabel="Type">@context.Type</MudTd>
-        <MudTd DataLabel="Balance">@context.Balance</MudTd>
+        <MudTd DataLabel="CreatedOn">@context.Date</MudTd>
+        <MudTd DataLabel="Balance">@context.AccountName</MudTd>
+        <MudTd DataLabel="Name">@context.Amount</MudTd>
+        <MudTd DataLabel="Type">@context.Description</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
-          <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
@@ -59,10 +44,10 @@
     private bool bordered = false;
     private string searchString1 = "";
     private string searchString2 = "";
-    private AccountDto selectedItem1 = null;
-    private AccountDto selectedItem2 = null;
-    private HashSet<AccountDto> selectedItems = new HashSet<AccountDto>();
-    private IEnumerable<AccountDto> Elements = new List<AccountDto>();
+    private GetExpenseDto selectedItem1 = null;
+    private GetExpenseDto selectedItem2 = null;
+    private HashSet<GetExpenseDto> selectedItems = new HashSet<GetExpenseDto>();
+    private IEnumerable<GetExpenseDto> Elements = new List<GetExpenseDto>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -72,14 +57,14 @@
 
     private async Task GetAccounts()
     {
-        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
+        var result = await Http.GetFromJsonAsync<IList<GetExpenseDto>>("api/Expense/GetExpenses");
         if(result is not null)
         {
-            Elements = result.OrderBy(x=>x.Code);
+            Elements = result;
         }
         else
         {
-            Elements = new List<AccountDto>();
+            Elements = new List<GetExpenseDto>();
         }
     }
     private async Task App_StateChanged(ComponentBase Source)
@@ -96,16 +81,16 @@
         await App_StateChanged((ComponentBase)source);
     }
 
-    private bool FilterFunc1(AccountDto element) => FilterFunc(element, searchString1);
-    private bool FilterFunc2(AccountDto element) => FilterFunc(element, searchString2);
+    private bool FilterFunc1(GetExpenseDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(GetExpenseDto element) => FilterFunc(element, searchString2);
 
-    private bool FilterFunc(AccountDto element, string searchString)
+    private bool FilterFunc(GetExpenseDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
         if (element.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Type.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Date.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }

@@ -31,5 +31,7 @@ namespace AMS.Server.Data
 
         public DbSet<Game> Games { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        
     }
 }

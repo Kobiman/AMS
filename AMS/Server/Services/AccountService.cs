@@ -1,6 +1,7 @@
 ﻿using AMS.Server.Data;
 using AMS.Shared;
 using AMS.Shared.Dto;
+using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMS.Server.Services
@@ -37,6 +38,36 @@ namespace AMS.Server.Services
                  x.CreatedDate,
                  x.Code
                  )); 
+        }
+
+        public async Task<IEnumerable<IncomeStatementDto>> GetIncomeStatement(int year)
+        {
+            var accounts = await _context.Accounts.Include(x => x.Transactions.Where(x => x.TransactionDate.Value.Year == year))
+                                             .Where(x => x.Type == AccountTypes.Revenue || x.Type == AccountTypes.Expense).ToListAsync();
+
+            return from account in accounts
+                   from t in account.Transactions
+                   where account.Type == AccountTypes.Revenue && t.Credit > 0 || account.Type == AccountTypes.Expense && t.Credit == 0
+                   select
+                   new IncomeStatementDto(account.Type, account.SubType, account.Code, t.Description, t.Amount);
+        }
+
+        public async Task<IEnumerable<IncomeStatementDto>> GetBalanceSheet(int year)
+        {
+            var accounts = await _context.Accounts.Include(x => x.Transactions.Where(x => x.TransactionDate.Value.Year == year))
+                                             .Where(x =>
+                                                x.Type == AccountTypes.Asset ||
+                                                x.Type == AccountTypes.Liability ||
+                                                x.Type == AccountTypes.Equity
+                                             ).ToListAsync();
+
+            return from account in accounts
+                   from t in account.Transactions
+                   where account.Type == AccountTypes.Asset && t.Credit == 0 || 
+                   account.Type == AccountTypes.Liability && t.Credit > 0 ||
+                   account.Type == AccountTypes.Equity && t.Credit > 0
+                   select
+                   new IncomeStatementDto(account.Type, account.SubType, account.Code, t.Description, t.Amount);
         }
     }
 }

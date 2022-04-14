@@ -7,5 +7,7 @@ namespace AMS.Server.Services
     {
         public Task<Shared.IResult> AddAccount(Account account);
         public Task<IEnumerable<AccountDto>> GetAccounts();
+        Task<IEnumerable<IncomeStatementDto>> GetIncomeStatement(int date);
+        Task<IEnumerable<IncomeStatementDto>> GetBalanceSheet(int year);
     }
 }

@@ -29,5 +29,21 @@ namespace AMS.Server.Controllers
             if (result is not null) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpGet("GetIncomeStatement")]
+        public async Task<IActionResult> GetIncomeStatement([FromQuery]int year)
+        {
+            var result = await _accountService.GetIncomeStatement(year);
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpGet("GetBalanceSheet")]
+        public async Task<IActionResult> GetBalanceSheet([FromQuery] int year)
+        {
+            var result = await _accountService.GetBalanceSheet(year);
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }
