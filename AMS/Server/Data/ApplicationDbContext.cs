@@ -15,7 +15,7 @@ namespace AMS.Server.Data
         {
             modelBuilder.Entity<Account>()
                 .HasData(
-                    new Account { AccountName="Pay-In", Balance=0, CreatedDate= DateTime.Now, Type="Revenue", Transactions = new List<AccountTransaction>() },
+                    new Account { AccountName = "Pay-In", Balance = 0, CreatedDate = DateTime.Now, Type = "Revenue", Transactions = new List<AccountTransaction>() },
                     new Account { AccountName = "Pay-Out", Balance = 0, CreatedDate = DateTime.Now, Type = "Liability", Transactions = new List<AccountTransaction>() },
                     new Account { AccountName = "GCB Bank", Balance = 0, CreatedDate = DateTime.Now, Type = "Asset", Transactions = new List<AccountTransaction>() }
                 );

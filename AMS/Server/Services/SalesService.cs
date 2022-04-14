@@ -28,6 +28,7 @@ namespace AMS.Server.Services
         {
             var result = appDbContext.Sales.Add(
                 new Sales { AgentId = sales.AgentId,
+                    AccountId = sales.AccountId,
                     DailySales = sales.DailySales, 
                     Description = sales.Description,
                     PayInAmount = sales.PayInAmount, 
@@ -58,7 +59,7 @@ namespace AMS.Server.Services
                 appDbContext.AccountTransactions.Add(
                 new AccountTransaction
                 {
-                    AccountId = "",
+                    AccountId = result.AccountId,
                     Amount = -result.PayInAmount,
                     Debit = result.PayInAmount,
                     Description = "Transaction removed"

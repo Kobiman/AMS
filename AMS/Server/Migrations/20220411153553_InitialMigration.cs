@@ -16,6 +16,8 @@ namespace AMS.Server.Migrations
                     AccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AccountName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -164,18 +166,18 @@ namespace AMS.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Accounts",
-                columns: new[] { "AccountId", "AccountName", "Balance", "CreatedDate", "Type" },
-                values: new object[] { "2dc50144-171c-4fe6-8c22-883a8dff843c", "Pay-Out", 0m, new DateTime(2022, 4, 5, 14, 30, 24, 456, DateTimeKind.Local).AddTicks(7927), "Liability" });
+                columns: new[] { "AccountId", "AccountName", "Balance", "Code", "CreatedDate", "SubType", "Type" },
+                values: new object[] { "6f7f8cd4-6950-4946-85ef-9a9ec144f24b", "Pay-In", 0m, null, new DateTime(2022, 4, 11, 16, 35, 52, 567, DateTimeKind.Local).AddTicks(4294), null, "Revenue" });
 
             migrationBuilder.InsertData(
                 table: "Accounts",
-                columns: new[] { "AccountId", "AccountName", "Balance", "CreatedDate", "Type" },
-                values: new object[] { "4f27423f-d177-4869-8b67-8d3f8674485a", "GCB Bank", 0m, new DateTime(2022, 4, 5, 14, 30, 24, 456, DateTimeKind.Local).AddTicks(7934), "Asset" });
+                columns: new[] { "AccountId", "AccountName", "Balance", "Code", "CreatedDate", "SubType", "Type" },
+                values: new object[] { "92e8ee28-28f2-42f1-815b-644b5e77ad95", "Pay-Out", 0m, null, new DateTime(2022, 4, 11, 16, 35, 52, 567, DateTimeKind.Local).AddTicks(4303), null, "Liability" });
 
             migrationBuilder.InsertData(
                 table: "Accounts",
-                columns: new[] { "AccountId", "AccountName", "Balance", "CreatedDate", "Type" },
-                values: new object[] { "62225fb9-0d05-4e9d-bcfb-29cbb29b06c8", "Pay-In", 0m, new DateTime(2022, 4, 5, 14, 30, 24, 456, DateTimeKind.Local).AddTicks(7909), "Revenue" });
+                columns: new[] { "AccountId", "AccountName", "Balance", "Code", "CreatedDate", "SubType", "Type" },
+                values: new object[] { "948d098a-eec3-429b-a51a-7549a1310938", "GCB Bank", 0m, null, new DateTime(2022, 4, 11, 16, 35, 52, 567, DateTimeKind.Local).AddTicks(4310), null, "Asset" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountTransactions_AccountId",

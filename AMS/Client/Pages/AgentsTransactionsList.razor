@@ -98,8 +98,8 @@
             return true;
         if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        //if (element.Account.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-        //    return true;
+        if (element.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
 
         return false;
     }
@@ -147,7 +147,7 @@
             var result = await transactionModal.Result;
             if(result.Cancelled == false)
             {
-                var response = await Http.DeleteAsync($"/api/AgentsTransaction/{Id}");
+                var response = await Http.DeleteAsync($"/api/Sales/{Id}");
                 if(response.IsSuccessStatusCode)
                 {
                     Snackbar.Add("Deletion Was Successful", Severity.Info);
