@@ -45,5 +45,13 @@ namespace AMS.Server.Controllers
             if (result is not null) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpGet("GetTrialBalance")]
+        public async Task<IActionResult> GetTrialBalance([FromQuery] int year)
+        {
+            var result = await _accountService.GetTrialBalance(year);
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

@@ -54,26 +54,26 @@ namespace AMS.Server.Migrations
                     b.HasData(
                         new
                         {
-                            AccountId = "f3642e97-7667-4367-86da-4d1b61f2db64",
+                            AccountId = "d7eb473a-f889-45a3-9d93-f9af06d0cda8",
                             AccountName = "Pay-In",
                             Balance = 0m,
-                            CreatedDate = new DateTime(2022, 4, 14, 12, 22, 2, 521, DateTimeKind.Local).AddTicks(179),
+                            CreatedDate = new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2274),
                             Type = "Revenue"
                         },
                         new
                         {
-                            AccountId = "e7881ab3-9e9a-48cf-9a6c-7cd292ea3ac4",
+                            AccountId = "5a61e24f-c32d-4c26-95cb-02b6d307fe21",
                             AccountName = "Pay-Out",
                             Balance = 0m,
-                            CreatedDate = new DateTime(2022, 4, 14, 12, 22, 2, 521, DateTimeKind.Local).AddTicks(184),
+                            CreatedDate = new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2280),
                             Type = "Liability"
                         },
                         new
                         {
-                            AccountId = "2741a9dc-2119-4a88-9a6c-82da97cc7c68",
+                            AccountId = "bbc12d8c-f5a7-4dd9-ad20-79a9e22ae441",
                             AccountName = "GCB Bank",
                             Balance = 0m,
-                            CreatedDate = new DateTime(2022, 4, 14, 12, 22, 2, 521, DateTimeKind.Local).AddTicks(188),
+                            CreatedDate = new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2284),
                             Type = "Asset"
                         });
                 });
@@ -225,6 +225,9 @@ namespace AMS.Server.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AgentId")
                         .IsRequired()

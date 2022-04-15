@@ -1,0 +1,90 @@
+﻿@page "/TrailBalance"
+@*@attribute [Authorize]*@ 
+
+@*<style type="text/css">
+    .mud-table-head .header-centered th {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+   .mud-table-foot .bold-text .mud-table-cell {
+       font-weight: 500;
+   }
+</style>*@
+<MudText Typo="Typo.h6">Trail Balance</MudText>
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<TrialBalanceDto,bool>(FilterFunc1)" 
+        @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
+    <ToolBarContent>
+        
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>AccountName</MudTh>
+        <MudTh>Debit</MudTh>
+        <MudTh>Credit</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="CreatedOn">@context.AccountName</MudTd>
+        <MudTd DataLabel="Balance">@context.Debit</MudTd>
+        <MudTd DataLabel="Name">@context.Credit</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow Class="bold-text">
+          <MudTd></MudTd>
+          <MudTh><b>Total Debit: @($"{Elements.Sum(x=>x.Debit)}")</b></MudTh>
+          <MudTh><b>Total Credit: @($"{Elements.Sum(x=>x.Credit)}")</b></MudTh>
+        </MudTFootRow>
+    </FooterContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+  </MudTable>
+</div>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private string searchString2 = "";
+    private TrialBalanceDto selectedItem1 = null;
+    private TrialBalanceDto selectedItem2 = null;
+    private HashSet<TrialBalanceDto> selectedItems = new HashSet<TrialBalanceDto>();
+    private IEnumerable<TrialBalanceDto> Elements = new List<TrialBalanceDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTrialBalance();
+    }
+
+    private async Task GetTrialBalance()
+    {
+        var result = await Http.GetFromJsonAsync<IList<TrialBalanceDto>>("api/Account/GetTrialBalance");
+        if(result is not null)
+        {
+            Elements = result.OrderBy(x=>x.Code);
+        }
+        else
+        {
+            Elements = new List<TrialBalanceDto>();
+        }
+    }
+
+    private bool FilterFunc1(TrialBalanceDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(TrialBalanceDto element) => FilterFunc(element, searchString2);
+
+    private bool FilterFunc(TrialBalanceDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (element.Type.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        return false;
+    }
+}

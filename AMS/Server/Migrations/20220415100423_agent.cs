@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AMS.Server.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class agent : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,6 +53,21 @@ namespace AMS.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Debtors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Expenses",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expenses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -148,6 +163,7 @@ namespace AMS.Server.Migrations
                     PayInAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AgentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DailySales = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -167,17 +183,17 @@ namespace AMS.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "AccountId", "AccountName", "Balance", "Code", "CreatedDate", "SubType", "Type" },
-                values: new object[] { "6f7f8cd4-6950-4946-85ef-9a9ec144f24b", "Pay-In", 0m, null, new DateTime(2022, 4, 11, 16, 35, 52, 567, DateTimeKind.Local).AddTicks(4294), null, "Revenue" });
+                values: new object[] { "5a61e24f-c32d-4c26-95cb-02b6d307fe21", "Pay-Out", 0m, null, new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2280), null, "Liability" });
 
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "AccountId", "AccountName", "Balance", "Code", "CreatedDate", "SubType", "Type" },
-                values: new object[] { "92e8ee28-28f2-42f1-815b-644b5e77ad95", "Pay-Out", 0m, null, new DateTime(2022, 4, 11, 16, 35, 52, 567, DateTimeKind.Local).AddTicks(4303), null, "Liability" });
+                values: new object[] { "bbc12d8c-f5a7-4dd9-ad20-79a9e22ae441", "GCB Bank", 0m, null, new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2284), null, "Asset" });
 
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "AccountId", "AccountName", "Balance", "Code", "CreatedDate", "SubType", "Type" },
-                values: new object[] { "948d098a-eec3-429b-a51a-7549a1310938", "GCB Bank", 0m, null, new DateTime(2022, 4, 11, 16, 35, 52, 567, DateTimeKind.Local).AddTicks(4310), null, "Asset" });
+                values: new object[] { "d7eb473a-f889-45a3-9d93-f9af06d0cda8", "Pay-In", 0m, null, new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2274), null, "Revenue" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountTransactions_AccountId",
@@ -197,6 +213,9 @@ namespace AMS.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Debtors");
+
+            migrationBuilder.DropTable(
+                name: "Expenses");
 
             migrationBuilder.DropTable(
                 name: "Games");

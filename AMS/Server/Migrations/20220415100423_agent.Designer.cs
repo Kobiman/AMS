@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220411183435_columnUpdate")]
-    partial class columnUpdate
+    [Migration("20220415100423_agent")]
+    partial class agent
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,26 +56,26 @@ namespace AMS.Server.Migrations
                     b.HasData(
                         new
                         {
-                            AccountId = "e425187a-8b95-41b9-a257-dbe2b2209b80",
+                            AccountId = "d7eb473a-f889-45a3-9d93-f9af06d0cda8",
                             AccountName = "Pay-In",
                             Balance = 0m,
-                            CreatedDate = new DateTime(2022, 4, 11, 19, 34, 34, 687, DateTimeKind.Local).AddTicks(9410),
+                            CreatedDate = new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2274),
                             Type = "Revenue"
                         },
                         new
                         {
-                            AccountId = "bb517b60-da0c-4c8a-846a-4adee6d56a8b",
+                            AccountId = "5a61e24f-c32d-4c26-95cb-02b6d307fe21",
                             AccountName = "Pay-Out",
                             Balance = 0m,
-                            CreatedDate = new DateTime(2022, 4, 11, 19, 34, 34, 687, DateTimeKind.Local).AddTicks(9419),
+                            CreatedDate = new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2280),
                             Type = "Liability"
                         },
                         new
                         {
-                            AccountId = "b644dbe5-76ab-47f4-8815-188eb1352db3",
+                            AccountId = "bbc12d8c-f5a7-4dd9-ad20-79a9e22ae441",
                             AccountName = "GCB Bank",
                             Balance = 0m,
-                            CreatedDate = new DateTime(2022, 4, 11, 19, 34, 34, 687, DateTimeKind.Local).AddTicks(9463),
+                            CreatedDate = new DateTime(2022, 4, 15, 10, 4, 22, 665, DateTimeKind.Local).AddTicks(2284),
                             Type = "Asset"
                         });
                 });
@@ -151,6 +151,30 @@ namespace AMS.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Debtors");
+                });
+
+            modelBuilder.Entity("AMS.Shared.Expense", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("AMS.Shared.Game", b =>

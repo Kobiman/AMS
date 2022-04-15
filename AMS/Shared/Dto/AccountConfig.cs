@@ -11,7 +11,7 @@
         {
             IEnumerable<AccountConfig> AccountConfigs = AccountList();
             var config = AccountConfigs.FirstOrDefault(c => c.AccountType == account.Type);
-            return $"{startingPoint + config.Min}{config.Subtypes.FirstOrDefault(x => x.Name == account.SubType)?.Id}";
+            return $"{startingPoint + config.Min}{config.Subtypes.FirstOrDefault(x => x.Name == account.SubType)?.Id ?? "0"}";
         }
 
         private static IEnumerable<AccountConfig> AccountList()

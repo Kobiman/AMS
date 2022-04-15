@@ -60,14 +60,20 @@ namespace AMS.Server.Services
                                                 x.Type == AccountTypes.Liability ||
                                                 x.Type == AccountTypes.Equity
                                              ).ToListAsync();
+            return accounts.Select(x => new IncomeStatementDto( x.Type, x.SubType, x.Code, x.AccountName, x.Transactions.Sum(x => x.Amount)));
+        }
 
-            return from account in accounts
-                   from t in account.Transactions
-                   where account.Type == AccountTypes.Asset && t.Credit == 0 || 
-                   account.Type == AccountTypes.Liability && t.Credit > 0 ||
-                   account.Type == AccountTypes.Equity && t.Credit > 0
-                   select
-                   new IncomeStatementDto(account.Type, account.SubType, account.Code, t.Description, t.Amount);
+        public async Task<IEnumerable<TrialBalanceDto>> GetTrialBalance(int year)
+        {
+            var accounts = await _context.Accounts.Include(x => x.Transactions).ToListAsync();
+            return accounts.Select(x => new TrialBalanceDto
+            (
+                 x.AccountName,
+                 x.Type,
+                 x.Code,
+                 x.Transactions.Sum(x => x.Debit),
+                 x.Transactions.Sum(x => x.Credit)
+                 ));
         }
     }
 }
