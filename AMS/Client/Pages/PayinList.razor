@@ -5,7 +5,7 @@
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent> 
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudSpacer />
         <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
             <MudSelectItem Value="@("Today")" />
@@ -33,7 +33,7 @@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd>Total: @Elements.Sum(x=>x.Amount)</MudTd>
+          <MudTd>Total: @TotalBalance</MudTd>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>
@@ -96,6 +96,18 @@
         //    return true;
 
         return false;
+    }
+
+    private void CalculateSummuries(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+           TotalBalance = Elements.Sum(x => x.Amount);   
+        }
+        if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+        }
     }
 
 

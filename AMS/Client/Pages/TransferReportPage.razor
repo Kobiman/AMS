@@ -8,7 +8,7 @@
     <ToolBarContent>
         
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudSpacer />
         <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
             <MudSelectItem Value="@("Today")" />
@@ -55,6 +55,7 @@
     private TransferDto selectedItem2 = null;
     private HashSet<TransferDto> selectedItems = new HashSet<TransferDto>();
     private IEnumerable<TransferDto> Elements = new List<TransferDto>();
+    public decimal TotalBalance { get; set; }
 
     string period = "Today";
 
@@ -102,6 +103,22 @@
         if (element.DestinationAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    private void CalculateSummuries(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+           TotalBalance = Elements.Sum(x => x.Amount);   
+        }
+        if (Elements.Select(x=>x.SourceAccount.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            TotalBalance = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+        }
+        if (Elements.Select(x=>x.DestinationAccount.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            TotalBalance = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+        }
     }
 
     void IDisposable.Dispose()

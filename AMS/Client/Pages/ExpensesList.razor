@@ -8,16 +8,16 @@
     <ToolBarContent>
         
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Date</MudTh>
            <MudTh>Account Name</MudTh>
-        <MudTh>Name</MudTh>
+        <MudTh>Amount</MudTh>
         <MudTh>Description</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.Date</MudTd>
+        <MudTd DataLabel="CreatedOn">@context.Date.ToShortDateString()</MudTd>
         <MudTd DataLabel="Balance">@context.AccountName</MudTd>
         <MudTd DataLabel="Name">@context.Amount</MudTd>
         <MudTd DataLabel="Type">@context.Description</MudTd>
@@ -27,7 +27,7 @@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd></MudTd>
+          <MudTd>@TotalAmount</MudTd>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>
@@ -48,6 +48,7 @@
     private GetExpenseDto selectedItem2 = null;
     private HashSet<GetExpenseDto> selectedItems = new HashSet<GetExpenseDto>();
     private IEnumerable<GetExpenseDto> Elements = new List<GetExpenseDto>();
+    private decimal TotalAmount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,6 +94,22 @@
         if (element.Date.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    private void CalculateSummuries(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            TotalAmount = Elements.Sum(x => x.Amount);   
+        }
+        if (Elements.Select(x=>x.AccountName.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            TotalAmount = Elements.Where(x => x.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+        }
+        if (Elements.Select(x=>x.Date.ToShortDateString().ToUpper()).Contains(searchString.ToUpper()))
+        {
+            TotalAmount = Elements.Where(x => x.Date.ToShortDateString().Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+        }
     }
 
     void IDisposable.Dispose()
