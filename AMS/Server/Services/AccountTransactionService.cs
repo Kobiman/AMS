@@ -202,15 +202,25 @@ namespace AMS.Server.Services
             });
         }
 
-        public async Task<AccountTransactionDto> Payout(Payout payout)
+        public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
             //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
             //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
 
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.SourceAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = payout.DestinationAccountId, Amount = -payout.Amount, Debit = payout.Amount, Description = "PAYOUT" });
-            appDbContext.Transfers.Add(new Transfer { Amount = payout.Amount, SourceAccountId = payout.SourceAccountId, DestinationAccountId = payout.DestinationAccountId, Description = "PAYOUT" });
-            appDbContext.Payouts.Add(payout);
+            var decrease = new JournalEntryRules(addPayoutDto.Amount, addPayoutDto.SourceAccountType, JournalEntryRules.Decrease);
+            var increase = new JournalEntryRules(addPayoutDto.Amount, addPayoutDto.DestinationAccountType, JournalEntryRules.Increase);
+
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = decrease.Amount, Debit = decrease.Debit, Credit = decrease.Credit, Description = "PAYOUT" });
+            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = increase.Amount, Debit = increase.Debit, Credit = increase.Credit, Description = "PAYOUT" });
+            appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
+
+            appDbContext.Payouts.Add(new Payout 
+                                     { 
+                                        Amount = addPayoutDto.Amount, 
+                                        Description = addPayoutDto.Description, 
+                                        DestinationAccountId = addPayoutDto.DestinationAccountId, 
+                                        SourceAccountId = addPayoutDto.SourceAccountId 
+                                     });
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
             return null;

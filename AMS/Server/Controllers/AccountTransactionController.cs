@@ -135,13 +135,13 @@ namespace AMS.Server.Controllers
 
         //PAY OUT
         [HttpPost("Payout")]
-        public async Task<ActionResult<AccountTransactionDto>> AddPayout([FromBody] Payout payout)
+        public async Task<ActionResult<AccountTransactionDto>> AddPayout([FromBody] AddPayoutDto addPayoutDto)
         {
             try
             {
-                if (payout == null)
+                if (addPayoutDto == null)
                     return BadRequest();
-                var result = await accTransactionService.Payout(payout);
+                var result = await accTransactionService.Payout(addPayoutDto);
 
                 return CreatedAtAction(nameof(GetAdministrativeTransaction), new { id = result.Id }, result);
                 //if (result.IsSucessful) 

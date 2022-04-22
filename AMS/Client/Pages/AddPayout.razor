@@ -52,7 +52,7 @@ else{
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    Payout model = new Payout();
+    AddPayoutDto model = new AddPayoutDto();
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -62,10 +62,13 @@ else{
 
     private async void OnValidSubmit(EditContext context)
     {
+        model.SourceAccountType = accounts.FirstOrDefault(x => x.AccountId == model.SourceAccountId).Type;
+        model.DestinationAccountType = accounts.FirstOrDefault(x => x.AccountId == model.DestinationAccountId).Type;
+
         var response = await Http.PostAsJsonAsync("api/AccountTransaction/Payout", model);
         if(response.IsSuccessStatusCode)
         {
-            model = new Payout();
+            model = new AddPayoutDto();
             var result = await response.Content.ReadFromJsonAsync<AccountTransactionDto>();
             Snackbar.Add("Transaction Saved", Severity.Success);
             accountEvents.OnAccountAdded(this);
@@ -73,7 +76,7 @@ else{
         }
         else
         {
-            model = new Payout();
+            model = new AddPayoutDto();
             Snackbar.Add("Save Transaction Failed", Severity.Error);   
         }
 
