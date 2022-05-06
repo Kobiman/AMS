@@ -1,0 +1,130 @@
+﻿@page "/ManageUsers"
+@attribute [Authorize(Roles ="Admin")]
+
+<PageTitle>Manage Users</PageTitle>
+
+<MudText Typo="Typo.h6">Manage Users</MudText>
+@*<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAccount>("Add Account"))">Add Account</MudButton>*@ 
+    <div style="margin-top:10px">
+<MudPaper Class="pa-6 ma-6">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true"
+        @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
+    <HeaderContent>
+        <MudTh>Email</MudTh>
+        <MudTh>Role</MudTh>
+        <MudTh>Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Email</MudTd>
+         <MudTd DataLabel="Role">@context.Role</MudTd>
+        <MudTd DataLabel="">
+            <MudFab @onclick="@(()=>EditRole(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            <MudFab @onclick="@(()=>DeleteUser(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+        </MudTd>
+    </RowTemplate>
+    
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+  </MudTable>
+</MudPaper>
+</div>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private string searchString2 = "";
+    private UserDto selectedItem1 = null;
+    private UserDto selectedItem2 = null;
+    private HashSet<UserDto> selectedItems = new HashSet<UserDto>();
+    private List<UserDto> Elements = new List<UserDto>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUsers();
+    }
+
+    private async Task GetUsers()
+    {
+        var result = await Http.GetFromJsonAsync<List<UserDto>>("api/Auth");
+        if(result is not null)
+        {
+            Elements = result.OrderBy(x => x.Id).ToList();
+        }
+        else
+        {
+            Elements = new List<UserDto>();
+        }
+    }
+
+
+    private bool FilterFunc1(UserDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(UserDto element) => FilterFunc(element, searchString2);
+
+    private bool FilterFunc(UserDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Role.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+    async Task DeleteUser(int Id)
+    {
+        UserDto user = Elements.FirstOrDefault(x => x.Id == Id);
+        if(user != null)
+        {
+            var userModal = Modal.Show<ConfirmDelete>("Confirm Delete");
+            var result = await userModal.Result;
+            if(result.Cancelled == false)
+            {
+                var response = await Http.DeleteAsync($"/api/Auth/{Id}");
+                if(response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Deletion Was Successful", Severity.Info);
+                    Elements.Remove(user);             
+                    StateHasChanged();
+                }
+                else
+                {
+                    Snackbar.Add("Deletion Failed", Severity.Error);   
+                }
+            }
+        }
+    }
+
+    async Task EditRole(int Id)
+    {
+        UserDto user = Elements.FirstOrDefault(x => x.Id == Id);
+        if(user != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(EditUserRole.User), user);
+
+            var userModal = Modal.Show<EditUserRole>("Edit Agents User", parameters);
+            var result = await userModal.Result;
+            if(result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                UserDto updatedUser = (UserDto)result.Data;
+                var originalUser = Elements.FirstOrDefault(t => t.Id == updatedUser.Id);
+                if(originalUser != null)
+                {
+                    originalUser.Role = updatedUser.Role;
+                    StateHasChanged();
+                }         
+            }
+        }
+    }
+}

@@ -1,5 +1,6 @@
 global using AMS.Server.Services;
 global using AMS.Shared;
+global using AMS.Shared.Dto;
 global using AMS.Server.Data;
 using AMS.Server.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +33,22 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<ISalesService, SalesService>();
 builder.Services.AddTransient<IAccountTransactionService, AccountTransactionService>();
-builder.Services.AddTransient<IGameService, GameService>(); 
+builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IExpenseService, ExpenseService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey =
+                new SymmetricSecurityKey(System.Text.Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("AppSettings:token").Value)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
 //builder.Services.AddAuthentication()
 //    .AddIdentityServerJwt();

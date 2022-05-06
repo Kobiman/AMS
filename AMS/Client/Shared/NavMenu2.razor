@@ -39,15 +39,18 @@
             
 
         <MudNavGroup Title="Users" Icon="@Icons.Filled.AssignmentInd" Color="Color.Primary" Expanded="true">
-@*            <AuthorizeView>
+            <AuthorizeView>
                 <Authorized>
+                     <MudNavLink Href="/Profile" Icon="@Icons.Filled.SupervisedUserCircle">Profile</MudNavLink>
+                     <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
+                     <MudNavLink Href="/ManageUsers" Icon="@Icons.Filled.Groups">Manage Users</MudNavLink>
                      <MudButton Variant="Variant.Text" DisableElevation="true" Color="Color.Primary" @onclick="Logout">Logout</MudButton>
                 </Authorized>
-                <NotAuthorized>*@
+                <NotAuthorized>
                     <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
                     <MudNavLink Href="/Login" Icon="@Icons.Filled.Login">Login</MudNavLink>
-       @*         </NotAuthorized>
-            </AuthorizeView>*@
+                </NotAuthorized>
+            </AuthorizeView>
         </MudNavGroup>
 
     </MudNavMenu>
