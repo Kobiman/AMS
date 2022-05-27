@@ -17,11 +17,11 @@
                 <a href="/Register" class="dropdown-item">Register</a>
                 <a href="/ManageUsers" class="dropdown-item">Manage Users</a>
                 <hr />
-                <button class="dropdown-item" >Logout</button>
+                <button class="dropdown-item"  @onclick="Logout">Logout</button>
             </Authorized>
             <NotAuthorized>
                 <a href="/Register" class="dropdown-item">Register</a>
-                <a href="/Login" class="dropdown-item" @onclick="Logout">Login</a>                
+                <a href="/Login" class="dropdown-item">Login</a>                
             </NotAuthorized>
         </AuthorizeView>
         
@@ -43,7 +43,7 @@
         await Task.Delay(200);
         showUserMenu = false;
     }
-     private async Task Logout()
+    private async Task Logout()
     {
         await localStorage.RemoveItemAsync("authToken");
         await AuthStateProvider.GetAuthenticationStateAsync();
