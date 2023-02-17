@@ -12,8 +12,10 @@
 
             <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
                 Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Account")">Account</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Sales")">Sales</MudSelectItem>
               <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
-              <MudSelectItem T="string" Value="@("Data Entry")">Data Entry</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
             </MudSelect>
 
             <ValidationSummary />

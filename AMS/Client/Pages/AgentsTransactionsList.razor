@@ -1,4 +1,5 @@
 ﻿@page "/Sales"
+@attribute [Authorize(Roles ="Admin, Sales")]
 
 <MudText Typo="Typo.h6">Sales</MudText>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Transaction</MudButton>

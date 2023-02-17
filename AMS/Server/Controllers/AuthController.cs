@@ -23,7 +23,7 @@ namespace AMS.Server.Controllers
         {
             try
             {
-                var response = await _authService.Register(new User { Email = user.Email }, user.Password);
+                var response = await _authService.Register(new User { Email = user.Email,Role=user.Role }, user.Password);
                 if (response.IsSucessful)
                 {
                     return Ok(response);
@@ -77,7 +77,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Result<UserDto>>> EditTransaction(UserDto user)
+        public async Task<ActionResult<Result<UserDto>>> EditUser(UserDto user)
         {
             try
             {

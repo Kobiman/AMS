@@ -1,5 +1,5 @@
 ﻿@page "/AddAdminTransaction"
-
+@attribute [Authorize(Roles ="Admin, Account")]
 
 @if(accounts == null)
 {

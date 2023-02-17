@@ -1,5 +1,8 @@
 ﻿@using System.Text.RegularExpressions
 @page "/addAgent"
+@attribute [Authorize(Roles ="Admin, Sales")]
+
+
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />

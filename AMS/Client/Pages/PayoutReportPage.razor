@@ -1,5 +1,7 @@
 ﻿@implements IDisposable
 @page "/PayoutReport"
+@attribute [Authorize]
+
 <MudText Typo="Typo.h6">Payout Report (Wins)</MudText>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Add Payout"))">Payout</MudButton>
     <div style="margin-top:10px">

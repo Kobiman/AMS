@@ -1,5 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @page "/AddGame"
+@attribute [Authorize(Roles ="Admin")]
+
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />

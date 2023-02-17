@@ -13,15 +13,15 @@
     <div class="dropdown-menu dropdown-menu-right @UserMenuCssClass">
         <AuthorizeView>
             <Authorized>
-                <a href="/Profile" class="dropdown-item">Profile</a>
-                <a href="/Register" class="dropdown-item">Register</a>
-                <a href="/ManageUsers" class="dropdown-item">Manage Users</a>
+                <a href="Profile" class="dropdown-item">Profile</a>
+                <a href="Register" class="dropdown-item">Register</a>
+                <a href="ManageUsers" class="dropdown-item">Manage Users</a>
                 <hr />
                 <button class="dropdown-item"  @onclick="Logout">Logout</button>
             </Authorized>
             <NotAuthorized>
-                <a href="/Register" class="dropdown-item">Register</a>
-                <a href="/Login" class="dropdown-item">Login</a>                
+                <a href="Register" class="dropdown-item">Register</a>
+                <a href="Login" class="dropdown-item">Login</a>                
             </NotAuthorized>
         </AuthorizeView>
         

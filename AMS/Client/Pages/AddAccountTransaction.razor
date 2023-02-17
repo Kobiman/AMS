@@ -1,4 +1,6 @@
 ﻿@page "/AddAccountTransaction"
+@attribute [Authorize(Roles ="Admin, Account")]
+
 @if(accounts == null)
 {
     <div>Loading Data...</div>

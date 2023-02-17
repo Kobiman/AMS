@@ -1,14 +1,18 @@
 ﻿@inject ILocalStorageService localStorage
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider AuthStateProvider
+@layout LoginLayout
 
+@page "/"
 @page "/Login"
 
 @using System.Text.RegularExpressions
 
 <PageTitle>Login</PageTitle>
-<h3>Login</h3>
-<MudPaper Class="pa-6 ma-6" Width="450px">
+
+<center>
+    <h3>Login</h3>
+    <MudPaper Class="pa-6 ma-6" Width="450px">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
         <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email" 
@@ -23,6 +27,8 @@
     <ValidationSummary />
     </EditForm>
 </MudPaper>
+
+</center>
 
 @code {
 
@@ -41,7 +47,7 @@
             await localStorage.SetItemAsync("authToken", content.Value);
             await AuthStateProvider.GetAuthenticationStateAsync();
             Snackbar.Add(content.Message,Severity.Success);
-            navigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/home");
         }
         else
         {

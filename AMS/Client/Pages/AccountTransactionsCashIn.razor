@@ -1,5 +1,5 @@
 ﻿@page "/CashIn"
-
+@attribute [Authorize]
 <MudText Typo="Typo.h6">Transactions (Cash In)</MudText>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">

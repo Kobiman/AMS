@@ -1,5 +1,6 @@
 ﻿@page "/Expenses"
 @implements IDisposable
+@attribute [Authorize]
 <MudText Typo="Typo.h6">Expenses</MudText>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddExpenses>("Add Expenses"))">Add Expenses</MudButton> 
 <div style="margin-top:10px">
