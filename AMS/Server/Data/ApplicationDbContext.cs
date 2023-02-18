@@ -11,15 +11,15 @@ namespace AMS.Server.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Account>()
-                .HasData(
-                    new Account { AccountName = "Pay-In", Balance = 0, CreatedDate = DateTime.Now, Type = "Revenue", Transactions = new List<AccountTransaction>() },
-                    new Account { AccountName = "Pay-Out", Balance = 0, CreatedDate = DateTime.Now, Type = "Liability", Transactions = new List<AccountTransaction>() },
-                    new Account { AccountName = "GCB Bank", Balance = 0, CreatedDate = DateTime.Now, Type = "Asset", Transactions = new List<AccountTransaction>() }
-                );
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Account>()
+        //        .HasData(
+        //            new Account { AccountName = "Pay-In", Balance = 0, CreatedDate = DateTime.Now, Type = "Revenue", Transactions = new List<AccountTransaction>() },
+        //            new Account { AccountName = "Pay-Out", Balance = 0, CreatedDate = DateTime.Now, Type = "Liability", Transactions = new List<AccountTransaction>() },
+        //            new Account { AccountName = "GCB Bank", Balance = 0, CreatedDate = DateTime.Now, Type = "Asset", Transactions = new List<AccountTransaction>() }
+        //        );
+        //}
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Agent> Agents { get; set; }
         public DbSet<AccountTransaction> AccountTransactions { get; set; }

@@ -1,0 +1,56 @@
+﻿@inject NavigationManager navigationManager
+
+@attribute [Authorize]
+@using System.Text.RegularExpressions
+@page "/Profile"
+<PageTitle>Profile</PageTitle>
+<AuthorizeView>
+    <h3>You are logged in with <i>@context.User.Identity.Name</i></h3>
+</AuthorizeView>
+<MudSpacer />
+
+<MudPaper Class="pa-4" Width="450px">
+    <h5>Change Password</h5>
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+
+        <MudTextField T="string" Label="New Password" Required="true" @bind-Value="model.Password" 
+        RequiredError="Password is a required field" For="@(() => model.Password)" InputType="InputType.Password"/>
+
+        <MudTextField T="string" Label="Confirm Password" Required="true" @bind-Value="model.ConfirmPassword" 
+        RequiredError="Confirm Password is a required field" For="@(() => model.ConfirmPassword)" InputType="InputType.Password"/>
+            
+            
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Apply</MudButton>
+    </div>
+    <ValidationSummary />
+    </EditForm>
+</MudPaper>
+
+@code {
+
+    bool success;
+    ChangeUserPassword model = new ChangeUserPassword();
+    string errors = "";
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PostAsJsonAsync("api/Auth/ChangePassword", model.Password);
+        var content = await response.Content.ReadFromJsonAsync<Result<bool>>();
+        if(content.IsSucessful)
+        {
+            errors = "";
+            model = new ChangeUserPassword();
+            Snackbar.Add(content.Message,Severity.Success);
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            errors = content.Message;
+            model = new ChangeUserPassword();
+            Snackbar.Add(errors, Severity.Error);
+        }
+    }
+}

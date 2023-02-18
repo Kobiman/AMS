@@ -1,5 +1,5 @@
 ﻿@page "/AddPayout"
-
+@attribute [Authorize(Roles ="Admin, Sales")]
 
 @if(accounts == null)
 {

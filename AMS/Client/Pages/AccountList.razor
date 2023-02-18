@@ -1,6 +1,6 @@
 ﻿@page "/Accounts"
 @implements IDisposable
-@*@attribute [Authorize]*@ 
+@attribute [Authorize(Roles ="Admin, Account")]
 
 @*<style type="text/css">
     .mud-table-head .header-centered th {

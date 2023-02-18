@@ -88,26 +88,10 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<SalesDto>> GetAgentsTransaction(string period)
         {
-            DateTime date = DateTime.Now.Date;
-            DateTime startDate = new DateTime();
-            DateTime endDate = new DateTime();
-            if (period == "This Week")
-            {
-                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(7);
-            }
+            DateRange.GetDates(period,out DateTime sDate,out DateTime eDate);
+            DateTime startDate = sDate;
+            DateTime endDate = eDate;
 
-            else if (period == "This Month")
-            {
-                startDate = new DateTime(date.Year, date.Month, 1);
-                int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth);
-            }
-            else
-            {
-                startDate = date.Date;
-                endDate = date.AddHours(24);
-            }
             var result = await (from t in appDbContext.Sales
                                 //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj

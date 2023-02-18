@@ -1,5 +1,7 @@
 ﻿@implements IDisposable
 @page "/PayoutReport"
+@attribute [Authorize]
+
 <MudText Typo="Typo.h6">Payout Report (Wins)</MudText>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Add Payout"))">Payout</MudButton>
     <div style="margin-top:10px">
@@ -13,7 +15,9 @@
         <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
             <MudSelectItem Value="@("Today")" />
             <MudSelectItem Value="@("This Week")" />
-            <MudSelectItem Value="@("This Month")" />           
+            <MudSelectItem Value="@("This Month")" />  
+            <MudSelectItem Value="@("This Year")" />
+            <MudSelectItem Value="@("All")" />
         </MudSelect>
     </ToolBarContent>
     <HeaderContent>        

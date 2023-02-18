@@ -58,26 +58,9 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<AccountTransactionDto>> GetAdmininistrativeTransactions(string period)
         {
-            DateTime date = DateTime.Now.Date;
-            DateTime startDate = new DateTime();
-            DateTime endDate = new DateTime();
-            if (period == "This Week")
-            {
-                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(7);
-            }
-
-            else if (period == "This Month")
-            {
-                startDate = new DateTime(date.Year, date.Month, 1);
-                int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth);
-            }
-            else
-            {
-                startDate = date.Date;
-                endDate = date.AddHours(24);
-            }
+            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
+            DateTime startDate = sDate;
+            DateTime endDate = eDate;
             var result = await (from t in appDbContext.AccountTransactions
                                 join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 //join sa in appDbContext.Accounts on t.SecondaryAccountId equals sa.AccountId into gj
@@ -168,26 +151,10 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<TransferDto>> TransferReport(string period)//Should be by period
         {
-            DateTime date = DateTime.Now.Date;
-            DateTime startDate = new DateTime();
-            DateTime endDate = new DateTime();
-            if (period == "This Week")
-            {
-                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(7);
-            }
+            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
+            DateTime startDate = sDate;
+            DateTime endDate = eDate;
 
-            else if (period == "This Month")
-            {
-                startDate = new DateTime(date.Year, date.Month, 1);
-                int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth);
-            }
-            else
-            {
-                startDate = date.Date;
-                endDate = date.AddHours(24);
-            }
             var transfers = await appDbContext.Transfers.Where(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate).ToListAsync();
             var accounts = await appDbContext.Accounts.Select(x=>new { x.AccountName, x.AccountId}).ToDictionaryAsync(x=>x.AccountId,y=>y.AccountName);
             return transfers.Select(x=> new TransferDto {
@@ -239,36 +206,15 @@ namespace AMS.Server.Services
             //    SourceAccountId = x.SourceAccountId,
             //    SourceAccount = accounts[x.SourceAccountId]
             //});
-            DateTime date = DateTime.Now.Date;
-            DateTime startDate = new DateTime();
-            DateTime endDate = new DateTime();
-            if (period == "This Week")
-            {
-                startDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Sunday);
-                endDate = startDate.AddDays(7);
-            }
+            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
+            DateTime startDate = sDate;
+            DateTime endDate = eDate;
 
-            else if (period == "This Month")
-            {
-                startDate = new DateTime(date.Year, date.Month, 1);
-                int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-                endDate = startDate.AddDays(daysInMonth);
-            }
-            else
-            {
-                startDate = date.Date;
-                endDate = date.AddHours(24);
-            }
-
-            var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate)
-                                    //join acc in appDbContext.Accounts on p.SourceAccountId equals acc.AccountId into sourceac
-                                    //from a in sourceac.DefaultIfEmpty()
-                                    //join dacc in appDbContext.Accounts on p.DestinationAccountId equals dacc.AccountId into desacc
-                                    //from d in desacc.DefaultIfEmpty()
-                                    join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
-                                    from agt in agac.DefaultIfEmpty()
-                                    join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
-                                    from gme in gmac.DefaultIfEmpty()
+            var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate<= endDate)
+                                join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
+                                from agt in agac.DefaultIfEmpty()
+                                join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
+                                from gme in gmac.DefaultIfEmpty()
 
                                 select new PayoutDto
                                 {
@@ -278,10 +224,6 @@ namespace AMS.Server.Services
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     GameId = p.GameId,
                                     GameName = gme.Name
-                                    //DestinationAccountId = p.DestinationAccountId,
-                                    //DestinationAccount = d == null? string.Empty : d.AccountName,
-                                    //SourceAccountId = p.SourceAccountId,
-                                    //SourceAccount = a == null? string.Empty : a.AccountName
                                 }).ToListAsync();
             return result;
         }

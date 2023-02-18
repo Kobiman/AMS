@@ -1,5 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @page "/Register"
+@*@attribute [Authorize(Roles ="Admin")]*@
+
 <PageTitle>Register</PageTitle>
 <h3>Register</h3>
 <MudPaper Class="pa-4" Width="450px">
@@ -13,6 +15,14 @@
 
         <MudTextField T="string" Label="Confirm Password" Required="true" @bind-Value="model.ConfirmPassword" 
         RequiredError="Confirm Password is a required field" For="@(() => model.ConfirmPassword)" InputType="InputType.Password"/>
+
+         <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
+                Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Account")">Account</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Sales")">Sales</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
+          </MudSelect>
             
             
      <div style="margin-top:15px"  class="mud-card-actions">
@@ -26,6 +36,7 @@
 
     bool success;
     UserRegister model = new UserRegister();
+   
     string errors = "";
 
 

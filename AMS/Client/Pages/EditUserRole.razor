@@ -1,0 +1,60 @@
+﻿@page "/EditUserRole"
+@inject MudBlazor.ISnackbar Snackbar
+@attribute [Authorize(Roles = "Admin")]
+
+
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+
+             <MudTextField T="string" Required="true" @bind-Value="model.Email" 
+            RequiredError="Description is required!" For="@(() => model.Email)" ReadOnly="true" Variant="Variant.Filled"/>
+
+            <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
+                Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Account")">Account</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Sales")">Sales</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
+            </MudSelect>
+
+            <ValidationSummary />
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public UserDto User { get; set; }
+    UserDto model = new UserDto();
+
+    bool success;
+    string[] errors = { };
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PutAsJsonAsync("api/Auth", model);
+        if(response.IsSuccessStatusCode)
+        {
+            model = new UserDto();
+            var result = await response.Content.ReadFromJsonAsync<Result<UserDto>>();
+            Snackbar.Add("User Updated", Severity.Success);
+            await ModalInstance.CloseAsync(ModalResult.Ok(result.Value));
+        }
+        else
+        {
+            model = new UserDto();
+            Snackbar.Add("Update Failed", Severity.Error);   
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = new UserDto();
+        model.Id = User.Id;
+        model.Email = User.Email;
+        model.Role = User.Role;
+    }
+}

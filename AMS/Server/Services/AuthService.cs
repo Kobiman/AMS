@@ -90,18 +90,70 @@ namespace AMS.Server.Services
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             };
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
                    claims: claims,
-                   expires: DateTime.Now.AddDays(3),
+                   expires: DateTime.UtcNow.AddDays(1),
                    signingCredentials: creds                  
                 );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;
+        }
+
+        public async Task<Result<bool>> ChangePassword(int userId, string password)
+        {
+            var user =  _dbContext.Users.Find(userId);
+            if (user == null)
+            {
+                return new Result<bool> { IsSucessful = false, Message = "User not found" };
+            }
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            await _dbContext.SaveChangesAsync();
+
+            return new Result<bool> { IsSucessful = true, Value = true,Message="Password has been changed" };
+
+        }
+
+        public async Task<IEnumerable<UserDto>> GetUsers()
+        {
+            var users =  _dbContext.Users.ToList();
+            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role });
+        }
+
+        public async Task<Result<int>> DeleteUser(int userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+            if(user != null)
+            {
+                _dbContext.Users.Remove(user);
+                await _dbContext.SaveChangesAsync();
+                return new Result<int> { IsSucessful = true, Message = "User Deleted Successfully", Value = userId };
+            }
+            return new Result<int> { IsSucessful = false, Message = "Operation Failed!", Value = userId };
+
+        }
+
+        public async Task<Result<UserDto>> EditUserRole(int userId, string role)
+        {
+            UserDto userDto = null;
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user != null)
+            {
+                user.Role = role;
+                await _dbContext.SaveChangesAsync();
+                userDto = new UserDto { Id= user.Id,Email=user.Email,Role=user.Role};
+                return new Result<UserDto> { IsSucessful = true, Message = "User Deleted Successfully", Value = userDto };
+            }
+            return new Result<UserDto> { IsSucessful = false, Message = "Operation Failed!", Value = userDto };
         }
     }
 }
