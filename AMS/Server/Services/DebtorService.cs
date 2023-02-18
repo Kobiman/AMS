@@ -1,7 +1,8 @@
 ﻿using AMS.Server.Data;
 using AMS.Shared;
 using AMS.Shared.Dto;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
+//using System.Data.Entity;
 
 namespace AMS.Server.Services
 {

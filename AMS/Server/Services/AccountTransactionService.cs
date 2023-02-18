@@ -1,8 +1,9 @@
 ﻿using AMS.Server.Data;
 using AMS.Shared;
 using AMS.Shared.Dto;
+using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
-using Z.EntityFramework.Plus;
+//using Z.EntityFramework.Plus;
 
 namespace AMS.Server.Services
 {
@@ -151,11 +152,8 @@ namespace AMS.Server.Services
 
         public async Task<AccountTransactionDto> Transfer(TransferDto transferDto)
         {
-            var decrease = new JournalEntryRules(transferDto.Amount, transferDto.SourceAccountType, JournalEntryRules.Decrease);
-            var increase = new JournalEntryRules(transferDto.Amount, transferDto.DestinationAccountType, JournalEntryRules.Increase);
-
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = decrease.Amount, Credit = decrease.Credit, Debit = decrease.Debit, Description = transferDto.Description });
-             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = increase.Amount, Credit = increase.Credit, Debit = increase.Debit, Description = transferDto.Description });
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.SourceAccountId, Amount = -transferDto.Amount, Credit = 0, Debit = transferDto.Amount, Description = transferDto.Description });
+             appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = transferDto.DestinationAccountId, Amount = transferDto.Amount, Credit = transferDto.Amount, Debit = 0, Description = transferDto.Description });
              appDbContext.Transfers.Add(new Transfer
              {
                  Amount = transferDto.Amount,
@@ -204,14 +202,8 @@ namespace AMS.Server.Services
 
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
-            //transferDto.Debit = transferDto.Amount < 0 ? transferDto.Amount : 0;
-            //transferDto.Credit = transferDto.Amount > 0 ? transferDto.Amount : 0;
-
-            var decrease = new JournalEntryRules(addPayoutDto.Amount, addPayoutDto.SourceAccountType, JournalEntryRules.Decrease);
-            var increase = new JournalEntryRules(addPayoutDto.Amount, addPayoutDto.DestinationAccountType, JournalEntryRules.Increase);
-
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = decrease.Amount, Debit = decrease.Debit, Credit = decrease.Credit, Description = "PAYOUT" });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = increase.Amount, Debit = increase.Debit, Credit = increase.Credit, Description = "PAYOUT" });
+            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });
+            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = addPayoutDto.Amount, Debit = 0, Credit = addPayoutDto.Amount, Description = "PAYOUT" });
             appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
 
             appDbContext.Payouts.Add(new Payout 
@@ -219,7 +211,9 @@ namespace AMS.Server.Services
                                         Amount = addPayoutDto.Amount, 
                                         Description = addPayoutDto.Description, 
                                         DestinationAccountId = addPayoutDto.DestinationAccountId, 
-                                        SourceAccountId = addPayoutDto.SourceAccountId 
+                                        SourceAccountId = addPayoutDto.SourceAccountId,
+                                        AgentId = addPayoutDto.AgentId,
+                                        GameId = addPayoutDto.GameId,
                                      });
             if (await appDbContext.SaveChangesAsync() > 0)
                 return await GetAdministrativeTransactionById(result.Entity.Id);
@@ -265,22 +259,23 @@ namespace AMS.Server.Services
                 startDate = date.Date;
                 endDate = date.AddHours(24);
             }
-            var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate<= endDate)
-                                //join acc in appDbContext.Accounts on p.SourceAccountId equals acc.AccountId into sourceac
-                                //from a in sourceac.DefaultIfEmpty()
-                                //join dacc in appDbContext.Accounts on p.DestinationAccountId equals dacc.AccountId into desacc
-                                //from d in desacc.DefaultIfEmpty()
-                                join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
-                                from agt in agac.DefaultIfEmpty()
-                                join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
-                                from gme in gmac.DefaultIfEmpty()
+
+            var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate)
+                                    //join acc in appDbContext.Accounts on p.SourceAccountId equals acc.AccountId into sourceac
+                                    //from a in sourceac.DefaultIfEmpty()
+                                    //join dacc in appDbContext.Accounts on p.DestinationAccountId equals dacc.AccountId into desacc
+                                    //from d in desacc.DefaultIfEmpty()
+                                    join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
+                                    from agt in agac.DefaultIfEmpty()
+                                    join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
+                                    from gme in gmac.DefaultIfEmpty()
 
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
-                                    Agent = agt==null?string.Empty: agt.Name,
+                                    Agent = agt == null ? string.Empty : agt.Name,
                                     GameId = p.GameId,
                                     GameName = gme.Name
                                     //DestinationAccountId = p.DestinationAccountId,

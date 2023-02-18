@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AMS.Shared.Dto
 {
-    public record JournalEntryRules
+    public sealed record JournalEntryRules
     {
         public const string Increase = "Increase";
         public const string Decrease = "Decrease";

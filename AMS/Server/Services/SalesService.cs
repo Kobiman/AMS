@@ -1,7 +1,9 @@
 ﻿using AMS.Server.Data;
 using AMS.Shared;
 using AMS.Shared.Dto;
+using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
+//using System.Data.Entity;
 
 namespace AMS.Server.Services
 {
@@ -26,6 +28,7 @@ namespace AMS.Server.Services
         //}
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
+            var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "Cash-Checking Account");
             var result = appDbContext.Sales.Add(
                 new Sales { AgentId = sales.AgentId,
                     AccountId = sales.AccountId,
@@ -35,6 +38,17 @@ namespace AMS.Server.Services
                     GameId = sales.GameId,
                     ReceiptNumber = sales.ReceiptNumber }
                 );
+
+            var Increase = new JournalEntryRules(sales.PayInAmount, AccountTypes.Asset, JournalEntryRules.Increase);
+            appDbContext.AccountTransactions.Add(
+                new AccountTransaction
+                {
+                    Amount = Increase.Amount,
+                    Credit = Increase.Credit,
+                    Debit = Increase.Debit,
+                    Description = sales.Description,
+                    AccountId = cachAccount?.AccountId
+                });
 
             appDbContext.AccountTransactions.Add(
                 new AccountTransaction { AccountId = sales.AccountId, 

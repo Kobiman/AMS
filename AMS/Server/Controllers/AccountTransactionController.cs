@@ -75,7 +75,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("Transfer")]
-        public async Task<ActionResult<AccountTransactionDto>> AddAdministrativeTransaction([FromBody] TransferDto transferDto)
+        public async Task<ActionResult<AccountTransactionDto>> Transfer([FromBody] TransferDto transferDto)
         {
             try
             {
@@ -158,7 +158,15 @@ namespace AMS.Server.Controllers
         [HttpGet("PayoutReport/{period}")]
         public async Task<IActionResult> PayoutReport(string period)//should be by period
         {
-            return Ok(await accTransactionService.PayoutReport(period));
+            try
+            {
+                return Ok(await accTransactionService.PayoutReport(period));
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+            
         }
     }
 }

@@ -46,8 +46,8 @@
     private string searchString2 = "";
     private GetExpenseDto selectedItem1 = null;
     private GetExpenseDto selectedItem2 = null;
-    private HashSet<GetExpenseDto> selectedItems = new HashSet<GetExpenseDto>();
-    private IEnumerable<GetExpenseDto> Elements = new List<GetExpenseDto>();
+    private HashSet<GetExpenseDto>? selectedItems = new HashSet<GetExpenseDto>();
+    private IEnumerable<GetExpenseDto>? Elements = new List<GetExpenseDto>();
     private decimal TotalAmount;
 
     protected override async Task OnInitializedAsync()

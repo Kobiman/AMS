@@ -22,7 +22,7 @@ namespace AMS.Server.Controllers
             {
                 return Ok(await accTransactionService.GetAgentsTransaction(period));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
             }
@@ -70,7 +70,7 @@ namespace AMS.Server.Controllers
                 //    return Ok(result);
                 //return BadRequest(result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
             }
