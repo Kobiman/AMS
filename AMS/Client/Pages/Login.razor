@@ -10,9 +10,11 @@
 
 <PageTitle>Login</PageTitle>
 
+
+
 <center>
-    <h3>Login</h3>
-    <MudPaper Class="pa-6 ma-6" Width="450px">
+     <p>Welcome to VAG-OIRI LOTTERIES | SCRIPTAccounting 2.0 | LOGIN</p>
+   @* <MudPaper Class="pa-6 ma-6" Width="450px">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
         <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email" 
@@ -26,6 +28,26 @@
     </div>
     <ValidationSummary />
     </EditForm>
+</MudPaper>*@
+<MudPaper Square="true" Class="d-flex pa-md-6  justify-space-around">
+  
+   <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+        <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email" 
+        RequiredError="Email is a required field" For="@(() => model.Email)" InputType="InputType.Email" Variant="Variant.Outlined"/>
+
+        <MudTextField T="string" Label="Password" Required="true" @bind-Value="model.Password" 
+        RequiredError="Password is a required field" For="@(() => model.Password)" InputType="InputType.Password" Variant="Variant.Outlined"/>            
+            
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Login</MudButton>
+    </div>
+    <ValidationSummary />
+    </EditForm>
+
+    <MudDivider Vertical="true" FlexItem="true" />
+    
+     <img src="/Images/bg.png" alt="Image" width="900"/>
 </MudPaper>
 
 </center>
