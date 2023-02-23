@@ -28,7 +28,7 @@
         <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
         <MudTd DataLabel="Account">@context.AccountName</MudTd>
         <MudTd DataLabel="Agent">@context.AgentName</MudTd>
-        <MudTd DataLabel="Amount">@context.Amount</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         
     </RowTemplate>
@@ -42,7 +42,7 @@
     <MudCardContent>
         <MudText Typo="Typo.h6">Summary</MudText>
         <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
-        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalAmount</MudText>
+        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @String.Format("{0:0,0.0}",TotalAmount)</MudText>
     </MudCardContent>
 </MudCard>
 

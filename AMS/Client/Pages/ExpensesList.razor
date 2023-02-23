@@ -20,7 +20,7 @@
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.Date.ToShortDateString()</MudTd>
         <MudTd DataLabel="Balance">@context.AccountName</MudTd>
-        <MudTd DataLabel="Name">@context.Amount</MudTd>
+        <MudTd DataLabel="Name">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
         <MudTd DataLabel="Type">@context.Description</MudTd>
     </RowTemplate>
     <FooterContent>
@@ -28,7 +28,7 @@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd>@TotalAmount</MudTd>
+          <MudTd>@String.Format("{0:0,0.0}",TotalAmount)</MudTd>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>

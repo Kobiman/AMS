@@ -28,7 +28,7 @@
         <MudTd DataLabel="Agent">@context.AgentName</MudTd>
         <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
-        <MudTd DataLabel="Amount">@context.Amount</MudTd>       
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>       
     </RowTemplate>
      <FooterContent>
         <MudTFootRow Class="bold-text">
@@ -36,7 +36,7 @@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd>Total: @TotalBalance</MudTd>
+          <MudTd>Total: @String.Format("{0:0,0.0}",TotalBalance)</MudTd>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>

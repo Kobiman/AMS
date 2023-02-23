@@ -49,7 +49,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.AccountTransaction", b =>
@@ -81,7 +81,7 @@ namespace AMS.Server.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountTransactions");
+                    b.ToTable("AccountTransactions", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Agent", b =>
@@ -103,7 +103,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("AgentId");
 
-                    b.ToTable("Agents");
+                    b.ToTable("Agents", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Debtors", b =>
@@ -122,7 +122,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Debtors");
+                    b.ToTable("Debtors", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Expense", b =>
@@ -146,7 +146,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Game", b =>
@@ -160,7 +160,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games");
+                    b.ToTable("Games", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Payout", b =>
@@ -192,7 +192,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Payouts");
+                    b.ToTable("Payouts", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Sales", b =>
@@ -231,7 +231,7 @@ namespace AMS.Server.Migrations
 
                     b.HasIndex("AgentId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sales", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.Transfer", b =>
@@ -256,7 +256,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Transfers");
+                    b.ToTable("Transfers", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.User", b =>
@@ -288,7 +288,7 @@ namespace AMS.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("AMS.Shared.AccountTransaction", b =>

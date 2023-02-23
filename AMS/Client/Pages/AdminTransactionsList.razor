@@ -33,9 +33,9 @@
         <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
         <MudTd DataLabel="Acc">@context.SourceAccount</MudTd>
         @*<MudTd DataLabel="Destination Acc.">@context.DestinationAccount</MudTd>*@
-        <MudTd DataLabel="Amount">@context.Amount</MudTd>
-        <MudTd DataLabel="Credit">@context.Credit</MudTd>
-        <MudTd DataLabel="Debit">@context.Debit</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
+        <MudTd DataLabel="Credit">@String.Format("{0:0,0.0}",context.Credit)</MudTd>
+        <MudTd DataLabel="Debit">@String.Format("{0:0,0.0}",context.Debit)</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="">
 @*            <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />

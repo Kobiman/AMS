@@ -29,7 +29,7 @@
         <MudTd DataLabel="Balance">@context.Code</MudTd>
         <MudTd DataLabel="Name">@context.AccountName</MudTd>
         <MudTd DataLabel="Type">@context.Type</MudTd>
-        <MudTd DataLabel="Balance">@context.Balance</MudTd>
+            <MudTd DataLabel="Balance">@String.Format("{0:0,0.0}", context.Balance)</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
@@ -37,7 +37,7 @@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTh><b>Total: @($"{Elements.Sum(x=>x.Balance)}")</b></MudTh>
+                <MudTh><b>Total: @($"{String.Format("{0:0,0.0}", Elements.Sum(x => x.Balance))}")</b></MudTh>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>
