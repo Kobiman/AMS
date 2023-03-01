@@ -31,14 +31,14 @@
         <MudTd DataLabel="Agent">@context.Agent</MudTd> 
         <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd>Total: @String.Format("{0:0,0.0}",TotalAmount)</MudTd>
+          <MudTd>Total: @String.Format("{0:0,0.00}",TotalAmount)</MudTd>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>

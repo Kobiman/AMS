@@ -22,14 +22,14 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.AccountName</MudTd>
-        <MudTd DataLabel="Balance">@String.Format("{0:0,0.0}",context.Debit)</MudTd>
-        <MudTd DataLabel="Name">@String.Format("{0:0,0.0}",context.Credit)</MudTd>
+        <MudTd DataLabel="Balance">@String.Format("{0:0,0.00}",context.Debit)</MudTd>
+        <MudTd DataLabel="Name">@String.Format("{0:0,0.00}",context.Credit)</MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTFootRow Class="bold-text">
           <MudTd></MudTd>
-                <MudTh><b>Total Debit: @($"{String.Format("{0:0,0.0}", Elements.Sum(x => x.Debit))}")</b></MudTh>
-                <MudTh><b>Total Credit: @($"{String.Format("{0:0,0.0}", Elements.Sum(x => x.Credit))}")</b></MudTh>
+                <MudTh><b>Total Debit: @($"{String.Format("{0:0,0.00}", Elements.Sum(x => x.Debit))}")</b></MudTh>
+                <MudTh><b>Total Credit: @($"{String.Format("{0:0,0.00}", Elements.Sum(x => x.Credit))}")</b></MudTh>
         </MudTFootRow>
     </FooterContent>
     <PagerContent>
