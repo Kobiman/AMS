@@ -1,0 +1,139 @@
+﻿@page "/SalesReport"
+@attribute [Authorize(Roles = "Admin, Sales")]
+
+<MudText Typo="Typo.h6">Sales Report</MudText>
+<div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+        <ToolBarContent>
+
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudSpacer />
+            <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("Today")" />
+                <MudSelectItem Value="@("This Week")" />
+                <MudSelectItem Value="@("This Month")" />
+                <MudSelectItem Value="@("This Year")" />
+                <MudSelectItem Value="@("All")" />
+
+            </MudSelect>
+
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>CreatedOn</MudTh>
+            <MudTh>Agent</MudTh>
+            <MudTh>Game</MudTh>
+            <MudTh>Sales</MudTh>
+            <MudTh>Paid</MudTh>
+            <MudTh>Outstanding Balance</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh>Action</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+            <MudTd DataLabel="Agent">@context.AgentName</MudTd>
+            <MudTd DataLabel="Game">@context.GameName</MudTd>
+            <MudTd DataLabel="Sales">@context.DailySales</MudTd>
+            <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
+            <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+        </RowTemplate>
+        <FooterContent>
+            <MudTFootRow Class="bold-text">
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
+                <MudTd>@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
+                <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
+            </MudTFootRow>
+        </FooterContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</div>
+
+
+@*<MudCard Outlined="true">
+    <MudCardContent>
+        <MudText Typo="Typo.h6">Summary</MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
+        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
+    </MudCardContent>
+</MudCard>*@
+
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private SalesDto selectedItem1 = null;
+
+    private List<SalesDto>? Elements { get; set; }
+    string period = "Today";
+
+    public int TotalNum { get; set; }
+    public decimal DailySales { get; set; }
+    public decimal OutstandingBalance { get; set; }
+    public decimal TotalBalance { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        DailySales = Elements.Sum(x => x.DailySales);
+        TotalBalance = Elements.Sum(x => x.Amount);
+        OutstandingBalance = Elements.Sum(x => x.OutstandingBalance);
+        TotalNum = Elements.Count;
+    }
+
+
+    private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(SalesDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private void CalculateSummuries(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            DailySales = Elements.Sum(x => x.DailySales);
+            TotalBalance = Elements.Sum(x => x.Amount);
+            OutstandingBalance = Elements.Sum(x => x.OutstandingBalance);
+        }
+        if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Amount);
+            OutstandingBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.OutstandingBalance);
+        }
+        if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            TotalBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Amount);
+            OutstandingBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.OutstandingBalance);
+        }
+    }
+
+    async Task PeriodChanged()
+    {
+        Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+
+        DailySales = Elements.Sum(x => x.DailySales);
+        TotalBalance = Elements.Sum(x => x.Amount);
+        OutstandingBalance = Elements.Sum(x => x.OutstandingBalance);
+        TotalNum = Elements.Count;
+    }
+}
+
