@@ -38,13 +38,10 @@
             <MudTd DataLabel="Description">@context.Description</MudTd>
         </RowTemplate>
         <FooterContent>
-            <MudTFootRow Class="bold-text">
-                <MudTd></MudTd>
-                <MudTd></MudTd>
-                <MudTd></MudTd>
-                <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
-                <MudTd>@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
-                <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
+            <MudTFootRow Class="bold-text">  
+                <MudTd>Total Sales :         @String.Format("{0:0,0.00}",DailySales)</MudTd>
+                <MudTd>Total Paid  :         @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
+                <MudTd>Total Outstanding Balance :     @String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
                 <MudTd></MudTd>
             </MudTFootRow>
         </FooterContent>
