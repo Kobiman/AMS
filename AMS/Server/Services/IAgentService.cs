@@ -7,6 +7,7 @@ namespace AMS.Server.Services
     public interface IAgentService
     {
         Task<IResult> AddAgent(Agent agent);
+        Task<IEnumerable<AgentReportDto>> GetAgentReport();
         Task<IEnumerable<AgentDto>> GetAgents();
     }
 }

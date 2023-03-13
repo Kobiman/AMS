@@ -1,4 +1,4 @@
-﻿@page "/SalesReport"
+﻿@page "/AgentReport"
 @attribute [Authorize(Roles = "Admin, Sales")]
 
 <MudText Typo="Typo.h6">Sales Report</MudText>
@@ -20,20 +20,24 @@
 
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>CreatedOn</MudTh>
+            <MudTh>Entry Date</MudTh>
+            <MudTh>Draw Date</MudTh>
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Sales</MudTh>
-            <MudTh>Paid</MudTh>
+            <MudTh>Pay-In</MudTh>
+            <MudTh>Pay-Out</MudTh>
             <MudTh>Outstanding Balance</MudTh>
             <MudTh>Description</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+            <MudTd DataLabel="EntryDate">@context.TransactionDate</MudTd>
+            <MudTd DataLabel="DrawDate">@context.TransactionDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Sales">@context.DailySales</MudTd>
+            <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.DailySales)</MudTd>
             <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
+            <MudTd DataLabel="Amount"></MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
         </RowTemplate>
@@ -54,15 +58,6 @@
     </MudTable>
 </div>
 
-
-@*<MudCard Outlined="true">
-    <MudCardContent>
-        <MudText Typo="Typo.h6">Summary</MudText>
-        <MudSpacer />
-        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
-        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
-    </MudCardContent>
-</MudCard>*@
 
 @code {
     private bool dense = false;

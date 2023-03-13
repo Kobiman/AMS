@@ -38,5 +38,18 @@ namespace AMS.Server.Services
                 OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.PayInAmount)
             });
         }
+
+        public async Task<IEnumerable<AgentReportDto>> GetAgentReport()
+        {
+            var results = await _context.Agents.Include(x => x.Transactions).ToListAsync();
+            return results.Select(x => new AgentReportDto
+            {
+                AgentId = x.AgentId,
+                Name = x.Name,
+                Sales = x.Transactions.Sum(x => x.DailySales),
+                PayInAmount = x.Transactions.Sum(x => x.PayInAmount),
+                OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.PayInAmount)
+            });
+        }
     }
 }

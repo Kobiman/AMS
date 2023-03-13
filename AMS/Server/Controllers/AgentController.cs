@@ -29,5 +29,13 @@ namespace AMS.Server.Controllers
             if (result is not null) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpGet("GetAgentReport")]
+        public async Task<IActionResult> GetAgentReport()
+        {
+            var result = await _agentService.GetAgentReport();
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }
