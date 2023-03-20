@@ -169,22 +169,29 @@ namespace AMS.Server.Services
 
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
-            var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });
-            appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = addPayoutDto.Amount, Debit = 0, Credit = addPayoutDto.Amount, Description = "PAYOUT" });
-            appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
+            var originalPayout = await appDbContext.Sales.FirstOrDefaultAsync(x=>x.TransactionDate.Value.Date == addPayoutDto.TransactionDate.Value.Date &&
+                                                                                   x.AgentId == addPayoutDto.AgentId);
+            if (originalPayout != null)
+            {
+                var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });
+                appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = addPayoutDto.Amount, Debit = 0, Credit = addPayoutDto.Amount, Description = "PAYOUT" });
+                appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
 
-            appDbContext.Payouts.Add(new Payout 
-                                     { 
-                                        Amount = addPayoutDto.Amount, 
-                                        Description = addPayoutDto.Description, 
-                                        DestinationAccountId = addPayoutDto.DestinationAccountId, 
-                                        SourceAccountId = addPayoutDto.SourceAccountId,
-                                        AgentId = addPayoutDto.AgentId,
-                                        GameId = addPayoutDto.GameId,
-                                     });
-            if (await appDbContext.SaveChangesAsync() > 0)
-                return await GetAdministrativeTransactionById(result.Entity.Id);
-            return null;
+                appDbContext.Payouts.Add(new Payout
+                {
+                    Amount = addPayoutDto.Amount,
+                    Description = addPayoutDto.Description,
+                    DestinationAccountId = addPayoutDto.DestinationAccountId,
+                    SourceAccountId = addPayoutDto.SourceAccountId,
+                    AgentId = addPayoutDto.AgentId,
+                    GameId = addPayoutDto.GameId,
+                    TransactionDate = addPayoutDto.TransactionDate.Value
+                });
+                if (await appDbContext.SaveChangesAsync() > 0)
+                    return await GetAdministrativeTransactionById(result.Entity.Id);
+            }
+            
+            return new AccountTransactionDto();
         }
 
         public async Task<IEnumerable<PayoutDto>> PayoutReport(string period)//Should be by period
@@ -219,6 +226,7 @@ namespace AMS.Server.Services
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
+                                    TransactionDate = p.TransactionDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
                                     Agent = agt == null ? string.Empty : agt.Name,

@@ -9,6 +9,9 @@ else{
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
+                <MudDatePicker Editable="true" @bind-Date="model.TransactionDate" Placeholder="Select Date"
+                RequiredError="Description is required!" For="@(() => model.TransactionDate)"/>
+
                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                     @foreach(var agent in agents)
                     {

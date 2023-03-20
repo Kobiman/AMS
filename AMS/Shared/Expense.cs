@@ -13,5 +13,6 @@ namespace AMS.Shared
         public decimal Amount { get; set; }
         public string Description { get; set; }
         public string AccountId { get; set; }
+        public string AgentId { get; set; }
     }
 }

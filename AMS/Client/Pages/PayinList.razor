@@ -31,13 +31,13 @@
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>       
     </RowTemplate>
      <FooterContent>
-        <MudTFootRow Class="bold-text">
+        @*<MudTFootRow Class="bold-text">*@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd>Total: @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
-        </MudTFootRow>
+          <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
+        @*</MudTFootRow>*@
     </FooterContent>
     <PagerContent>
         <MudTablePager />

@@ -36,7 +36,7 @@ namespace AMS.Server.Services
                     AccountId = cachAccount?.AccountId.ToString()
                 });
 
-            _context.Expenses.Add(new Expense {  Amount = expense.Amount, Description = expense.Description, AccountId = expense.AccountId });
+            _context.Expenses.Add(new Expense {  Amount = expense.Amount, Description = expense.Description, AccountId = expense.AccountId, AgentId = expense.AgentId });
             var result = await _context.SaveChangesAsync();
             if (result > 0) return new Result(true, "Expense saved successfully.");
             return new Result(false, "Operation failled.");
@@ -44,12 +44,14 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<GetExpenseDto>> GetExpenses()
         {
-            var accounts = await _context.Accounts.ToDictionaryAsync(x=>x.AccountId,x=>x.AccountName);
+            var accounts = await _context.Accounts.Select(x=>new {x.AccountId,x.AccountName}).ToDictionaryAsync(x=>x.AccountId,x=>x.AccountName);
+            var agents = await _context.Agents.Select(x => new { x.AgentId, x.Name }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
             var expenses = await _context.Expenses.ToListAsync();
             return expenses.Select(x => new GetExpenseDto {
                 Description = x.Description,
                 Amount = x.Amount,
                 AccountName = accounts.TryGetValue(x.AccountId,out string? accountName)? accountName:"",
+                AgentName = agents.TryGetValue(x.AgentId, out string? agentName) ? agentName : "",
                 Date = x.Date 
             });
         }

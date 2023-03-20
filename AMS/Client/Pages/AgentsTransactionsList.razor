@@ -2,7 +2,7 @@
 @attribute [Authorize(Roles ="Admin, Sales")]
 
 <MudText Typo="Typo.h6">Sales</MudText>
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Transaction</MudButton>
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
@@ -44,14 +44,14 @@
         </MudTd>
     </RowTemplate>
     <FooterContent>
-        <MudTFootRow Class="bold-text">
+        @*<MudTFootRow Class="bold-text">*@
           <MudTd>&nbsp</MudTd>
           <MudTd>&nbsp</MudTd>
           <MudTd>&nbsp</MudTd>
           <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
           <MudTd>@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
           <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
-        </MudTFootRow>
+        @*</MudTFootRow>*@
     </FooterContent>
     <PagerContent>
         <MudTablePager />
@@ -191,7 +191,7 @@
 
     async Task ShowModal()
     {
-        var transactionModal = Modal.Show<AddAgentsTransaction>("Add Agent Transaction");
+        var transactionModal = Modal.Show<AddAgentsTransaction>("Add Sales");
         var result = await transactionModal.Result;
         if(result.Cancelled)
         {

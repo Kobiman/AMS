@@ -11,7 +11,13 @@
                     {
                         <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
                     }
-                </MudSelect>
+           </MudSelect>
+           <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+               @foreach (var agent in agents)
+               {
+                   <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+               }
+           </MudSelect>
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
             RequiredError="Description is required!" For="@(() => model.Description)"/>
           <MudNumericField HideSpinButtons="true" Label="Amount" Required="true" @bind-Value="model.Amount" 
@@ -25,6 +31,7 @@
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     private IEnumerable<AccountDto> accounts { get; set; } = new List<AccountDto>();
+    private IEnumerable<Agent> agents = new List<Agent>();
     bool success;
     AddExpenseDto model = new AddExpenseDto();
     string[] errors = { };
@@ -57,6 +64,20 @@
         else
         {
             accounts = new List<AccountDto>();
+        }
+        await GetAgents();
+    }
+
+    private async Task GetAgents()
+    {
+        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        if (result is not null)
+        {
+            agents = result;
+        }
+        else
+        {
+            agents = new List<Agent>();
         }
     }
 

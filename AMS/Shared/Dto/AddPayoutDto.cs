@@ -24,5 +24,6 @@ namespace AMS.Shared.Dto
         public string? DestinationAccountId { get; set; }
         public string SourceAccountType { get; set; }
         public string DestinationAccountType { get; set; }
+        public DateTime? TransactionDate { get; set; }
     }
 }

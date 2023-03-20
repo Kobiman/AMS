@@ -20,26 +20,28 @@
             <MudSelectItem Value="@("All")" />
         </MudSelect>
     </ToolBarContent>
-    <HeaderContent>        
+    <HeaderContent>
+        <MudTh>CreatedOn</MudTh>
         <MudTh>Agent</MudTh>
         <MudTh>Game</MudTh>   
         <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
     </HeaderContent>
     <RowTemplate>
-        
+        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd> 
         <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
     </RowTemplate>
     <FooterContent>
-        <MudTFootRow Class="bold-text">
+        @*<MudTFootRow Class="bold-text">*@
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
-          <MudTd>Total: @String.Format("{0:0,0.00}",TotalAmount)</MudTd>
-        </MudTFootRow>
+          <MudTd></MudTd>
+          <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalAmount)</MudTd>
+        @*</MudTFootRow>*@
     </FooterContent>
     <PagerContent>
         <MudTablePager />

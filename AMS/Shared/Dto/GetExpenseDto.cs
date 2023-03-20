@@ -12,5 +12,6 @@ namespace AMS.Shared.Dto
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string? AccountName { get; set; }
+        public string? AgentName { get; set; }
     }
 }

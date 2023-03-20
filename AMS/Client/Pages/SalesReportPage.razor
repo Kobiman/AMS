@@ -38,15 +38,15 @@
             <MudTd DataLabel="Description">@context.Description</MudTd>
         </RowTemplate>
         <FooterContent>
-            <MudTFootRow Class="bold-text">
+            @*<MudTFootRow Class="bold-text">*@
                 <MudTd></MudTd>
                 <MudTd></MudTd>
                 <MudTd></MudTd>
-                <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
-                <MudTd>@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
-                <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
-                <MudTd></MudTd>
-            </MudTFootRow>
+                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",DailySales)</MudTd>
+                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
+                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
+                <MudTd Class="bold-text"></MudTd>
+            @*</MudTFootRow>*@
         </FooterContent>
         <PagerContent>
             <MudTablePager />

@@ -9,8 +9,9 @@ namespace AMS.Shared.Dto
     public class AddExpenseDto
     {
         public decimal Amount { get; set; }
-        public string Description { get; set; }
-        public string AccountId { get; set; }
-        public string AccountType { get; set; }
+        public string? Description { get; set; }
+        public string? AccountId { get; set; }
+        public string? AgentId { get; set; }
+        public string? AccountType { get; set; }
     }
 }

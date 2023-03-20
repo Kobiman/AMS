@@ -36,7 +36,8 @@ namespace AMS.Server.Services
                     Description = sales.Description,
                     PayInAmount = sales.PayInAmount, 
                     GameId = sales.GameId,
-                    ReceiptNumber = sales.ReceiptNumber }
+                    ReceiptNumber = sales.ReceiptNumber,
+                    TransactionDate = sales.TransactionDate }
                 );
 
             var Increase = new JournalEntryRules(sales.PayInAmount, AccountTypes.Asset, JournalEntryRules.Increase);

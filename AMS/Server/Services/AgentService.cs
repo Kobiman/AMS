@@ -1,7 +1,4 @@
-﻿using AMS.Server.Data;
-using AMS.Shared;
-using AMS.Shared.Dto;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace AMS.Server.Services
 {
@@ -39,17 +36,23 @@ namespace AMS.Server.Services
             });
         }
 
-        public async Task<IEnumerable<AgentReportDto>> GetAgentReport()
+        public async Task<IEnumerable<AgentReportDto>> GetAgentReport(string period)
         {
-            var results = await _context.Agents.Include(x => x.Transactions).ToListAsync();
-            return results.Select(x => new AgentReportDto
-            {
-                AgentId = x.AgentId,
-                Name = x.Name,
-                Sales = x.Transactions.Sum(x => x.DailySales),
-                PayInAmount = x.Transactions.Sum(x => x.PayInAmount),
-                OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.PayInAmount)
-            });
+            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
+            string startDate = $"{sDate.Year}-{sDate.Month}-{sDate.Day}";
+            string endDate = $"{eDate.Year}-{eDate.Month}-{eDate.Day}";
+            var query = $"SELECT * FROM [dbo].[View_AgentReport] where [CreatedDate] between '{startDate}' and '{endDate}'";
+            var results = await query.Execute();
+            return results[0].ToList<AgentReportDto>();
+            //return results.Select(x => new AgentReportDto
+            //{
+            //    AgentId = x.AgentId,
+            //    Name = x.Name,
+            //    Sales = x.Transactions.Sum(x => x.DailySales),
+            //    PayInAmount = x.Transactions.Sum(x => x.PayInAmount),
+            //    //PayOut = x.Payouts.Sum(x => x.Amount),
+            //    OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.PayInAmount)
+            //});
         }
     }
 }
