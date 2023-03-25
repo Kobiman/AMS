@@ -55,8 +55,11 @@ namespace AMS.Server.Services
             return sales.Select(x => {
                 var payinAmount = payout_payin
                 .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
-                .Sum(y => y.Amount);
+                .Sum(y => y.PayinAmount);
                 var payoutAmount = payout_payin
+                .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
+                .Sum(y => y.PayoutAmount);
+                var amount = payout_payin
                 .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
                 .Sum(y => y.Amount);
                 return new AgentReportDto
@@ -70,7 +73,7 @@ namespace AMS.Server.Services
                     Wins = x.WinAmount,
                     Payin = payinAmount,
                     Payout = payoutAmount,
-                    Balance = x.DailySales - payinAmount - payoutAmount
+                    Balance = x.DailySales - x.WinAmount - amount
                 };
             });
         }
