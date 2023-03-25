@@ -193,7 +193,7 @@
 
     async Task ShowModal()
     {
-        var transactionModal = Modal.Show<AddSales>("Add Sales(Wins)");
+        var transactionModal = Modal.Show<AddSales>("Add Sales/Wins");
         var result = await transactionModal.Result;
         if(result.Cancelled)
         {
