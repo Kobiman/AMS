@@ -18,17 +18,19 @@
 
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>CreatedOn</MudTh>
+        <MudTh>EntryDate</MudTh>
+        <MudTh>DrawDate</MudTh>
         <MudTh>Account</MudTh>
         <MudTh>Agent</MudTh>
         <MudTh>Amount</MudTh>
         <MudTh>Description</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
         <MudTd DataLabel="Account">@context.AccountName</MudTd>
         <MudTd DataLabel="Agent">@context.AgentName</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.WinAmount)</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         
     </RowTemplate>
@@ -65,7 +67,7 @@
     protected override async Task OnInitializedAsync()
     {
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/AccountTransaction/CashOut/{period}");
-        TotalAmount = Elements.Sum(x => x.Amount);
+        TotalAmount = Elements.Sum(x => x.WinAmount);
         TotalNum = Elements.Count;
     }
 
@@ -87,7 +89,7 @@
     async Task PeriodChanged()
     {
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/AccountTransaction/CashOut/{period}");
-        TotalAmount = Elements.Sum(x => x.Amount);
+        TotalAmount = Elements.Sum(x => x.WinAmount);
         TotalNum = Elements.Count;
     }
 }

@@ -30,8 +30,8 @@
             <MudTh>Outstanding Balance</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd>@context.CreatedDate.Value.ToShortDateString()</MudTd>
-            <MudTd>@context.CreatedDate.Value.ToShortDateString()</MudTd>
+            <MudTd>@context?.EntryDate.Value.ToShortDateString()</MudTd>
+            <MudTd>@context?.DrawDate.Value.ToShortDateString()</MudTd>
             <MudTd>@context.Name</MudTd>
             <MudTd>@context.Game</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Sales)</MudTd>
@@ -44,6 +44,7 @@
                 <MudTd></MudTd>
                 <MudTd></MudTd>
                 <MudTd></MudTd>
+            <MudTd></MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payin)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payout)</MudTd>

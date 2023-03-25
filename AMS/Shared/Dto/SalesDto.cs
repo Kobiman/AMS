@@ -15,14 +15,15 @@ namespace AMS.Shared.Dto
         public string AgentName { get; set; } = "";
         public string? Id { get; set; }
         [Required]
-        public decimal PayInAmount { get; set; }
+        public decimal WinAmount { get; set; }
         [Required]
         public string? Description { get; set; }
         [Required]
         public string? AgentId { get; set; }
         public string GameId { get; set; }
         public string GameName { get; set; } = "";
-        public DateTime? TransactionDate { get; set; }
+        public DateTime? EntryDate { get; set; }
+        public DateTime? DrawDate { get; set; }
         public decimal DailySales { get; set; }
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }

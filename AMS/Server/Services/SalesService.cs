@@ -34,13 +34,14 @@ namespace AMS.Server.Services
                     AccountId = sales.AccountId,
                     DailySales = sales.DailySales, 
                     Description = sales.Description,
-                    PayInAmount = sales.PayInAmount, 
+                    WinAmount = sales.WinAmount, 
                     GameId = sales.GameId,
                     ReceiptNumber = sales.ReceiptNumber,
-                    TransactionDate = sales.TransactionDate }
+                    EntryDate = sales.EntryDate,
+                    DrawDate = sales.DrawDate }
                 );
 
-            var Increase = new JournalEntryRules(sales.PayInAmount, AccountTypes.Asset, JournalEntryRules.Increase);
+            var Increase = new JournalEntryRules(sales.WinAmount, AccountTypes.Asset, JournalEntryRules.Increase);
             appDbContext.AccountTransactions.Add(
                 new AccountTransaction
                 {
@@ -53,8 +54,8 @@ namespace AMS.Server.Services
 
             appDbContext.AccountTransactions.Add(
                 new AccountTransaction { AccountId = sales.AccountId, 
-                Amount = sales.PayInAmount, 
-                Credit = sales.PayInAmount, 
+                Amount = sales.WinAmount, 
+                Credit = sales.WinAmount, 
                 Description = sales.Description }
                 );
             if (await appDbContext.SaveChangesAsync() > 0)
@@ -75,8 +76,8 @@ namespace AMS.Server.Services
                 new AccountTransaction
                 {
                     AccountId = result.AccountId,
-                    Amount = -result.PayInAmount,
-                    Debit = result.PayInAmount,
+                    Amount = -result.WinAmount,
+                    Debit = result.WinAmount,
                     Description = "Transaction removed"
                 }
                 );
@@ -100,7 +101,7 @@ namespace AMS.Server.Services
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                 from gme in _gme.DefaultIfEmpty()
                                 where
-                                t.TransactionDate >= startDate.Date && t.TransactionDate <= endDate.Date
+                                t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
 
                                 select new SalesDto
                                 {
@@ -109,11 +110,12 @@ namespace AMS.Server.Services
                                     AgentId = t.AgentId,
                                     AgentName = x == null ? string.Empty : x.Name,
                                     Id = t.Id,
-                                    Amount = t.PayInAmount,
+                                    WinAmount = t.WinAmount,
                                     DailySales = t.DailySales,
-                                    OutstandingBalance = t.DailySales - t.PayInAmount,
+                                    OutstandingBalance = t.DailySales - t.WinAmount,
                                     Description = t.Description,
-                                    TransactionDate = t.TransactionDate,
+                                    EntryDate = t.EntryDate,
+                                    DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     GameName = gme == null? string.Empty : gme.Name,
                                 }).ToListAsync();
@@ -130,13 +132,13 @@ namespace AMS.Server.Services
             if (result != null)
             {
                 //preAccountId = result.AccountId;
-                preAmount = result.PayInAmount;
-                result.PayInAmount = agentTransaction.PayInAmount;
+                preAmount = result.WinAmount;
+                result.WinAmount = agentTransaction.WinAmount;
                 result.Description = agentTransaction.Description;
                 //result.AccountId = agentTransaction.AccountId;
                 result.AgentId = agentTransaction.AgentId;
                 result.DailySales = agentTransaction.DailySales;
-                result.TransactionDate = agentTransaction.TransactionDate;
+                result.EntryDate = agentTransaction.EntryDate;
                 //result.TransactionType = "Agent";
 
                 //update account balance
@@ -190,9 +192,9 @@ namespace AMS.Server.Services
                         AccountId = a.AccountId,
                         AccountName = a.AccountName,
                         Id = t.Id,
-                        Amount = t.Amount,
+                        WinAmount = t.Amount,
                         Description = t.Description,
-                        TransactionDate = t.TransactionDate
+                        EntryDate = t.TransactionDate,
                     };
                 }
             }
@@ -215,11 +217,12 @@ namespace AMS.Server.Services
                                     AgentId = t.AgentId,
                                     AgentName = (x == null? String.Empty : x.Name),
                                     Id = t.Id,
-                                    Amount = t.PayInAmount,
+                                    WinAmount = t.WinAmount,
                                     DailySales = t.DailySales,
-                                    OutstandingBalance = t.DailySales - t.PayInAmount,
+                                    OutstandingBalance = t.DailySales - t.WinAmount,
                                     Description = t.Description,
-                                    TransactionDate = t.TransactionDate,
+                                    EntryDate = t.EntryDate,
+                                    DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                 }).FirstOrDefaultAsync();
@@ -238,9 +241,9 @@ namespace AMS.Server.Services
         {
             var transactions = await GetAgentsTransaction(period);
             if (inOut == "CashIn")
-                return transactions.Where(x => x.Amount > 0);
+                return transactions.Where(x => x.WinAmount > 0);
             else
-                return transactions.Where(x => x.Amount < 0);
+                return transactions.Where(x => x.WinAmount < 0);
         }
 
         public async Task UpdateAccount(decimal amount, string accountId)

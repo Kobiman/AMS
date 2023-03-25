@@ -2,8 +2,8 @@
 @page "/PayoutReport"
 @attribute [Authorize]
 
-<MudText Typo="Typo.h6">Payout Report (Wins)</MudText>
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Add Payout"))">Payout</MudButton>
+<MudText Typo="Typo.h6">Payout Report</MudText>
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Cash Pay-Out"))">Payout</MudButton>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" 
         @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
@@ -21,14 +21,16 @@
         </MudSelect>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>CreatedOn</MudTh>
+        <MudTh>Entry Date</MudTh>
+        <MudTh>Draw Date</MudTh>
         <MudTh>Agent</MudTh>
         <MudTh>Game</MudTh>   
         <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+        <MudTd DataLabel="CreatedOn">@context.EntryDate</MudTd>
+        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd> 
         <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>

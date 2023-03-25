@@ -2,8 +2,9 @@
 @attribute [Authorize]
 
 <MudText Typo="Typo.h6">Pay-In Report</MudText>
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayin>("Cash Pay-In"))">Payin</MudButton>
     <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent> 
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -17,15 +18,17 @@
         </MudSelect>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>CreatedOn</MudTh>
+        <MudTh>Entry Date</MudTh>
+        <MudTh>Draw Date</MudTh>
         <MudTh>Agent</MudTh>
         <MudTh>Game</MudTh>
         <MudTh>Description</MudTh>
         <MudTh>Paid</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
-        <MudTd DataLabel="Agent">@context.AgentName</MudTd>
+        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
+        <MudTd DataLabel="Agent">@context.Agent</MudTd>
         <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>       
@@ -61,9 +64,9 @@
     private bool striped = false;
     private bool bordered = false;
     private string searchString1 = "";
-    private SalesDto selectedItem1 = null;
+    private PayoutDto selectedItem1 = null;
 
-    private IEnumerable<SalesDto> Elements = new List<SalesDto>();
+    private IEnumerable<PayoutDto> Elements = new List<PayoutDto>();
     string period = "Today";
 
     public int TotalNum { get; set; }
@@ -73,23 +76,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        var result = await Http.GetFromJsonAsync<List<PayoutDto>>($"/api/AccountTransaction/PayinReport/{period}");
         if(result is not null)
         {
             Elements = result;
         }
         else
         {
-            Elements = new List<SalesDto>();
+            Elements = new List<PayoutDto>();
         }
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
     }
 
 
-    private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
+    private bool FilterFunc1(PayoutDto element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(SalesDto element, string searchString)
+    private bool FilterFunc(PayoutDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -116,14 +119,14 @@
 
     async Task PeriodChanged()
     {
-        var result =  await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
+        var result = await Http.GetFromJsonAsync<List<PayoutDto>>($"/api/AccountTransaction/PayinReport/{period}");
         if(result is not null)
         {
             Elements = result;
         }
         else
         {
-            Elements = new List<SalesDto>();
+            Elements = new List<PayoutDto>();
         }
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();

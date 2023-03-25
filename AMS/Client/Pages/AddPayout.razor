@@ -9,8 +9,10 @@ else{
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
-                <MudDatePicker Editable="true" @bind-Date="model.TransactionDate" Placeholder="Select Date"
-                RequiredError="Description is required!" For="@(() => model.TransactionDate)"/>
+                <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date"
+                RequiredError="Description is required!" For="@(() => model.EntryDate)"/>
+                <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Entry Date"
+                       RequiredError="Description is required!" For="@(() => model.EntryDate)" />
 
                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                     @foreach(var agent in agents)
@@ -25,7 +27,7 @@ else{
                         <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
                     }
                 </MudSelect>
-                <MudSelect T="string" Label="Select Source Account"  @bind-Value="model.SourceAccountId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                @*<MudSelect T="string" Label="Select Source Account"  @bind-Value="model.SourceAccountId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                     @foreach(var account in accounts)
                     {
                         <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
@@ -37,7 +39,7 @@ else{
                     {
                         <MudSelectItem T="string" Value="@acc.AccountId">@acc.AccountName</MudSelectItem>
                     }
-                </MudSelect>
+                </MudSelect>*@
 
 
              <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
@@ -65,8 +67,10 @@ else{
 
     private async void OnValidSubmit(EditContext context)
     {
-        model.SourceAccountType = accounts.FirstOrDefault(x => x.AccountId == model.SourceAccountId).Type;
-        model.DestinationAccountType = accounts.FirstOrDefault(x => x.AccountId == model.DestinationAccountId).Type;
+        //model.SourceAccountType = accounts.FirstOrDefault(x => x.AccountId == model.SourceAccountId).Type;
+        //model.DestinationAccountType = accounts.FirstOrDefault(x => x.AccountId == model.DestinationAccountId).Type;
+        model.Type = "Payout";
+        model.Amount = Math.Abs(model.Amount);
 
         var response = await Http.PostAsJsonAsync("api/AccountTransaction/Payout", model);
         if(response.IsSuccessStatusCode)
@@ -99,7 +103,7 @@ else{
         await GetAgents();
         await GetGames();
     }
-     private async Task GetAgents()
+    private async Task GetAgents()
     {
         var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
         if(result is not null)

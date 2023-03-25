@@ -19,6 +19,7 @@ namespace AMS.Shared.Dto
         public string Agent { get; set; } = "";
         public string GameName { get; set; } = "";
 
-        public DateTime TransactionDate { get; set; }
+        public DateTime EntryDate { get; set; }
+        public DateTime DrawDate { get; set; }
     }
 }

@@ -26,23 +26,24 @@
         <MudTh>Agent</MudTh>
         <MudTh>Game</MudTh>
         <MudTh>Sales</MudTh>
-        <MudTh>Paid</MudTh>
-        <MudTh>Outstanding Balance</MudTh>
+        <MudTh>Wins</MudTh>
+        @*<MudTh>Outstanding Balance</MudTh>*@
         <MudTh>Description</MudTh>
-        <MudTh>Action</MudTh>
+        @*<MudTh>Action</MudTh>*@
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
         <MudTd DataLabel="Agent">@context.AgentName</MudTd>
         <MudTd DataLabel="Game">@context.GameName</MudTd>
-        <MudTd DataLabel="Sales">@context.DailySales</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>       
-        <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>
+        <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.DailySales)</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.WinAmount)</MudTd>       
+        @*<MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.OutstandingBalance)</MudTd>*@
         <MudTd DataLabel="Description">@context.Description</MudTd>
-        <MudTd DataLabel="">
-            @*<MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />*@
+        @*<MudTd DataLabel="">
+            <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
             <MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
-        </MudTd>
+        </MudTd>*@
     </RowTemplate>
     <FooterContent>
         @*<MudTFootRow Class="bold-text">*@
@@ -90,7 +91,7 @@
     {
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
         DailySales = Elements.Sum(x=>x.DailySales);
-        TotalBalance = Elements.Sum(x=>x.Amount);
+        TotalBalance = Elements.Sum(x=>x.WinAmount);
         OutstandingBalance = Elements.Sum(x=>x.OutstandingBalance);
         TotalNum = Elements.Count;
     }
@@ -115,19 +116,19 @@
         if (string.IsNullOrWhiteSpace(searchString))
         {
             DailySales = Elements.Sum(x=>x.DailySales);
-            TotalBalance = Elements.Sum(x=>x.Amount);
+            TotalBalance = Elements.Sum(x=>x.WinAmount);
             OutstandingBalance = Elements.Sum(x=>x.OutstandingBalance);   
         }
         if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.DailySales);
-            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
             OutstandingBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.OutstandingBalance);
         }
         if (Elements.Select(x=>x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.DailySales);
-            TotalBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+            TotalBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
             OutstandingBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.OutstandingBalance);
         }
     }
@@ -156,7 +157,7 @@
                     originalTransaction.AccountName = updatedTransaction.AccountName;
                     originalTransaction.AgentId = updatedTransaction.AgentId;
                     originalTransaction.AgentName = updatedTransaction.AgentName;
-                    originalTransaction.Amount = updatedTransaction.Amount;
+                    originalTransaction.WinAmount = updatedTransaction.WinAmount;
                     originalTransaction.DailySales = updatedTransaction.DailySales;
                     originalTransaction.OutstandingBalance = updatedTransaction.OutstandingBalance;
                     originalTransaction.Description = updatedTransaction.Description;
@@ -192,7 +193,7 @@
 
     async Task ShowModal()
     {
-        var transactionModal = Modal.Show<AddAgentsTransaction>("Add Sales");
+        var transactionModal = Modal.Show<AddSales>("Add Sales(Wins)");
         var result = await transactionModal.Result;
         if(result.Cancelled)
         {

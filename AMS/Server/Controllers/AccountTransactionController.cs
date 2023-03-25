@@ -143,7 +143,7 @@ namespace AMS.Server.Controllers
                     return BadRequest();
                 var result = await accTransactionService.Payout(addPayoutDto);
 
-                return CreatedAtAction(nameof(GetAdministrativeTransaction), new { id = result.Id }, result);
+                return Ok(result);
                 //if (result.IsSucessful) 
                 //    return Ok(result);
                 //return BadRequest(result);
@@ -156,7 +156,7 @@ namespace AMS.Server.Controllers
         }
         //PayoutReport
         [HttpGet("PayoutReport/{period}")]
-        public async Task<IActionResult> PayoutReport(string period)//should be by period
+        public async Task<IActionResult> PayoutReport(string period)
         {
             try
             {
@@ -167,6 +167,20 @@ namespace AMS.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
             }
             
+        }
+
+        [HttpGet("PayinReport/{period}")]
+        public async Task<IActionResult> PayinReport(string period)
+        {
+            try
+            {
+                return Ok(await accTransactionService.PayinReport(period));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+
         }
     }
 }

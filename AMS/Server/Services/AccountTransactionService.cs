@@ -169,32 +169,35 @@ namespace AMS.Server.Services
 
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
-            var originalPayout = await appDbContext.Sales.FirstOrDefaultAsync(x=>x.TransactionDate.Value.Date == addPayoutDto.TransactionDate.Value.Date &&
+            var originalPayout = await appDbContext.Sales.FirstOrDefaultAsync(x=>x.EntryDate.Value.Date == addPayoutDto.EntryDate.Value.Date &&
                                                                                    x.AgentId == addPayoutDto.AgentId);
             if (originalPayout != null)
             {
-                var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });
-                appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = addPayoutDto.Amount, Debit = 0, Credit = addPayoutDto.Amount, Description = "PAYOUT" });
-                appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
-
+                //var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });
+                //appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = addPayoutDto.Amount, Debit = 0, Credit = addPayoutDto.Amount, Description = "PAYOUT" });
+                //appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
+                var absoluteAmount = Math.Abs(addPayoutDto.Amount);
                 appDbContext.Payouts.Add(new Payout
                 {
-                    Amount = addPayoutDto.Amount,
+                    Amount = addPayoutDto.Type == "Payout" ? -absoluteAmount : absoluteAmount,
+                    PayoutAmount = addPayoutDto.Type == "Payout" ? absoluteAmount : 0,
+                    PayinAmount = addPayoutDto.Type == "Payin" ? absoluteAmount : 0,
                     Description = addPayoutDto.Description,
                     DestinationAccountId = addPayoutDto.DestinationAccountId,
                     SourceAccountId = addPayoutDto.SourceAccountId,
                     AgentId = addPayoutDto.AgentId,
                     GameId = addPayoutDto.GameId,
-                    TransactionDate = addPayoutDto.TransactionDate.Value
+                    Type = addPayoutDto.Type,
+                    EntryDate = addPayoutDto.EntryDate.Value,
+                    DrawDate = addPayoutDto.DrawDate.Value
                 });
-                if (await appDbContext.SaveChangesAsync() > 0)
-                    return await GetAdministrativeTransactionById(result.Entity.Id);
+                await appDbContext.SaveChangesAsync();
             }
             
             return new AccountTransactionDto();
         }
 
-        public async Task<IEnumerable<PayoutDto>> PayoutReport(string period)//Should be by period
+        public async Task<IEnumerable<PayoutDto>> PayoutReport(string period)
         {
             //var transfers = await appDbContext.Payouts.ToListAsync();
             //var accounts = await appDbContext.Accounts.Select(x => new { x.AccountName, x.AccountId }).ToDictionaryAsync(x => x.AccountId, y => y.AccountName);
@@ -217,7 +220,7 @@ namespace AMS.Server.Services
             DateTime startDate = sDate;
             DateTime endDate = eDate;
 
-            var result = await (from p in appDbContext.Payouts.Where(x => x.TransactionDate >= startDate && x.TransactionDate<= endDate)
+            var result = await (from p in appDbContext.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate<= endDate && x.Type == "Payout")
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
                                 from agt in agac.DefaultIfEmpty()
                                 join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
@@ -226,7 +229,33 @@ namespace AMS.Server.Services
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
-                                    TransactionDate = p.TransactionDate,
+                                    EntryDate = p.EntryDate,
+                                    Description = p.Description,
+                                    AgentId = p.AgentId,
+                                    Agent = agt == null ? string.Empty : agt.Name,
+                                    GameId = p.GameId,
+                                    GameName = gme.Name
+                                }).ToListAsync();
+            return result;
+        }
+
+        public async Task<IEnumerable<PayoutDto>> PayinReport(string period)
+        {
+            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
+            DateTime startDate = sDate;
+            DateTime endDate = eDate;
+
+            var result = await (from p in appDbContext.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate && x.Type == "Payin")
+                                join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
+                                from agt in agac.DefaultIfEmpty()
+                                join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
+                                from gme in gmac.DefaultIfEmpty()
+
+                                select new PayoutDto
+                                {
+                                    Amount = p.Amount,
+                                    EntryDate = p.EntryDate,
+                                    DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
                                     Agent = agt == null ? string.Empty : agt.Name,

@@ -20,21 +20,23 @@
 
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>CreatedOn</MudTh>
+            <MudTh>EntryDate</MudTh>
+            <MudTh>DrawDate</MudTh>
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Sales</MudTh>
-            <MudTh>Paid</MudTh>
-            <MudTh>Outstanding Balance</MudTh>
+            <MudTh>Wins</MudTh>
+@*            <MudTh>Outstanding Balance</MudTh>*@
             <MudTh>Description</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="CreatedOn">@context.TransactionDate</MudTd>
+            <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+            <MudTd DataLabel="EntryDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
             <MudTd DataLabel="Sales">@context.DailySales</MudTd>
             <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
-            <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>
+@*            <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>*@
             <MudTd DataLabel="Description">@context.Description</MudTd>
         </RowTemplate>
         <FooterContent>

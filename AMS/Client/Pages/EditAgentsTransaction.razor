@@ -32,7 +32,7 @@ else{
              <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
             RequiredError="Description is required!" For="@(() => model.Description)"/>
 
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.PayInAmount"
+            <MudNumericField HideSpinButtons="true"  @bind-Value="model.WinAmount"
             Label="Pay-In Amount" Variant="Variant.Text" />
 
             <MudNumericField HideSpinButtons="true"  @bind-Value="model.DailySales"
@@ -86,7 +86,7 @@ else{
         model.AccountId = Transaction.AccountId;
         model.AgentId = Transaction.AgentId;
         model.GameId = Transaction.GameId;
-        model.PayInAmount = Transaction.Amount;
+        model.WinAmount = Transaction.WinAmount;
         model.DailySales = Transaction.DailySales;
         model.Description = Transaction.Description;
     }

@@ -18,12 +18,14 @@ namespace AMS.Shared.Dto
         [Required]
         public string? GameId { get; set; }
 
-        [Required]
+        //[Required]
         public string? SourceAccountId { get; set; }
-        [Required]
+        //[Required]
         public string? DestinationAccountId { get; set; }
-        public string SourceAccountType { get; set; }
-        public string DestinationAccountType { get; set; }
-        public DateTime? TransactionDate { get; set; }
+        public string? SourceAccountType { get; set; }
+        public string? DestinationAccountType { get; set; }
+        public string? Type { get; set; }
+        public DateTime? EntryDate { get; set; }
+        public DateTime? DrawDate { get; set; }
     }
 }
