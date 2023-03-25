@@ -48,6 +48,7 @@
                 <MudTd></MudTd>
             <MudTd></MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
+                <MudTd>@String.Format("{0:0,0.00}",Wins)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payin)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payout)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
@@ -74,6 +75,7 @@
 
     public int TotalNum { get; set; }
     public decimal DailySales { get; set; }
+    public decimal Wins { get; set; }
     public decimal OutstandingBalance { get; set; }
     public decimal Payin { get; set; }
     public decimal Payout { get; set; }
@@ -82,6 +84,7 @@
     {
         Elements = await Http.GetFromJsonAsync<List<AgentReportDto>>($"/api/Agent/GetAgentReports/{period}");
         DailySales = Elements.Sum(x => x.Sales);
+        Wins = Elements.Sum(x => x.Wins);
         Payin = Elements.Sum(x => x.Payin);
         Payout = Elements.Sum(x => x.Payout);
         OutstandingBalance = Elements.Sum(x => x.Balance);
