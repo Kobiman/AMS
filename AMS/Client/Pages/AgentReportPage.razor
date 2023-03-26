@@ -111,6 +111,7 @@
         if (string.IsNullOrWhiteSpace(searchString))
         {
             DailySales = Elements.Sum(x => x.Sales);
+            Wins = Elements.Sum(x => x.Wins);
             Payin = Elements.Sum(x => x.Payin);
             Payout = Elements.Sum(x => x.Payout);
             OutstandingBalance = Elements.Sum(x => x.Balance);
@@ -119,6 +120,7 @@
         if (Elements.Select(x => x.Name.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Sales);
+            Wins = Elements.Sum(x => x.Wins);
             Payin = Elements.Where(x => x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Payin);
             Payout = Elements.Where(x => x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Payout);
             OutstandingBalance = Elements.Where(x => x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Balance);
@@ -127,6 +129,7 @@
         if (Elements.Select(x => x.Game.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.Game.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Sales);
+            Wins = Elements.Sum(x => x.Wins);
             Payin = Elements.Where(x => x.Game.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Payin);
             Payout = Elements.Where(x => x.Game.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Payout);
             OutstandingBalance = Elements.Where(x => x.Game.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Balance);
@@ -139,6 +142,7 @@
         Elements = await Http.GetFromJsonAsync<List<AgentReportDto>>($"/api/Agent/GetAgentReports/{period}");
 
         DailySales = Elements.Sum(x => x.Sales);
+        Wins = Elements.Sum(x => x.Wins);
         Payin = Elements.Sum(x => x.Payin);
         Payout = Elements.Sum(x => x.Payout);
         OutstandingBalance = Elements.Sum(x => x.Balance);

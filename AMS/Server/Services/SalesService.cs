@@ -28,7 +28,7 @@ namespace AMS.Server.Services
         //}
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
-            var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "Cash-Checking Account");
+            var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
             var result = appDbContext.Sales.Add(
                 new Sales { AgentId = sales.AgentId,
                     AccountId = sales.AccountId,

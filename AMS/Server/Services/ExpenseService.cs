@@ -13,7 +13,7 @@ namespace AMS.Server.Services
         }
         public async Task<Shared.IResult> AddExpenses(AddExpenseDto expense)
         {
-            var cachAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.AccountName == "Cash-Checking Account");
+            var cachAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
             var journalEntryRule = new JournalEntryRules(expense.Amount, expense.AccountType, JournalEntryRules.Increase);
             _context.AccountTransactions.Add(
                 new AccountTransaction

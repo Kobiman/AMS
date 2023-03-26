@@ -50,9 +50,10 @@
           <MudTd>&nbsp</MudTd>
           <MudTd>&nbsp</MudTd>
           <MudTd>&nbsp</MudTd>
+          <MudTd>&nbsp</MudTd>
           <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
-          <MudTd>@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
-          <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
+          <MudTd>@String.Format("{0:0,0.00}",Wins)</MudTd>
+          @*<MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>*@
         @*</MudTFootRow>*@
     </FooterContent>
     <PagerContent>
@@ -85,14 +86,13 @@
     public int TotalNum { get; set; }
     public decimal DailySales { get; set; }
     public decimal OutstandingBalance { get; set; }
-    public decimal TotalBalance { get; set; }
+    public decimal Wins { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
         DailySales = Elements.Sum(x=>x.DailySales);
-        TotalBalance = Elements.Sum(x=>x.WinAmount);
-        OutstandingBalance = Elements.Sum(x=>x.OutstandingBalance);
+        Wins = Elements.Sum(x=>x.WinAmount);
         TotalNum = Elements.Count;
     }
 
@@ -116,20 +116,17 @@
         if (string.IsNullOrWhiteSpace(searchString))
         {
             DailySales = Elements.Sum(x=>x.DailySales);
-            TotalBalance = Elements.Sum(x=>x.WinAmount);
-            OutstandingBalance = Elements.Sum(x=>x.OutstandingBalance);   
+            Wins = Elements.Sum(x=>x.WinAmount);  
         }
         if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.DailySales);
-            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
-            OutstandingBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.OutstandingBalance);
+            Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
         }
         if (Elements.Select(x=>x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.DailySales);
-            TotalBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
-            OutstandingBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.OutstandingBalance);
+            Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
         }
     }
 
@@ -210,7 +207,8 @@
     async Task PeriodChanged()
     {
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
-        TotalBalance = Elements.Sum(x => x.Amount);
+        DailySales = Elements.Sum(x => x.DailySales);
+        Wins = Elements.Sum(x => x.WinAmount);
         TotalNum = Elements.Count;
     }
 }

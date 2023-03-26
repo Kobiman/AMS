@@ -34,8 +34,8 @@
             <MudTd DataLabel="EntryDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Sales">@context.DailySales</MudTd>
-            <MudTd DataLabel="Amount">@String.Format("{0:0,0.0}",context.Amount)</MudTd>
+            <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.DailySales)</MudTd>
+            <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.WinAmount)</MudTd>
 @*            <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>*@
             <MudTd DataLabel="Description">@context.Description</MudTd>
         </RowTemplate>
@@ -44,9 +44,10 @@
                 <MudTd></MudTd>
                 <MudTd></MudTd>
                 <MudTd></MudTd>
+                <MudTd></MudTd>
                 <MudTd Class="bold-text">@String.Format("{0:0,0.00}",DailySales)</MudTd>
-                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",TotalBalance)</MudTd>
-                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
+                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",Wins)</MudTd>
+@*                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>*@
                 <MudTd Class="bold-text"></MudTd>
             @*</MudTFootRow>*@
         </FooterContent>
@@ -80,14 +81,13 @@
     public int TotalNum { get; set; }
     public decimal DailySales { get; set; }
     public decimal OutstandingBalance { get; set; }
-    public decimal TotalBalance { get; set; }
+    public decimal Wins { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
         DailySales = Elements.Sum(x => x.DailySales);
-        TotalBalance = Elements.Sum(x => x.Amount);
-        OutstandingBalance = Elements.Sum(x => x.OutstandingBalance);
+        Wins = Elements.Sum(x => x.WinAmount);
         TotalNum = Elements.Count;
     }
 
@@ -111,20 +111,17 @@
         if (string.IsNullOrWhiteSpace(searchString))
         {
             DailySales = Elements.Sum(x => x.DailySales);
-            TotalBalance = Elements.Sum(x => x.Amount);
-            OutstandingBalance = Elements.Sum(x => x.OutstandingBalance);
+            Wins = Elements.Sum(x => x.WinAmount);
         }
         if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
-            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Amount);
-            OutstandingBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.OutstandingBalance);
+            Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
         }
         if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
         {
             DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
-            TotalBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Amount);
-            OutstandingBalance = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.OutstandingBalance);
+            Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
         }
     }
 
@@ -133,8 +130,7 @@
         Elements = await Http.GetFromJsonAsync<List<SalesDto>>($"/api/Sales/GetTransactions/{period}");
 
         DailySales = Elements.Sum(x => x.DailySales);
-        TotalBalance = Elements.Sum(x => x.Amount);
-        OutstandingBalance = Elements.Sum(x => x.OutstandingBalance);
+        Wins = Elements.Sum(x => x.WinAmount);
         TotalNum = Elements.Count;
     }
 }
