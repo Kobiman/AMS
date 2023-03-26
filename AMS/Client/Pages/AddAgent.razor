@@ -8,8 +8,12 @@
           <DataAnnotationsValidator />
             <MudTextField T="string" Label="Name" Required="true" @bind-Value="model.Name" 
             RequiredError="Agent name is required!" For="@(() => model.Name)"/>
-            <MudTextField T="string" Label="Contact" Required="true" @bind-Value="model.Contact" 
-            RequiredError="Contact is required!" For="@(() => model.Contact)"/>  
+            <MudTextField T="string" Label="Phone" Required="true" @bind-Value="model.Phone"
+                      RequiredError="Phone is required!" For="@(() => model.Phone)" />
+            <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email"
+                      RequiredError="Email is required!" For="@(() => model.Email)" />
+            <MudTextField T="string" Label="House no." Required="true" @bind-Value="model.HouseNo"
+                      RequiredError="House no. is required!" For="@(() => model.HouseNo)" />
             <MudSelect T="string" Label="Select Region"  @bind-Value="model.Region"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                 @foreach (var r in regions)
                 {

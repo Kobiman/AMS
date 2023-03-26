@@ -170,7 +170,8 @@ namespace AMS.Server.Services
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
             var originalPayout = await appDbContext.Sales.FirstOrDefaultAsync(x=>x.EntryDate.Value.Date == addPayoutDto.EntryDate.Value.Date &&
-                                                                                   x.AgentId == addPayoutDto.AgentId);
+                                                                                   x.AgentId == addPayoutDto.AgentId &&
+                                                                                   x.GameId == addPayoutDto.GameId);
             if (originalPayout != null)
             {
                 //var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });

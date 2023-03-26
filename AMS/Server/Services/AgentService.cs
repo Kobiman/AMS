@@ -28,8 +28,10 @@ namespace AMS.Server.Services
             {
                 AgentId = x.AgentId,
                 Name = x.Name,
-                Contact = x.Contact,
+                Phone = x.Phone,
                 CreatedDate = x.CreatedDate,
+                Email = x.Email,
+                HouseNo = x.HouseNo,
                 Region = x.Region,
                 Sales = x.Transactions.Sum(x => x.DailySales),
                 AmountPaid = x.Transactions.Sum(x => x.WinAmount),

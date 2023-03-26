@@ -17,8 +17,10 @@ namespace AMS.Shared
         public string? AgentId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? HouseNo { get; set; }
         public string? Region { get; set; }
-        public string? Contact { get; set; }
+        public string? Phone { get; set; }
         public IList<Sales> Transactions { get; set; }
     }
 }
