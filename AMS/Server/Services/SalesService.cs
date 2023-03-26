@@ -41,7 +41,7 @@ namespace AMS.Server.Services
                     DrawDate = sales.DrawDate }
                 );
 
-            var Increase = new JournalEntryRules(sales.WinAmount, AccountTypes.Asset, JournalEntryRules.Increase);
+            var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
             appDbContext.AccountTransactions.Add(
                 new AccountTransaction
                 {
@@ -54,8 +54,8 @@ namespace AMS.Server.Services
 
             appDbContext.AccountTransactions.Add(
                 new AccountTransaction { AccountId = sales.AccountId, 
-                Amount = sales.WinAmount, 
-                Credit = sales.WinAmount, 
+                Amount = sales.DailySales, 
+                Credit = sales.DailySales, 
                 Description = sales.Description }
                 );
             if (await appDbContext.SaveChangesAsync() > 0)
@@ -76,8 +76,8 @@ namespace AMS.Server.Services
                 new AccountTransaction
                 {
                     AccountId = result.AccountId,
-                    Amount = -result.WinAmount,
-                    Debit = result.WinAmount,
+                    Amount = -result.DailySales,
+                    Debit = result.DailySales,
                     Description = "Transaction removed"
                 }
                 );

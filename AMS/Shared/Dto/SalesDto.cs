@@ -24,6 +24,7 @@ namespace AMS.Shared.Dto
         public string GameName { get; set; } = "";
         public DateTime? EntryDate { get; set; }
         public DateTime? DrawDate { get; set; }
+        [Required]
         public decimal DailySales { get; set; }
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }
