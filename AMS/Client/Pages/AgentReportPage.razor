@@ -9,14 +9,18 @@
             <MudSpacer />
             <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudSpacer />
-            <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+          
+            @*<MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                 <MudSelectItem Value="@("Today")" />
                 <MudSelectItem Value="@("This Week")" />
                 <MudSelectItem Value="@("This Month")" />
                 <MudSelectItem Value="@("This Year")" />
                 <MudSelectItem Value="@("All")" />
 
-            </MudSelect>
+            </MudSelect>*@
 
         </ToolBarContent>
         <HeaderContent>
@@ -69,9 +73,11 @@
     private bool bordered = false;
     private string searchString1 = "";
     private AgentReportDto selectedItem1 = null;
+    DateTime? start = DateTime.Today;
+    DateTime? end = DateTime.Today;
 
     private List<AgentReportDto>? Elements { get; set; }
-    string period = "Today";
+
 
     public int TotalNum { get; set; }
     public decimal DailySales { get; set; }
@@ -82,13 +88,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await Http.GetFromJsonAsync<List<AgentReportDto>>($"/api/Agent/GetAgentReports/{period}");
-        DailySales = Elements.Sum(x => x.Sales);
-        Wins = Elements.Sum(x => x.Wins);
-        Payin = Elements.Sum(x => x.Payin);
-        Payout = Elements.Sum(x => x.Payout);
-        OutstandingBalance = Elements.Sum(x => x.Balance);
-        TotalNum = Elements.Count;
+        var response = await Http.PostAsJsonAsync($"/api/Agent/GetAgentReports", new AMS.Shared.DateRange ());
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<AgentReportDto>>();
+            DailySales = Elements.Sum(x => x.Sales);
+            Wins = Elements.Sum(x => x.Wins);
+            Payin = Elements.Sum(x => x.Payin);
+            Payout = Elements.Sum(x => x.Payout);
+            OutstandingBalance = Elements.Sum(x => x.Balance);
+            TotalNum = Elements.Count;
+        }
     }
 
 
@@ -139,14 +149,18 @@
 
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<List<AgentReportDto>>($"/api/Agent/GetAgentReports/{period}");
-
-        DailySales = Elements.Sum(x => x.Sales);
-        Wins = Elements.Sum(x => x.Wins);
-        Payin = Elements.Sum(x => x.Payin);
-        Payout = Elements.Sum(x => x.Payout);
-        OutstandingBalance = Elements.Sum(x => x.Balance);
-        TotalNum = Elements.Count;
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/Agent/GetAgentReports", dateRange);
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<AgentReportDto>>();
+            DailySales = Elements.Sum(x => x.Sales);
+            Wins = Elements.Sum(x => x.Wins);
+            Payin = Elements.Sum(x => x.Payin);
+            Payout = Elements.Sum(x => x.Payout);
+            OutstandingBalance = Elements.Sum(x => x.Balance);
+            TotalNum = Elements.Count;
+        }
     }
 }
 

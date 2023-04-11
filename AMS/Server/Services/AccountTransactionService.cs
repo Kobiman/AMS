@@ -56,11 +56,9 @@ namespace AMS.Server.Services
             return null;
         }
 
-        public async Task<IEnumerable<AccountTransactionDto>> GetAdmininistrativeTransactions(string period)
+        public async Task<IEnumerable<AccountTransactionDto>> GetAdmininistrativeTransactions(DateRange period)
         {
-            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
-            DateTime startDate = sDate;
-            DateTime endDate = eDate;
+            period.GetDates(out DateTime startDate, out DateTime endDate);
             var result = await (from t in appDbContext.AccountTransactions
                                 join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 //join sa in appDbContext.Accounts on t.SecondaryAccountId equals sa.AccountId into gj
@@ -149,11 +147,9 @@ namespace AMS.Server.Services
             return null;
         }
 
-        public async Task<IEnumerable<TransferDto>> TransferReport(string period)//Should be by period
+        public async Task<IEnumerable<TransferDto>> TransferReport(DateRange period)
         {
-            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
-            DateTime startDate = sDate;
-            DateTime endDate = eDate;
+            period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var transfers = await appDbContext.Transfers.Where(x => x.TransactionDate >= startDate && x.TransactionDate <= endDate).ToListAsync();
             var accounts = await appDbContext.Accounts.Select(x=>new { x.AccountName, x.AccountId}).ToDictionaryAsync(x=>x.AccountId,y=>y.AccountName);
@@ -198,7 +194,7 @@ namespace AMS.Server.Services
             return new AccountTransactionDto();
         }
 
-        public async Task<IEnumerable<PayoutDto>> PayoutReport(string period)
+        public async Task<IEnumerable<PayoutDto>> PayoutReport(DateRange period)
         {
             //var transfers = await appDbContext.Payouts.ToListAsync();
             //var accounts = await appDbContext.Accounts.Select(x => new { x.AccountName, x.AccountId }).ToDictionaryAsync(x => x.AccountId, y => y.AccountName);
@@ -217,9 +213,7 @@ namespace AMS.Server.Services
             //    SourceAccountId = x.SourceAccountId,
             //    SourceAccount = accounts[x.SourceAccountId]
             //});
-            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
-            DateTime startDate = sDate;
-            DateTime endDate = eDate;
+            period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var result = await (from p in appDbContext.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate<= endDate && x.Type == "Payout")
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
@@ -240,11 +234,9 @@ namespace AMS.Server.Services
             return result;
         }
 
-        public async Task<IEnumerable<PayoutDto>> PayinReport(string period)
+        public async Task<IEnumerable<PayoutDto>> PayinReport(DateRange period)
         {
-            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
-            DateTime startDate = sDate;
-            DateTime endDate = eDate;
+            period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var result = await (from p in appDbContext.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate && x.Type == "Payin")
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac

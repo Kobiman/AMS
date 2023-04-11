@@ -15,8 +15,8 @@ namespace AMS.Server.Controllers
             accTransactionService = _accTransationService;
         }
 
-        [HttpGet("GetTransactions/{period}")]
-        public async Task<IActionResult> GetAdministrativeTransactions(string? period="Today")
+        [HttpPost("GetTransactions")]
+        public async Task<IActionResult> GetAdministrativeTransactions(DateRange period)
         {
             try
             {
@@ -95,8 +95,8 @@ namespace AMS.Server.Controllers
 
         }
 
-        [HttpGet("TransferReport/{period}")]
-        public async Task<IActionResult> TransferReport(string period)//should be by period
+        [HttpPost("TransferReport")]
+        public async Task<IActionResult> TransferReport(DateRange period)//should be by period
         {
              return Ok(await accTransactionService.TransferReport(period));
         }
@@ -155,8 +155,8 @@ namespace AMS.Server.Controllers
 
         }
         //PayoutReport
-        [HttpGet("PayoutReport/{period}")]
-        public async Task<IActionResult> PayoutReport(string period)
+        [HttpPost("PayoutReport")]
+        public async Task<IActionResult> PayoutReport(DateRange period)
         {
             try
             {
@@ -169,8 +169,8 @@ namespace AMS.Server.Controllers
             
         }
 
-        [HttpGet("PayinReport/{period}")]
-        public async Task<IActionResult> PayinReport(string period)
+        [HttpPost("PayinReport")]
+        public async Task<IActionResult> PayinReport(DateRange period)
         {
             try
             {

@@ -7,7 +7,7 @@ namespace AMS.Server.Services
     {
         Task<Shared.IResult> AddAccountTransaction(AddTransactionDto adminTransactions);
         public Task<AccountTransactionDto> AddAdministrativeTransaction(AccountTransaction adminTransaction);
-        public Task<IEnumerable<AccountTransactionDto>> GetAdmininistrativeTransactions(string period); 
+        public Task<IEnumerable<AccountTransactionDto>> GetAdmininistrativeTransactions(DateRange period); 
         public Task<AccountTransactionDto> UpdateAdministrativeTrasaction(AccountTransaction adminTransaction);
         public Task<AccountTransactionDto> DeleteAdministrativeTransaction(string accountTransactionId);
 
@@ -15,9 +15,9 @@ namespace AMS.Server.Services
 
         public Task<AccountTransaction> GetTransaction(string transactionID);
         public Task<AccountTransactionDto> Transfer(TransferDto transferDto);
-        public Task<IEnumerable<TransferDto>> TransferReport(string period);
+        public Task<IEnumerable<TransferDto>> TransferReport(DateRange period);
         public Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto);
-        public Task<IEnumerable<PayoutDto>> PayoutReport(string period);
-        public Task<IEnumerable<PayoutDto>> PayinReport(string period);
+        public Task<IEnumerable<PayoutDto>> PayoutReport(DateRange period);
+        public Task<IEnumerable<PayoutDto>> PayinReport(DateRange period);
     }
 }

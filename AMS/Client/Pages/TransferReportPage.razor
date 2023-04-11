@@ -11,14 +11,17 @@
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudSpacer />
-        <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
+        <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+        <MudSpacer />
+        <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+        @*<MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
             <MudSelectItem Value="@("Today")" />
             <MudSelectItem Value="@("This Week")" />
             <MudSelectItem Value="@("This Month")" />
             <MudSelectItem Value="@("This Year")" />
             <MudSelectItem Value="@("All")" />
             
-        </MudSelect>
+        </MudSelect>*@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Source Account</MudTh>
@@ -59,6 +62,8 @@
     private HashSet<TransferDto> selectedItems = new HashSet<TransferDto>();
     private IEnumerable<TransferDto> Elements = new List<TransferDto>();
     public decimal TotalBalance { get; set; }
+    DateTime? start = DateTime.Today;
+    DateTime? end = DateTime.Today;
 
     string period = "Today";
 
@@ -70,14 +75,10 @@
 
     private async Task GetTransferReport()
     {
-        var result = await Http.GetFromJsonAsync<IList<TransferDto>>($"api/AccountTransaction/TransferReport/{period}");
-        if(result is not null)
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/TransferReport", new AMS.Shared.DateRange());
+        if (response.IsSuccessStatusCode)
         {
-            Elements = result;
-        }
-        else
-        {
-            Elements = new List<TransferDto>();
+            Elements = await response.Content.ReadFromJsonAsync<List<TransferDto>>();
         }
     }
     private async Task App_StateChanged(ComponentBase Source)
@@ -131,6 +132,11 @@
 
     async Task PeriodChanged()
     {
-        Elements = await Http.GetFromJsonAsync<IList<TransferDto>>($"api/AccountTransaction/TransferReport/{period}");
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/TransferReport", dateRange);
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<TransferDto>>();
+        }
     }
 }

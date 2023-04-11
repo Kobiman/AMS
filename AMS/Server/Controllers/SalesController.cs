@@ -15,8 +15,8 @@ namespace AMS.Server.Controllers
             accTransactionService = _accTransationService;
         }
 
-        [HttpGet("GetTransactions/{period}")]
-        public async Task<IActionResult> GetAgentsTransactions(string? period="Today")
+        [HttpPost("GetTransactions")]
+        public async Task<IActionResult> GetAgentsTransactions(DateRange period)
         {
             try
             {
@@ -28,8 +28,8 @@ namespace AMS.Server.Controllers
             }
         }
 
-        [HttpGet("{inOut}/{period}")]
-        public async Task<IActionResult> GetTransactionsCashInOut(string inOut, string? period)
+        [HttpPost("{inOut}")]
+        public async Task<IActionResult> GetTransactionsCashInOut([FromQuery]string inOut, DateRange period)
         {
             try
             {

@@ -30,8 +30,8 @@ namespace AMS.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetAgentReports/{period}")]
-        public async Task<IActionResult> GetAgentReport(string? period = "Today")
+        [HttpPost("GetAgentReports")]
+        public async Task<IActionResult> GetAgentReport(DateRange period)
         {
             var result = await _agentService.GetAgentReport(period);
             if (result is not null) return Ok(result);

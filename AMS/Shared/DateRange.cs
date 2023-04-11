@@ -6,8 +6,24 @@ using System.Threading.Tasks;
 
 namespace AMS.Shared
 {
-    public static class DateRange
+    public class DateRange
     {
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public void GetDates(out DateTime startDate, out DateTime endDate)
+        {
+            if (StartDate == null || EndDate == null)
+            {
+                GetDates("Today", out DateTime sDate, out DateTime eDate);
+                startDate = sDate;
+                endDate = eDate;
+            }
+            else
+            {
+                startDate = StartDate.Value;
+                endDate = EndDate.Value;
+            }
+        }
         public static void GetDates(string period, out DateTime startDate, out DateTime endDate)
         {
             DateTime date = DateTime.Now.Date;

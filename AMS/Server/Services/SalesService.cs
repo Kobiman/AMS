@@ -88,11 +88,9 @@ namespace AMS.Server.Services
             return null;
         }
 
-        public async Task<IEnumerable<SalesDto>> GetAgentsTransaction(string period)
+        public async Task<IEnumerable<SalesDto>> GetAgentsTransaction(DateRange period)
         {
-            DateRange.GetDates(period,out DateTime sDate,out DateTime eDate);
-            DateTime startDate = sDate;
-            DateTime endDate = eDate;
+            period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var result = await (from t in appDbContext.Sales
                                 //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
@@ -237,7 +235,7 @@ namespace AMS.Server.Services
             return await appDbContext.Sales.FirstOrDefaultAsync(t => t.Id == transactionID);
         }
 
-        public async Task<IEnumerable<SalesDto>> GetTransactionsCashInCashOut(string inOut, string period)
+        public async Task<IEnumerable<SalesDto>> GetTransactionsCashInCashOut(string inOut, DateRange period)
         {
             var transactions = await GetAgentsTransaction(period);
             if (inOut == "CashIn")

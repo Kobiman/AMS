@@ -39,22 +39,16 @@ namespace AMS.Server.Services
             });
         }
 
-        public async Task<IEnumerable<AgentReportDto>> GetAgentReport(string period)
+        public async Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period)
         {
-            DateRange.GetDates(period, out DateTime sDate, out DateTime eDate);
-            DateTime startDate = sDate;
-            DateTime endDate = eDate;
-            //string startDate = $"{sDate.Year}-{sDate.Month}-{sDate.Day}";
-            //string endDate = $"{eDate.Year}-{eDate.Month}-{eDate.Day}";
-            //var query = $"SELECT * FROM [dbo].[View_AgentReport] where [CreatedDate] between '{startDate}' and '{endDate}'";
-            //var results = await query.Execute();
-            //return results[0].ToList<AgentReportDto>();
+            period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var sales = await _context.Sales.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate).ToListAsync();
             var payout_payin = await _context.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate).ToListAsync();
-            var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x=>x.AgentId,x=>x.Name);
+            var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
             var games = await _context.Games.Select(x => new { x.Name, x.Id }).ToDictionaryAsync(x => x.Id, x => x.Name);
-            return sales.Select(x => {
+            return sales.Select(x =>
+            {
                 var payinAmount = payout_payin
                 .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
                 .Sum(y => y.PayinAmount);
@@ -69,7 +63,7 @@ namespace AMS.Server.Services
                     EntryDate = x.EntryDate,
                     DrawDate = x.DrawDate,
                     AgentId = x.AgentId,
-                    Name = agents.TryGetValue(x.AgentId,out string? agent)? agent : "",
+                    Name = agents.TryGetValue(x.AgentId, out string? agent) ? agent : "",
                     Sales = x.DailySales,
                     Game = games.TryGetValue(x.GameId, out string? game) ? game : "",
                     Wins = x.WinAmount,
