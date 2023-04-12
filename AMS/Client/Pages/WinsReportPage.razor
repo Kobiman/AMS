@@ -1,74 +1,57 @@
-﻿@page "/SalesReport"
+﻿@page "/WinsReport"
 @attribute [Authorize(Roles = "Admin, Sales")]
 
-<MudText Typo="Typo.h6">Sales Report</MudText>
+<MudText Typo="Typo.h6">Wins Report</MudText>
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
 
             <MudSpacer />
-            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-            <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-            @*<MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                <MudSelectItem Value="@("Today")" />
-                <MudSelectItem Value="@("This Week")" />
-                <MudSelectItem Value="@("This Month")" />
-                <MudSelectItem Value="@("This Year")" />
-                <MudSelectItem Value="@("All")" />
-
-            </MudSelect>*@
-
+            <MudSpacer />
+            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (var game in games)
+                {
+                    <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+                }
+            </MudSelect>
         </ToolBarContent>
         <HeaderContent>
             <MudTh>EntryDate</MudTh>
             <MudTh>DrawDate</MudTh>
-            <MudTh>Agent</MudTh>
+            @*<MudTh>Agent</MudTh>*@
             <MudTh>Game</MudTh>
-            <MudTh>Sales</MudTh>
+            @*<MudTh>Sales</MudTh>*@
             <MudTh>Wins</MudTh>
-@*            <MudTh>Outstanding Balance</MudTh>*@
             <MudTh>Description</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
             <MudTd DataLabel="EntryDate">@context.DrawDate</MudTd>
-            <MudTd DataLabel="Agent">@context.AgentName</MudTd>
+            @*<MudTd DataLabel="Agent">@context.AgentName</MudTd>*@
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.DailySales)</MudTd>
-            <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.WinAmount)</MudTd>
-@*            <MudTd DataLabel="Sales">@String.Format("{0:0,0.0}",context.OutstandingBalance)</MudTd>*@
+@*            <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.DailySales)</MudTd>*@
+            <MudTd DataLabel="Wins">@String.Format("{0:0,0.00}",context.WinAmount)</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
         </RowTemplate>
         <FooterContent>
-            @*<MudTFootRow Class="bold-text">*@
                 <MudTd></MudTd>
                 <MudTd></MudTd>
                 <MudTd></MudTd>
-                <MudTd></MudTd>
-                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",DailySales)</MudTd>
+                @*<MudTd></MudTd>*@
+                @*<MudTd Class="bold-text">@String.Format("{0:0,0.00}",DailySales)</MudTd>*@
                 <MudTd Class="bold-text">@String.Format("{0:0,0.00}",Wins)</MudTd>
-@*                <MudTd Class="bold-text">@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>*@
                 <MudTd Class="bold-text"></MudTd>
-            @*</MudTFootRow>*@
         </FooterContent>
         <PagerContent>
             <MudTablePager />
         </PagerContent>
     </MudTable>
 </div>
-
-
-@*<MudCard Outlined="true">
-    <MudCardContent>
-        <MudText Typo="Typo.h6">Summary</MudText>
-        <MudSpacer />
-        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
-        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
-    </MudCardContent>
-</MudCard>*@
 
 @code {
     private bool dense = false;
@@ -79,6 +62,7 @@
     private SalesDto selectedItem1 = null;
     DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
+    private IEnumerable<Game>? games { get; set; }
 
     private List<SalesDto>? Elements { get; set; }
     string period = "Today";
@@ -98,6 +82,7 @@
             Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
         }
+        await GetGames();
     }
 
 
@@ -144,6 +129,19 @@
             DailySales = Elements.Sum(x => x.DailySales);
             Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
+        }
+    }
+
+    private async Task GetGames()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+        if (result is not null)
+        {
+            games = result;
+        }
+        else
+        {
+            games = new List<Game>();
         }
     }
 }
