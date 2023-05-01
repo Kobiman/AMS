@@ -19,5 +19,6 @@ namespace AMS.Shared.Dto
         public decimal Payout { get; set; }
         public decimal Balance { get; set; }
         public decimal Wins { get; set; }
+        public decimal CumlativeBalance { get; set; }
     }
 }

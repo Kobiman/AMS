@@ -186,7 +186,8 @@ namespace AMS.Server.Services
                     GameId = addPayoutDto.GameId,
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
-                    DrawDate = addPayoutDto.DrawDate.Value
+                    DrawDate = addPayoutDto.DrawDate.Value,
+                    CurrentDate = addPayoutDto.CurrentDate.Value,
                 });
                 await appDbContext.SaveChangesAsync();
             }
@@ -224,6 +225,7 @@ namespace AMS.Server.Services
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
+                                    CurrentDate = p.CurrentDate,
                                     EntryDate = p.EntryDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
@@ -247,6 +249,7 @@ namespace AMS.Server.Services
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
+                                    CurrentDate = p.CurrentDate,
                                     EntryDate = p.EntryDate,
                                     DrawDate = p.DrawDate,
                                     Description = p.Description,

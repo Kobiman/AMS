@@ -1,4 +1,5 @@
 ﻿using AMS.Client.Pages;
+using AMS.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace AMS.Server.Services
@@ -36,7 +37,7 @@ namespace AMS.Server.Services
                 Sales = x.Transactions.Sum(x => x.DailySales),
                 AmountPaid = x.Transactions.Sum(x => x.WinAmount),
                 OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.WinAmount)
-            });
+            }).OrderBy(x=>x.Name);
         }
 
         public async Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period)
@@ -47,31 +48,41 @@ namespace AMS.Server.Services
             var payout_payin = await _context.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate).ToListAsync();
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
             var games = await _context.Games.Select(x => new { x.Name, x.Id }).ToDictionaryAsync(x => x.Id, x => x.Name);
-            return sales.Select(x =>
+            var group = sales.OrderBy(x=>x.EntryDate).GroupBy(x=>x.AgentId);
+            var agentReport = new List<AgentReportDto>();
+            
+            foreach (var g in group)
             {
-                var payinAmount = payout_payin
-                .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
-                .Sum(y => y.PayinAmount);
-                var payoutAmount = payout_payin
-                .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
-                .Sum(y => y.PayoutAmount);
-                var amount = payout_payin
-                .Where(y => y.EntryDate == x.EntryDate && y.AgentId == x.AgentId && y.GameId == x.GameId)
-                .Sum(y => y.Amount);
-                return new AgentReportDto
+                var cumlativeBalance = new List<decimal>();
+                foreach (var y in g)
                 {
-                    EntryDate = x.EntryDate,
-                    DrawDate = x.DrawDate,
-                    AgentId = x.AgentId,
-                    Name = agents.TryGetValue(x.AgentId, out string? agent) ? agent : "",
-                    Sales = x.DailySales,
-                    Game = games.TryGetValue(x.GameId, out string? game) ? game : "",
-                    Wins = x.WinAmount,
-                    Payin = payinAmount,
-                    Payout = payoutAmount,
-                    Balance = x.DailySales - x.WinAmount - amount
-                };
-            });
+                    var payinAmount = payout_payin
+                   .Where(z => z.EntryDate == y.EntryDate && z.AgentId == y.AgentId && z.GameId == y.GameId)
+                   .Sum(z => z.PayinAmount);
+                    var payoutAmount = payout_payin
+                    .Where(z => z.EntryDate == y.EntryDate && z.AgentId == y.AgentId && z.GameId == y.GameId)
+                    .Sum(z => z.PayoutAmount);
+                    var amount = payout_payin
+                            .Where(z => z.EntryDate == y.EntryDate && z.AgentId == y.AgentId && z.GameId == y.GameId)
+                            .Sum(y => y.Amount);
+                    cumlativeBalance.Add(y.DailySales - y.WinAmount - amount);
+                    agentReport.Add(new AgentReportDto
+                    {
+                        EntryDate = y.EntryDate,
+                        DrawDate = y.DrawDate,
+                        AgentId = y.AgentId,
+                        Name = agents.TryGetValue(y.AgentId, out string? agent) ? agent : "",
+                        Sales = y.DailySales,
+                        Game = games.TryGetValue(y.GameId, out string? game) ? game : "",
+                        Wins = y.WinAmount,
+                        Balance = y.DailySales - y.WinAmount - amount,
+                        Payin = payinAmount,
+                        Payout = payoutAmount,
+                        CumlativeBalance = cumlativeBalance.Sum()
+                    });
+                }
+            }
+            return agentReport;
         }
     }
 }

@@ -21,5 +21,6 @@ namespace AMS.Shared.Dto
 
         public DateTime EntryDate { get; set; }
         public DateTime DrawDate { get; set; }
+        public DateTime CurrentDate { get; set; }
     }
 }

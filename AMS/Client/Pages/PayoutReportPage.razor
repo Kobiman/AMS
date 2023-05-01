@@ -24,6 +24,7 @@
         </MudSelect>*@
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>Transaction Date</MudTh>
         <MudTh>Entry Date</MudTh>
         <MudTh>Draw Date</MudTh>
         <MudTh>Agent</MudTh>
@@ -32,6 +33,7 @@
         <MudTh>Amount</MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="CurrentDate">@context.CurrentDate</MudTd>
         <MudTd DataLabel="CreatedOn">@context.EntryDate</MudTd>
         <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd> 

@@ -116,7 +116,8 @@ namespace AMS.Server.Services
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     GameName = gme == null? string.Empty : gme.Name,
-                                }).ToListAsync();
+                                }).OrderBy(x=>x.EntryDate)
+                                .ToListAsync();
             return result;
         }
 

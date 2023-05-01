@@ -30,6 +30,7 @@
             <MudTh>Pay-In</MudTh>
             <MudTh>Pay-Out</MudTh>
             <MudTh>Outstanding Balance</MudTh>
+            <MudTh>Outstanding Balance(Cum.)</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context?.EntryDate.Value.ToShortDateString()</MudTd>
@@ -41,6 +42,7 @@
             <MudTd>@String.Format("{0:0,0.00}",context.Payin)</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Payout)</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Balance)</MudTd>
+            <MudTd>@String.Format("{0:0,0.00}",context.CumlativeBalance)</MudTd>
         </RowTemplate>
         <FooterContent>
             @*<MudTFootRow Class="bold-text">*@
