@@ -9,9 +9,7 @@ else
     <div style="width: 450px;">
         <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-            <MudDatePicker Editable="true" @bind-Date="model.CurrentDate" Placeholder="Current Date"
-                       RequiredError="Current date is required!" For="@(() => model.CurrentDate)" />
-            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date"
+            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Current Date"
                        RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
             <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
                        RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />

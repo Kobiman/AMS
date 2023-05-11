@@ -5,10 +5,10 @@
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentReportDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
-            <MudSpacer />
+            @*<MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
-            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />*@
             <MudSpacer />
             <MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
                        SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
@@ -21,8 +21,8 @@
             
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>Entry Date</MudTh>
-            <MudTh>Draw Date</MudTh>
+           @* <MudTh>Entry Date</MudTh>
+            <MudTh>Draw Date</MudTh>*@
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Sales</MudTh>
@@ -30,11 +30,10 @@
             <MudTh>Pay-In</MudTh>
             <MudTh>Pay-Out</MudTh>
             <MudTh>Outstanding Balance</MudTh>
-            <MudTh>Outstanding Balance(Cum.)</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd>@context?.EntryDate.Value.ToShortDateString()</MudTd>
-            <MudTd>@context?.DrawDate.Value.ToShortDateString()</MudTd>
+            @*<MudTd>@context?.EntryDate.Value.ToShortDateString()</MudTd>
+            <MudTd>@context?.DrawDate.Value.ToShortDateString()</MudTd>*@
             <MudTd>@context.Name</MudTd>
             <MudTd>@context.Game</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Sales)</MudTd>
@@ -42,12 +41,9 @@
             <MudTd>@String.Format("{0:0,0.00}",context.Payin)</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Payout)</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Balance)</MudTd>
-            <MudTd>@String.Format("{0:0,0.00}",context.CumlativeBalance)</MudTd>
         </RowTemplate>
         <FooterContent>
             @*<MudTFootRow Class="bold-text">*@
-                <MudTd></MudTd>
-                <MudTd></MudTd>
                 <MudTd></MudTd>
             <MudTd></MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
@@ -55,7 +51,6 @@
                 <MudTd>@String.Format("{0:0,0.00}",Payin)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payout)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
-                <MudTd></MudTd>
             @*</MudTFootRow>*@
         </FooterContent>
         <PagerContent>
