@@ -16,7 +16,6 @@ namespace AMS.Shared
         {
             Id = Guid.NewGuid().ToString();
             EntryDate = DateTime.Now;
-            CurrentDate = DateTime.Now;
         }
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public decimal Amount { get; set; }
@@ -32,6 +31,5 @@ namespace AMS.Shared
         public string? Type { get; set; }
         public DateTime EntryDate { get; set; }
         public DateTime DrawDate { get; set; }
-        public DateTime CurrentDate { get; set; }
     }
 }

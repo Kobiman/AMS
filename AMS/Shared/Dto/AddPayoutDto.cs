@@ -27,6 +27,5 @@ namespace AMS.Shared.Dto
         public string? Type { get; set; }
         public DateTime? EntryDate { get; set; }
         public DateTime? DrawDate { get; set; }
-        public DateTime? CurrentDate { get; set; }
     }
 }

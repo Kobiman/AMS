@@ -165,14 +165,6 @@ namespace AMS.Server.Services
 
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
-            var originalPayout = await appDbContext.Sales.FirstOrDefaultAsync(x=>x.EntryDate.Value.Date == addPayoutDto.EntryDate.Value.Date &&
-                                                                                   x.AgentId == addPayoutDto.AgentId &&
-                                                                                   x.GameId == addPayoutDto.GameId);
-            if (originalPayout != null)
-            {
-                //var result = appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.SourceAccountId, Amount = -addPayoutDto.Amount, Debit = addPayoutDto.Amount, Credit = 0, Description = "PAYOUT" });
-                //appDbContext.AccountTransactions.Add(new AccountTransaction { AccountId = addPayoutDto.DestinationAccountId, Amount = addPayoutDto.Amount, Debit = 0, Credit = addPayoutDto.Amount, Description = "PAYOUT" });
-                //appDbContext.Transfers.Add(new Transfer { Amount = addPayoutDto.Amount, SourceAccountId = addPayoutDto.SourceAccountId, DestinationAccountId = addPayoutDto.DestinationAccountId, Description = "PAYOUT" });
                 var absoluteAmount = Math.Abs(addPayoutDto.Amount);
                 appDbContext.Payouts.Add(new Payout
                 {
@@ -186,11 +178,9 @@ namespace AMS.Server.Services
                     GameId = addPayoutDto.GameId,
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
-                    DrawDate = addPayoutDto.DrawDate.Value,
-                    CurrentDate = addPayoutDto.CurrentDate.Value,
+                    DrawDate = addPayoutDto.DrawDate.Value
                 });
                 await appDbContext.SaveChangesAsync();
-            }
             
             return new AccountTransactionDto();
         }
@@ -225,8 +215,8 @@ namespace AMS.Server.Services
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
-                                    CurrentDate = p.CurrentDate,
                                     EntryDate = p.EntryDate,
+                                    DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
                                     Agent = agt == null ? string.Empty : agt.Name,
@@ -249,7 +239,6 @@ namespace AMS.Server.Services
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
-                                    CurrentDate = p.CurrentDate,
                                     EntryDate = p.EntryDate,
                                     DrawDate = p.DrawDate,
                                     Description = p.Description,

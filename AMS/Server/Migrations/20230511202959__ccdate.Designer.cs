@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230511202959__ccdate")]
+    partial class _ccdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,37 +112,6 @@ namespace AMS.Server.Migrations
                     b.HasKey("AgentId");
 
                     b.ToTable("Agents");
-                });
-
-            modelBuilder.Entity("AMS.Shared.Audit", b =>
-                {
-                    b.Property<int>("AuditID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditID"), 1L, 1);
-
-                    b.Property<string>("ActionName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ControllerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IPAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PageAccessed")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TimeAccessed")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AuditID");
-
-                    b.ToTable("Audits");
                 });
 
             modelBuilder.Entity("AMS.Shared.Debtors", b =>
