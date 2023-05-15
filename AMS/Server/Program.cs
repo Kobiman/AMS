@@ -2,6 +2,7 @@ global using AMS.Server.Services;
 global using AMS.Shared;
 global using AMS.Shared.Dto;
 global using AMS.Server.Data;
+global using AMS.Server.Services.AuditService;
 using AMS.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AMS.Server;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,14 @@ builder.Services.AddTransient<IAccountTransactionService, AccountTransactionServ
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IExpenseService, ExpenseService>();
+builder.Services.AddTransient<IAuditService, AuditService>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IAuditService, AuditService>();
+builder.Services.AddControllersWithViews(options => {
+    options.Filters.Add(typeof(AuditFilterAttribute));
+});
+builder.Services.AddScoped<AuditFilterAttribute>();
+//builder.Services.addcontro
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
