@@ -43,10 +43,11 @@ builder.Services.AddTransient<IExpenseService, ExpenseService>();
 builder.Services.AddTransient<IAuditService, AuditService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IAuditService, AuditService>();
-builder.Services.AddControllersWithViews(options => {
-    options.Filters.Add(typeof(AuditFilterAttribute));
-});
-builder.Services.AddScoped<AuditFilterAttribute>();
+builder.Services.AddControllersWithViews();
+//options => {
+//    options.Filters.Add(typeof(AuditFilterAttribute));
+//}
+//builder.Services.AddScoped<AuditFilterAttribute>();
 //builder.Services.addcontro
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
