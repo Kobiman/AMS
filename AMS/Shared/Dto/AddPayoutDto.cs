@@ -15,8 +15,8 @@ namespace AMS.Shared.Dto
         public string? Description { get; set; }
         [Required]
         public string? AgentId { get; set; }
-        [Required]
-        public string? GameId { get; set; }
+        //[Required]
+        //public string? GameId { get; set; }
 
         //[Required]
         public string? SourceAccountId { get; set; }
@@ -26,6 +26,6 @@ namespace AMS.Shared.Dto
         public string? DestinationAccountType { get; set; }
         public string? Type { get; set; }
         public DateTime? EntryDate { get; set; }
-        public DateTime? DrawDate { get; set; }
+        //public DateTime? DrawDate { get; set; }
     }
 }

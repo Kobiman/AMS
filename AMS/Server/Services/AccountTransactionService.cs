@@ -175,10 +175,10 @@ namespace AMS.Server.Services
                     DestinationAccountId = addPayoutDto.DestinationAccountId,
                     SourceAccountId = addPayoutDto.SourceAccountId,
                     AgentId = addPayoutDto.AgentId,
-                    GameId = addPayoutDto.GameId,
+                    //GameId = addPayoutDto.GameId,
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
-                    DrawDate = addPayoutDto.DrawDate.Value
+                    //DrawDate = addPayoutDto.DrawDate.Value
                 });
                 await appDbContext.SaveChangesAsync();
             
@@ -209,19 +209,19 @@ namespace AMS.Server.Services
             var result = await (from p in appDbContext.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate<= endDate && x.Type == "Payout")
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
                                 from agt in agac.DefaultIfEmpty()
-                                join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
-                                from gme in gmac.DefaultIfEmpty()
+                                //join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
+                                //from gme in gmac.DefaultIfEmpty()
 
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
                                     EntryDate = p.EntryDate,
-                                    DrawDate = p.DrawDate,
+                                    //DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
                                     Agent = agt == null ? string.Empty : agt.Name,
-                                    GameId = p.GameId,
-                                    GameName = gme.Name
+                                    //GameId = p.GameId,
+                                    //GameName = gme.Name
                                 }).ToListAsync();
             return result;
         }
@@ -233,19 +233,19 @@ namespace AMS.Server.Services
             var result = await (from p in appDbContext.Payouts.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate && x.Type == "Payin")
                                 join ag in appDbContext.Agents on p.AgentId equals ag.AgentId into agac
                                 from agt in agac.DefaultIfEmpty()
-                                join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
-                                from gme in gmac.DefaultIfEmpty()
+                                //join gm in appDbContext.Games on p.GameId equals gm.Id into gmac
+                                //from gme in gmac.DefaultIfEmpty()
 
                                 select new PayoutDto
                                 {
                                     Amount = p.Amount,
                                     EntryDate = p.EntryDate,
-                                    DrawDate = p.DrawDate,
+                                    //DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
                                     Agent = agt == null ? string.Empty : agt.Name,
-                                    GameId = p.GameId,
-                                    GameName = gme.Name
+                                    //GameId = p.GameId,
+                                    //GameName = gme.Name
                                 }).ToListAsync();
             return result;
         }

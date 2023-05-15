@@ -9,22 +9,15 @@ else
     <div style="width: 450px;">
         <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Current Date"
+            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
                        RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
-            <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
-                       RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />
+            @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
+                       RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />*@
 
             <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                 @foreach (var agent in agents)
                 {
                     <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
-                }
-            </MudSelect>
-
-            <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                @foreach (var game in games)
-                {
-                    <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
                 }
             </MudSelect>
 
@@ -62,7 +55,7 @@ else
         if (response.IsSuccessStatusCode)
         {
             model = new AddPayoutDto();
-            var result = await response.Content.ReadFromJsonAsync<AccountTransactionDto>();
+            var result = await response.Content.ReadFromJsonAsync<AddPayoutDto>();
             Snackbar.Add("Transaction Saved", Severity.Success);
             accountEvents.OnAccountAdded(this);
             await ModalInstance.CloseAsync(ModalResult.Ok(result));

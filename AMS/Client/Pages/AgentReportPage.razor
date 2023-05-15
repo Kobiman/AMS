@@ -21,10 +21,7 @@
             
         </ToolBarContent>
         <HeaderContent>
-           @* <MudTh>Entry Date</MudTh>
-            <MudTh>Draw Date</MudTh>*@
             <MudTh>Agent</MudTh>
-            <MudTh>Game</MudTh>
             <MudTh>Sales</MudTh>
             <MudTh>Wins</MudTh>
             <MudTh>Pay-In</MudTh>
@@ -32,10 +29,7 @@
             <MudTh>Outstanding Balance</MudTh>
         </HeaderContent>
         <RowTemplate>
-            @*<MudTd>@context?.EntryDate.Value.ToShortDateString()</MudTd>
-            <MudTd>@context?.DrawDate.Value.ToShortDateString()</MudTd>*@
             <MudTd>@context.Name</MudTd>
-            <MudTd>@context.Game</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Sales)</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Wins)</MudTd>
             <MudTd>@String.Format("{0:0,0.00}",context.Payin)</MudTd>
@@ -43,15 +37,12 @@
             <MudTd>@String.Format("{0:0,0.00}",context.Balance)</MudTd>
         </RowTemplate>
         <FooterContent>
-            @*<MudTFootRow Class="bold-text">*@
-                <MudTd></MudTd>
             <MudTd></MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Wins)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payin)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",Payout)</MudTd>
                 <MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>
-            @*</MudTFootRow>*@
         </FooterContent>
         <PagerContent>
             <MudTablePager />

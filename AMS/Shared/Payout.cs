@@ -30,6 +30,6 @@ namespace AMS.Shared
         public string? DestinationAccountId { get; set; }
         public string? Type { get; set; }
         public DateTime EntryDate { get; set; }
-        public DateTime DrawDate { get; set; }
+        //public DateTime DrawDate { get; set; }
     }
 }

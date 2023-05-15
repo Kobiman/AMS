@@ -21,24 +21,19 @@
         </MudSelect>*@
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Entry Date</MudTh>
-        <MudTh>Draw Date</MudTh>
+        <MudTh>Date</MudTh>
         <MudTh>Agent</MudTh>
-        <MudTh>Game</MudTh>
         <MudTh>Description</MudTh>
         <MudTh>Paid</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
-        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd>
-        <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>       
     </RowTemplate>
      <FooterContent>
         @*<MudTFootRow Class="bold-text">*@
-          <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
