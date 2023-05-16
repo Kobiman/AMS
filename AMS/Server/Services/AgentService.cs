@@ -70,17 +70,17 @@ namespace AMS.Server.Services
                 x.Amount
             }).ToListAsync();
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
-            var games = await _context.Games.Select(x => new { x.Name, x.Id }).ToDictionaryAsync(x => x.Id, x => x.Name);
+            //var games = await _context.Games.Select(x => new { x.Name, x.Id }).ToDictionaryAsync(x => x.Id, x => x.Name);
             return sales.Select(x =>
             {
                 var payinAmount = payout_payin
-                .Where(y => y.AgentId == x.AgentId && y.GameId == x.GameId)
+                .Where(y => y.AgentId == x.AgentId)
                 .Sum(y => y.PayinAmount);
                 var payoutAmount = payout_payin
-                .Where(y => y.AgentId == x.AgentId && y.GameId == x.GameId)
+                .Where(y => y.AgentId == x.AgentId)
                 .Sum(y => y.PayoutAmount);
                 var amount = payout_payin
-                .Where(y => y.AgentId == x.AgentId && y.GameId == x.GameId)
+                .Where(y => y.AgentId == x.AgentId)
                 .Sum(y => y.Amount);
                 return new AgentReportDto
                 {
@@ -89,7 +89,7 @@ namespace AMS.Server.Services
                     AgentId = x.AgentId,
                     Name = agents.TryGetValue(x.AgentId, out string? agent) ? agent : "",
                     Sales = x.DailySales,
-                    Game = games.TryGetValue(x.GameId, out string? game) ? game : "",
+                    //Game = games.TryGetValue(x.GameId, out string? game) ? game : "",
                     Wins = x.WinAmount,
                     Payin = payinAmount,
                     Payout = payoutAmount,
