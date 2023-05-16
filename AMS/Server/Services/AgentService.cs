@@ -46,18 +46,16 @@ namespace AMS.Server.Services
             period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var sales = await _context.Sales
-                .GroupBy(x => new { x.AgentId, x.GameId})
+                .GroupBy(x => x.AgentId)
                 .Select(x => new
                 {
-                    AgentId = x.Key.AgentId,
-                    GameId = x.Key.GameId,
+                    AgentId = x.Key,
                     DailySales = x.Sum(x => x.DailySales),
                     WinAmount = x.Sum(x => x.WinAmount),
                 })
                 .Select(x => new
                 {
                     x.AgentId,
-                    x.GameId,
                     x.WinAmount,
                     x.DailySales
                 }).ToListAsync();
