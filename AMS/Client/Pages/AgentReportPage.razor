@@ -95,8 +95,7 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.Game.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
+
         if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
