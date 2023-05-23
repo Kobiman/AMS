@@ -2,7 +2,8 @@
 @page "/PayoutReport"
 @attribute [Authorize]
 
-<MudText Typo="Typo.h6">Payout Report</MudText>
+<MudText>PAY-OUT REPORT</MudText>
+<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Cash Pay-Out"))">Payout</MudButton>
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" 

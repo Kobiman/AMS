@@ -2,7 +2,7 @@
 @implements IDisposable
 @attribute [Authorize]
 
-<MudText Typo="Typo.h6">Agents</MudText>
+<MudText>AGENTS</MudText><button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAgent>("Add Agent"))">Add Agent</MudButton> 
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
