@@ -1,0 +1,76 @@
+﻿@using System.Text.RegularExpressions
+@page "/editAgent"
+@attribute [Authorize(Roles ="Admin, Sales")]
+
+
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+            <MudTextField T="string" Label="Name" Required="true" @bind-Value="model.Name" 
+            RequiredError="Agent name is required!" For="@(() => model.Name)"/>
+            <MudTextField T="string" Label="Phone" Required="true" @bind-Value="model.Phone"
+                      RequiredError="Phone is required!" For="@(() => model.Phone)" />
+            <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email"
+                      RequiredError="Email is required!" For="@(() => model.Email)" />
+            <MudTextField T="string" Label="House no." Required="true" @bind-Value="model.HouseNo"
+                      RequiredError="House no. is required!" For="@(() => model.HouseNo)" />
+            <MudSelect T="string" Label="Select Region"  @bind-Value="model.Region"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                @foreach (var r in regions)
+                {
+                   <MudSelectItem T="string" Value="@r">@r</MudSelectItem>
+                }
+            </MudSelect>
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public AgentDto Agent { get; set; }
+    AgentDto model = new AgentDto();
+
+    bool success;
+    string[] errors = { };
+    private string[] regions =
+    {
+           "Ahafo","Ashanti","Bono","Bono East",
+           "Central","Eastern","Greater Accra",
+           "Nort East","Northern","Oti","Savannah",
+           "Upper East","Upper West","Volta","Western",
+           "Western North"
+    };
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PutAsJsonAsync("api/Agent/EditAgent",model);
+
+        if (response.IsSuccessStatusCode)
+        {
+            model = new AgentDto();
+            var result = await response.Content.ReadFromJsonAsync<Result<AgentDto>>();
+            Snackbar.Add(result.Message, Severity.Success);
+            await ModalInstance.CloseAsync(ModalResult.Ok(result.Value));
+        }
+        else
+        {
+            model = new AgentDto();
+            Snackbar.Add("Update Failed", Severity.Error);   
+        }
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = new AgentDto();
+        model.AgentId = Agent.AgentId;
+        model.Name = Agent.Name;
+        model.Email = Agent.Email;
+        model.HouseNo = Agent.HouseNo;
+        model.Region = Agent.Region;
+        model.Phone = Agent.Phone;
+        model.CreatedDate = Agent.CreatedDate;
+    }
+}

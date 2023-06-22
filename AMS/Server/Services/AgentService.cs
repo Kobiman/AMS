@@ -35,6 +35,7 @@ namespace AMS.Server.Services
                 Email = x.Email,
                 HouseNo = x.HouseNo,
                 Region = x.Region,
+                Approved = x.Approved,
                 Sales = x.Transactions.Sum(x => x.DailySales),
                 AmountPaid = x.Transactions.Sum(x => x.WinAmount),
                 OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.WinAmount)
@@ -95,5 +96,34 @@ namespace AMS.Server.Services
                 };
             });
         }
+
+        public async Task<Result<Agent>> EditAgent(Agent agent)
+        {
+            _context.Agents.UpdateRange(agent);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+                return new Result<Agent>(true, agent, "Record Updated");
+            return new Result<Agent>(false, new Agent(), "Operation Failed");
+        }
+
+        public async Task<Result<bool>> DeleteAgent(Agent agent)
+        {
+            _context.Agents.Remove(agent);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+                return new Result<bool>(true, true, "Record Deleted");
+            return new Result<bool>(false, false, "Operation Failed");
+        }
+
+        public async Task<Result<bool>> ApproveAgent(string id)
+        {
+            var agent = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == id);
+            agent.Approved= true;
+            if(await _context.SaveChangesAsync() > 0) {
+                return new Result<bool>(true, true, "Record Approved!");
+            }
+            return new Result<bool>(false, false, "Operation Failed!");
+        }
+
     }
 }
