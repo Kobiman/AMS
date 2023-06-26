@@ -19,5 +19,8 @@ namespace AMS.Shared.Dto
         public decimal Payout { get; set; }
         public decimal Balance { get; set; }
         public decimal Wins { get; set; }
+        public List<SalesDetails> Details { get; set; } = new List<SalesDetails>();
+        public List<PayinPayout> Payins { get; set; } = new List<PayinPayout>();
+        public List<PayinPayout> Payouts { get; set; } = new List<PayinPayout>();
     }
 }

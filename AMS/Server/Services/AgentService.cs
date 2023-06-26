@@ -52,12 +52,24 @@ namespace AMS.Server.Services
                     AgentId = x.Key,
                     DailySales = x.Sum(x => x.DailySales),
                     WinAmount = x.Sum(x => x.WinAmount),
+                    Details = x.Select(x =>  new SalesDetails
+                    (
+                        x.AccountId,
+                        x.AgentId,
+                        "",
+                        x.DailySales,
+                        x.Description,
+                        x.EntryDate,
+                        x.WinAmount,
+                        x.ReceiptNumber
+                    )).ToList()
                 })
                 .Select(x => new
                 {
                     x.AgentId,
                     x.WinAmount,
-                    x.DailySales
+                    x.DailySales,
+                    x.Details
                 }).ToListAsync();
             var payout_payin = await _context.Payouts.Select(x=>new
             {
@@ -65,11 +77,24 @@ namespace AMS.Server.Services
                 x.GameId,
                 x.PayinAmount,
                 x.PayoutAmount,
-                x.Amount
-            }).ToListAsync();
+                x.Amount,
+                x.Type,
+                x.EntryDate
+            })
+            .Select(x => new PayinPayout
+            (
+                x.AgentId,
+                x.GameId,
+                x.PayinAmount,
+                x.PayoutAmount,
+                x.Amount,
+                x.Type,
+                x.EntryDate
+            ))
+            .ToListAsync();
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
             //var games = await _context.Games.Select(x => new { x.Name, x.Id }).ToDictionaryAsync(x => x.Id, x => x.Name);
-            return sales.Select(x =>
+            var rr = sales.Select(x =>
             {
                 var payinAmount = payout_payin
                 .Where(y => y.AgentId == x.AgentId)
@@ -91,9 +116,13 @@ namespace AMS.Server.Services
                     Wins = x.WinAmount,
                     Payin = payinAmount,
                     Payout = payoutAmount,
-                    Balance = x.DailySales - x.WinAmount - amount
+                    Balance = x.DailySales - x.WinAmount - amount,
+                    Details = x.Details,
+                    Payouts = payout_payin.Where(y => y.AgentId == x.AgentId && y.Type == "Payout").ToList(),
+                    Payins = payout_payin.Where(y => y.AgentId == x.AgentId && y.Type == "Payin").ToList()
                 };
             });
+            return rr;
         }
     }
 }
