@@ -1,44 +1,66 @@
 ﻿@page "/Agents"
 @implements IDisposable
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
 @attribute [Authorize]
 
-<MudText>AGENTS</MudText><button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
-<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAgent>("Add Agent"))">Add Agent</MudButton> 
-    <div style="margin-top:10px">
+<MudText>AGENTS</MudText>
+<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
+@if(!isAdmin)
+{
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAgent>("Add Agent"))">Add Agent</MudButton>
+}
+<div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
-    <ToolBarContent>
-        
-        <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <HeaderContent>
-        <MudTh>CreatedOn</MudTh>
-        <MudTh>Name</MudTh>
-        <MudTh>Region</MudTh>
-        <MudTh>Contact</MudTh>
-        <MudTh>Email</MudTh>
-        <MudTh>House no.</MudTh>
-        <MudTh>Sales</MudTh>
-        <MudTh>Wins</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.CreatedDate</MudTd>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Region">@context.Region</MudTd>
-        <MudTd DataLabel="Contact">@context.Phone</MudTd>
-        <MudTd DataLabel="Contact">@context.Email</MudTd>
-        <MudTd DataLabel="Contact">@context.HouseNo</MudTd>
-        <MudTd DataLabel="Sales">@context.Sales</MudTd>
-        <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
-    </RowTemplate>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-  </MudTable>
+        <ToolBarContent>
+
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>CreatedOn</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Region</MudTh>
+            <MudTh>Contact</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>House no.</MudTh>
+            <MudTh>Sales</MudTh>
+            <MudTh>Wins</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="CreatedOn">@context.CreatedDate</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Region">@context.Region</MudTd>
+            <MudTd DataLabel="Contact">@context.Phone</MudTd>
+            <MudTd DataLabel="Contact">@context.Email</MudTd>
+            <MudTd DataLabel="Contact">@context.HouseNo</MudTd>
+            <MudTd DataLabel="Sales">@context.Sales</MudTd>
+            <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
+            <MudTd DataLabel="">
+                @if (context.Approved == false)
+                {
+                    @if (isAdmin)
+                    {
+                        <MudFab @onclick="@(()=>Approve(@context.AgentId))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+                    }
+                    else
+                    {
+                        <MudFab @onclick="@(()=>Edit(@context.AgentId))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                    }
+                }
+
+                @*<MudFab @onclick="@(()=>DeleteAgent(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />*@
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 </div>
 
 @code {
-     private bool dense = false;
+    private bool dense = false;
     private bool hover = true;
     private bool striped = false;
     private bool bordered = false;
@@ -48,17 +70,19 @@
     private AgentDto selectedItem2 = null;
     private HashSet<AgentDto> selectedItems = new HashSet<AgentDto>();
     private IEnumerable<AgentDto> Elements = new List<AgentDto>();
+    private bool isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
         accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetRole();
         await GetAccounts();
     }
 
     private async Task GetAccounts()
     {
         var result = await Http.GetFromJsonAsync<IList<AgentDto>>("api/Agent/GetAgents");
-        if(result is not null)
+        if (result is not null)
         {
             Elements = result;
         }
@@ -95,6 +119,57 @@
         return false;
     }
 
+    private async Task Edit(string id)
+    {
+        var agent = Elements.FirstOrDefault(x => x.AgentId == id);
+        if (agent != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(EditAgent.Agent), agent);
+
+            var editModal = Modal.Show<EditAgent>("Edit Agent Info", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetAccounts();
+            }
+        }
+    }
+    private async Task Approve(string id)
+    {
+        var agent = Elements.FirstOrDefault(x => x.AgentId == id);
+        if (agent != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(ApproveAgent.Agent), agent);
+
+            var editModal = Modal.Show<ApproveAgent>("Approve Agent Info", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetAccounts();
+            }
+        }
+    }
+    private async Task GetRole()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+    }
     void IDisposable.Dispose()
     {
         accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);

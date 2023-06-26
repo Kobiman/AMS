@@ -13,6 +13,7 @@ namespace AMS.Shared
             AgentId = Guid.NewGuid().ToString();
             CreatedDate = DateTime.Now;
             Transactions = new List<Sales>();
+            Approved = false;
         }
         public string? AgentId { get; set; }
         public DateTime? CreatedDate { get; set; }
@@ -21,6 +22,7 @@ namespace AMS.Shared
         public string? HouseNo { get; set; }
         public string? Region { get; set; }
         public string? Phone { get; set; }
+        public bool Approved { get; set; }
         public IList<Sales> Transactions { get; set; }
     }
 }

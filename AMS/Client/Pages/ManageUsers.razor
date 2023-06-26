@@ -109,7 +109,7 @@
             var parameters = new ModalParameters();
             parameters.Add(nameof(EditUserRole.User), user);
 
-            var userModal = Modal.Show<EditUserRole>("Edit Agents User", parameters);
+            var userModal = Modal.Show<EditUserRole>("Edit User", parameters);
             var result = await userModal.Result;
             if(result.Cancelled)
             {
