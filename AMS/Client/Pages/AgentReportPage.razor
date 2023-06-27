@@ -3,12 +3,8 @@
 
 <MudText>AGENT REPORT</MudText><button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
 <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentReportDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+   @* <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentReportDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
-            @*<MudSpacer />
-            <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-            <MudSpacer />
-            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />*@
             <MudSpacer />
             <MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
                        SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
@@ -47,11 +43,97 @@
         <PagerContent>
             <MudTablePager />
         </PagerContent>
-    </MudTable>
+    </MudTable>*@
+
+    <MudDataGrid Items="@Elements" ReadOnly="@_isReadOnly" EditMode="@DataGridEditMode.Cell">
+        <Columns>
+        <HierarchyColumn T="AgentReportDto" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Sales"/>
+        <PropertyColumn Property="x => x.Wins"/>
+        <PropertyColumn Property="x => x.Payin"/>
+        <PropertyColumn Property="x => x.Payout"/>
+        <PropertyColumn Property="x => x.Balance"/>
+    </Columns>
+    <ChildRowContent>
+        <MudCard>
+            <MudCardContent>
+                    <MudText>Sales</MudText>
+                    <MudTable Items="@context.Item.Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                        <HeaderContent>
+                            <MudTh>Date</MudTh>
+                            <MudTh>Sales</MudTh>
+                            <MudTh>Wins</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="d">
+                            <MudTd>@d.EntryDate</MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",d.DailySales)</MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",d.WinAmount)</MudTd>
+                        </RowTemplate>
+                        <FooterContent>
+                            <MudTd></MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales))</MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
+                        </FooterContent>
+                        @*      <PagerContent>
+                        <MudTablePager />
+                        </PagerContent>*@
+                    </MudTable>
+            </MudCardContent>
+
+            <MudCardContent>
+                    <MudText>Payin</MudText>
+                    <MudTable Items="@context.Item.Payins" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                        <HeaderContent>
+                            <MudTh>Date</MudTh>
+                            <MudTh>Payin Amount</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="d">
+                            <MudTd>@d.EntryDate</MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",d.PayinAmount)</MudTd>
+                        </RowTemplate>
+                        <FooterContent>
+                            <MudTd></MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Payins.Sum(x=>x.PayinAmount))</MudTd>
+                        </FooterContent>
+                        @*            <PagerContent>
+                        <MudTablePager />
+                        </PagerContent>*@
+                    </MudTable>
+            </MudCardContent>
+
+            <MudCardContent>
+                    <MudText>Payout</MudText>
+                    <MudTable Items="@context.Item.Payouts" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                        <HeaderContent>
+                            <MudTh>Date</MudTh>
+                            <MudTh>Payout Amount</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="d">
+                            <MudTd>@d.EntryDate</MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",d.PayoutAmount)</MudTd>
+                        </RowTemplate>
+                        <FooterContent>
+                            <MudTd></MudTd>
+                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Payouts.Sum(x=>x.PayoutAmount))</MudTd>
+                        </FooterContent>
+                        @*            <PagerContent>
+                        <MudTablePager />
+                        </PagerContent>*@
+                    </MudTable>
+            </MudCardContent>
+        </MudCard>
+    </ChildRowContent>
+    <PagerContent>
+         <MudDataGridPager T="AgentReportDto" />
+    </PagerContent>
+</MudDataGrid>
+
 </div>
 
 
 @code {
+    private bool _isReadOnly = true;
     private bool dense = false;
     private bool hover = true;
     private bool striped = false;
