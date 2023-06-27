@@ -10,12 +10,16 @@ namespace AMS.Server.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(ApplicationDbContext dbContext, IConfiguration configuration)
+        public AuthService(ApplicationDbContext dbContext, IConfiguration configuration,IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        public string GetStaffID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber);
 
         public async Task<Result<string>> Login(string email, string password)
         {
@@ -92,7 +96,8 @@ namespace AMS.Server.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.SerialNumber, user.StaffId)
             };
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -126,7 +131,7 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<UserDto>> GetUsers()
         {
             var users =  _dbContext.Users.ToList();
-            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role });
+            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role,StaffId = x.StaffId });
         }
 
         public async Task<Result<int>> DeleteUser(int userId)

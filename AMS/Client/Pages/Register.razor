@@ -9,6 +9,9 @@
           <DataAnnotationsValidator />
         <MudTextField T="string" Label="Email" Required="true" @bind-Value="model.Email" 
         RequiredError="Email is a required field" For="@(() => model.Email)" InputType="InputType.Email"/>
+        
+        <MudTextField T="string" Label="Staff ID" Required="true" @bind-Value="model.StaffId" 
+        RequiredError="Staff is a required field" For="@(() => model.StaffId)" />
 
         <MudTextField T="string" Label="Password" Required="true" @bind-Value="model.Password" 
         RequiredError="Password is a required field" For="@(() => model.Password)" InputType="InputType.Password"/>

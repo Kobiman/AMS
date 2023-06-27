@@ -9,12 +9,14 @@ namespace AMS.Server.Services
 {
     public class SalesService : ISalesService
     {
-        public SalesService(ApplicationDbContext _appDbContext)
+        public SalesService(ApplicationDbContext _appDbContext,IAuthService authService)
         {
             appDbContext = _appDbContext;
+            _authService = authService;
         }
 
         private readonly ApplicationDbContext appDbContext;
+        private readonly IAuthService _authService;
 
         //public async Task<Shared.IResult> AddAccountTransaction(AccountTransaction accountTransaction)
         //{
@@ -29,7 +31,7 @@ namespace AMS.Server.Services
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
             var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
-            var result = appDbContext.Sales.Add(
+            var result = await appDbContext.Sales.AddAsync(
                 new Sales { AgentId = sales.AgentId,
                     AccountId = sales.AccountId,
                     DailySales = sales.DailySales, 
@@ -38,11 +40,12 @@ namespace AMS.Server.Services
                     GameId = sales.GameId,
                     ReceiptNumber = sales.ReceiptNumber,
                     EntryDate = sales.EntryDate,
-                    DrawDate = sales.DrawDate }
+                    DrawDate = sales.DrawDate,
+                    StaffId = _authService.GetStaffID() }
                 );
 
             var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
-            appDbContext.AccountTransactions.Add(
+            await appDbContext.AccountTransactions.AddAsync(
                 new AccountTransaction
                 {
                     Amount = Increase.Amount,
@@ -52,11 +55,14 @@ namespace AMS.Server.Services
                     AccountId = cachAccount?.AccountId
                 });
 
-            appDbContext.AccountTransactions.Add(
-                new AccountTransaction { AccountId = sales.AccountId, 
-                Amount = sales.DailySales, 
-                Credit = sales.DailySales, 
-                Description = sales.Description }
+            await appDbContext.AccountTransactions.AddAsync(
+                new AccountTransaction
+                {
+                    AccountId = sales.AccountId,
+                    Amount = sales.DailySales,
+                    Credit = sales.DailySales,
+                    Description = sales.Description
+                }
                 );
             if (await appDbContext.SaveChangesAsync() > 0)
             {
@@ -115,6 +121,7 @@ namespace AMS.Server.Services
                                     EntryDate = t.EntryDate,
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
+                                    StaffId = t.StaffId,
                                     GameName = gme == null? string.Empty : gme.Name,
                                 }).OrderBy(x=>x.EntryDate)
                                 .ToListAsync();

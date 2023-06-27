@@ -29,5 +29,7 @@ namespace AMS.Shared
         public DateTime? DrawDate { get; set; }
         public decimal DailySales { get; set; }
         public string? ReceiptNumber { get; set; }
+
+        public string StaffId { get; set; }
     }
 }

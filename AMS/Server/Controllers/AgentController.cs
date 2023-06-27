@@ -33,6 +33,14 @@ namespace AMS.Server.Controllers
             if (result is not null) return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("GetApprovedAgents")]
+        public async Task<IActionResult> GetApprovedAgents()
+        {
+            var list = await _agentService.GetAgents();
+            var result = list.Where(x => x.Approved);
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
+        }
 
         [HttpPost("GetAgentReports")]
         public async Task<IActionResult> GetAgentReport(DateRange period)
