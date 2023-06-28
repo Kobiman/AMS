@@ -33,20 +33,21 @@
         <MudTh>Wins</MudTh>
         @*<MudTh>Outstanding Balance</MudTh>*@
         <MudTh>Description</MudTh>
-        <MudTh>Action</MudTh>
+        <MudTh>Staff ID</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
         <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
         <MudTd DataLabel="Agent">@context.AgentName</MudTd>
         <MudTd DataLabel="Game">@context.GameName</MudTd>
-        <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.DailySales)</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.WinAmount)</MudTd>       
+        <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
         @*<MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.OutstandingBalance)</MudTd>*@
         <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="Description">@context.StaffId</MudTd>
         <MudTd DataLabel="">
-                @*<MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />*@
-            <MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+            @*<MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />*@
+            @*@<MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />*@
         </MudTd>
     </RowTemplate>
     <FooterContent>

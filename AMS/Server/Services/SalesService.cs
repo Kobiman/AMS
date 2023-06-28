@@ -227,6 +227,7 @@ namespace AMS.Server.Services
                                     DailySales = t.DailySales,
                                     OutstandingBalance = t.DailySales - t.WinAmount,
                                     Description = t.Description,
+                                    StaffId = t.StaffId,
                                     EntryDate = t.EntryDate,
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
