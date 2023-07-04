@@ -8,6 +8,7 @@ namespace AMS.Shared.Dto
 {
     public class PayoutDto
     {
+        public string Id { get; set; } 
         public decimal Amount { get; set; }
         public string? Description { get; set; }
         public string? AgentId { get; set; }
@@ -18,8 +19,9 @@ namespace AMS.Shared.Dto
         public string SourceAccount { get; set; }
         public string Agent { get; set; } = "";
         //public string GameName { get; set; } = "";
-
+        public string? Type { get; set; }
         public DateTime EntryDate { get; set; }
-        //public DateTime DrawDate { get; set; }
+        public bool Approved { get; set; } = false;
+        public string StaffId { get; set; } = String.Empty;
     }
 }

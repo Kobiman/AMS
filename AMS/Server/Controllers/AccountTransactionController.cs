@@ -154,6 +154,40 @@ namespace AMS.Server.Controllers
             }
 
         }
+        [HttpPut("EditPayout")]
+        public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody] Payout editPayout)
+        {
+            try
+            {
+                if (editPayout == null)
+                    return BadRequest();
+                var result = await accTransactionService.EditPayout(editPayout);
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+        }
+
+        [HttpPut("ApprovePayout")]
+        public async Task<ActionResult<Result<AccountTransactionDto>>> ApprovePayout([FromBody] Payout editPayout)
+        {
+            try
+            {
+                if (editPayout == null)
+                    return BadRequest();
+                var result = await accTransactionService.ApprovePayout(editPayout.Id);
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+        }
+
         //PayoutReport
         [HttpPost("PayoutReport")]
         public async Task<IActionResult> PayoutReport(DateRange period)

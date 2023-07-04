@@ -9,12 +9,15 @@ namespace AMS.Server.Services
 {
     public class AccountTransactionService : IAccountTransactionService
     {
-        public AccountTransactionService(ApplicationDbContext _appDbContext)
+        public AccountTransactionService(ApplicationDbContext _appDbContext,
+            IAuthService authService)
         {
             appDbContext = _appDbContext;
+            _authService = authService;
         }
 
         private readonly ApplicationDbContext appDbContext;
+        private readonly IAuthService _authService;
 
         public async Task<Shared.IResult> AddAccountTransaction(AddTransactionDto transactionDto)
         {
@@ -178,11 +181,48 @@ namespace AMS.Server.Services
                     //GameId = addPayoutDto.GameId,
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
+                    StaffId = _authService.GetStaffID()
                     //DrawDate = addPayoutDto.DrawDate.Value
                 });
                 await appDbContext.SaveChangesAsync();
             
             return new AccountTransactionDto();
+        }
+
+        public async Task<Result<AccountTransactionDto>> EditPayout(Payout editPayoutDto)
+        {
+            var result = await appDbContext.Payouts.FirstOrDefaultAsync(x=> x.Id == editPayoutDto.Id);
+            var absoluteAmount = Math.Abs(editPayoutDto.Amount);
+            if(result != null)
+            {
+                result.Amount = editPayoutDto.Type == "Payout" ? -absoluteAmount : absoluteAmount;
+                result.PayoutAmount = editPayoutDto.Type == "Payout" ? absoluteAmount : 0;
+                result.PayinAmount = editPayoutDto.Type == "Payin" ? absoluteAmount : 0;
+                result.Description = editPayoutDto.Description;
+                result.DestinationAccountId = editPayoutDto.DestinationAccountId;
+                result.SourceAccountId = editPayoutDto.SourceAccountId;
+                result.AgentId = editPayoutDto.AgentId;
+                result.StaffId = _authService.GetStaffID();
+                result.Type = editPayoutDto.Type;
+                result.EntryDate = editPayoutDto.EntryDate;
+                await appDbContext.SaveChangesAsync();
+                return new Result<AccountTransactionDto> { IsSucessful = true, Message = "Transaction Updated", Value = await GetAdministrativeTransactionById(result.Id) };
+            }
+
+            return new Result<AccountTransactionDto> { IsSucessful = false, Message = "Operation Failed", Value = new AccountTransactionDto() };
+        }
+
+        public async Task<Result<AccountTransactionDto>> ApprovePayout(string payoutId)
+        {
+            var result = await appDbContext.Payouts.FirstOrDefaultAsync(x => x.Id == payoutId);
+            if (result != null)
+            {
+                result.Approved = true;
+                result.ApprovedBy = _authService.GetStaffID();
+                await appDbContext.SaveChangesAsync();
+                return new Result<AccountTransactionDto> { IsSucessful = true, Message = "Transaction Approved", Value = await GetAdministrativeTransactionById(result.Id) };
+            }
+            return new Result<AccountTransactionDto> { IsSucessful = false, Message = "Operation Failed", Value = new AccountTransactionDto() };
         }
 
         public async Task<IEnumerable<PayoutDto>> PayoutReport(DateRange period)
@@ -214,11 +254,13 @@ namespace AMS.Server.Services
 
                                 select new PayoutDto
                                 {
+                                    Id = p.Id,
                                     Amount = p.Amount,
                                     EntryDate = p.EntryDate,
                                     //DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
+                                    Approved = p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
@@ -238,11 +280,13 @@ namespace AMS.Server.Services
 
                                 select new PayoutDto
                                 {
+                                    Id = p.Id,
                                     Amount = p.Amount,
                                     EntryDate = p.EntryDate,
                                     //DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
+                                    Approved = p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     //GameId = p.GameId,
                                     //GameName = gme.Name

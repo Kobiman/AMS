@@ -26,6 +26,7 @@ namespace AMS.Shared.Dto
         public string? DestinationAccountType { get; set; }
         public string? Type { get; set; }
         public DateTime? EntryDate { get; set; }
-        //public DateTime? DrawDate { get; set; }
+        public bool Approved { get; set; } = false;
+        public string StaffId { get; set; } = String.Empty;
     }
 }

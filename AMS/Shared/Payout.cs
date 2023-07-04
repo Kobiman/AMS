@@ -15,7 +15,7 @@ namespace AMS.Shared
         public Payout()
         {
             Id = Guid.NewGuid().ToString();
-            EntryDate = DateTime.Now;
+            EntryDate = DateTime.Today;
         }
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public decimal Amount { get; set; }
@@ -30,6 +30,8 @@ namespace AMS.Shared
         public string? DestinationAccountId { get; set; }
         public string? Type { get; set; }
         public DateTime EntryDate { get; set; }
-        //public DateTime DrawDate { get; set; }
+        public bool Approved { get; set; } = false;
+        public string StaffId { get; set; } = String.Empty;
+        public string ApprovedBy { get; set; } = String.Empty;
     }
 }

@@ -1,4 +1,7 @@
 ﻿@page "/PayinReport"
+@implements IDisposable
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
 @attribute [Authorize]
 
 <MudText>PAY-IN REPORT</MudText>
@@ -26,12 +29,26 @@
         <MudTh>Agent</MudTh>
         <MudTh>Description</MudTh>
         <MudTh>Paid</MudTh>
+        <MudTh>Action</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>       
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd> 
+        <MudTd DataLabel="">
+        @if (!context.Approved)
+        {
+            if(isAdmin)
+            {
+                 <MudFab @onclick="@(()=>Approve(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+            }
+            else
+            {
+                 <MudFab @onclick="@(()=>Edit(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />       
+            }                                     
+        }                
+        </MudTd>
     </RowTemplate>
      <FooterContent>
         @*<MudTFootRow Class="bold-text">*@
@@ -74,19 +91,21 @@
     public decimal TotalCredit { get; set; }
     public decimal TotalDebit { get; set; }
     public decimal TotalBalance { get; set; }
+    private bool isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayinReport", new AMS.Shared.DateRange());
-        if (response.IsSuccessStatusCode)
-        {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
-
-        }
-        TotalBalance = Elements.Sum(x => x.Amount);
-        TotalNum = Elements.Count();
+        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetRole();
+        await GetRecords();
     }
-
+    private async Task App_StateChanged(ComponentBase Source)
+    {
+        if (Source != this)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
 
     private bool FilterFunc1(PayoutDto element) => FilterFunc(element, searchString1);
 
@@ -106,7 +125,7 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
         {
-           TotalBalance = Elements.Sum(x => x.Amount);   
+            TotalBalance = Elements.Sum(x => x.Amount);   
         }
         if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
@@ -114,7 +133,63 @@
         }
     }
 
+    private async Task Edit(string id)
+    {
+        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
+        if (toEdit != null)
+        {
+            toEdit.Type = "Payin";
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(EditPayin.editPayout), toEdit);
 
+            var editModal = Modal.Show<EditPayin>("Edit Pay-In", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetRecords();
+            }
+        }
+    }
+    private async Task Approve(string id)
+    {
+        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
+        if (toEdit != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(ApprovePayin.editPayout), toEdit);
+
+            var editModal = Modal.Show<ApprovePayin>("Approve Pay-In", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetRecords();
+            }
+        }
+    }
+    private async Task GetRole()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+    }
+    public async Task ReloadAccounts(object source, EventArgs e)
+    {
+        await GetRecords();
+        await App_StateChanged((ComponentBase)source);
+    }
     async Task PeriodChanged()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
@@ -122,9 +197,26 @@
         if (response.IsSuccessStatusCode)
         {
             Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
-            
+
         }
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
+    }
+
+    private async Task GetRecords()
+    {
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayinReport", new AMS.Shared.DateRange());
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+
+        }
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalNum = Elements.Count();
+    }
+
+    void IDisposable.Dispose()
+    {
+        accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
     }
 }
