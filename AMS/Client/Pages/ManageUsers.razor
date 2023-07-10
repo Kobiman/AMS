@@ -11,11 +11,13 @@
         @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
     <HeaderContent>
         <MudTh>Email</MudTh>
+        <MudTh>Staff ID</MudTh>
         <MudTh>Role</MudTh>
         <MudTh>Action</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Email</MudTd>
+         <MudTd DataLabel="StaffID">@context.StaffId</MudTd>
          <MudTd DataLabel="Role">@context.Role</MudTd>
         <MudTd DataLabel="">
             <MudFab @onclick="@(()=>EditRole(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />

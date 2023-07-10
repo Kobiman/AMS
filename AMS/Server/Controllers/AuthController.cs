@@ -23,7 +23,7 @@ namespace AMS.Server.Controllers
         {
             try
             {
-                var response = await _authService.Register(new User { Email = user.Email,Role=user.Role }, user.Password);
+                var response = await _authService.Register(new User { Email = user.Email,Role=user.Role,StaffId=user.StaffId }, user.Password);
                 if (response.IsSucessful)
                 {
                     return Ok(response);

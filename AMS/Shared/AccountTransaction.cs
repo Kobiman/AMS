@@ -26,6 +26,7 @@ namespace AMS.Shared
         [Required]
         public string? AccountId { get; set; }
         public DateTime? TransactionDate { get; set; }
+
        
     }
 }

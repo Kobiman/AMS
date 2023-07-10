@@ -70,7 +70,7 @@
 
     private async Task GetAgents()
     {
-        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
         if (result is not null)
         {
             agents = result;

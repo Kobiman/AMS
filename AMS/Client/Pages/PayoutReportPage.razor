@@ -1,5 +1,7 @@
-﻿@implements IDisposable
-@page "/PayoutReport"
+﻿@page "/PayoutReport"
+@implements IDisposable
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
 @attribute [Authorize]
 
 <MudText>PAY-OUT REPORT</MudText>
@@ -29,12 +31,26 @@
         <MudTh>Agent</MudTh>
         <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
+        <MudTh>Action</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.EntryDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd> 
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
+        <MudTd DataLabel="">
+        @if (!context.Approved)
+        {
+            if(isAdmin)
+            {
+                 <MudFab @onclick="@(()=>Approve(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+            }
+            else
+            {
+                 <MudFab @onclick="@(()=>Edit(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />       
+            }                                     
+        }                
+        </MudTd>
     </RowTemplate>
     <FooterContent>
         @*<MudTFootRow Class="bold-text">*@
@@ -63,6 +79,7 @@
     private HashSet<PayoutDto> selectedItems = new HashSet<PayoutDto>();
     private IEnumerable<PayoutDto> Elements = new List<PayoutDto>();
     private decimal TotalAmount;
+    private bool isAdmin;
     DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
 
@@ -71,6 +88,8 @@
     protected override async Task OnInitializedAsync()
     {
         accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetRole();
+
         await GetPayoutReport();
     }
 
@@ -132,7 +151,58 @@
     {
         accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
     }
+    private async Task Edit(string id)
+    {
+        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
+        if (toEdit != null)
+        {
+            toEdit.Type = "Payout";
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(EditPayin.editPayout), toEdit);
 
+            var editModal = Modal.Show<EditPayin>("Edit Pay-Out", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetPayoutReport();
+            }
+        }
+    }
+    private async Task Approve(string id)
+    {
+        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
+        if (toEdit != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(ApprovePayin.editPayout), toEdit);
+
+            var editModal = Modal.Show<ApprovePayin>("Approve Pay-Out", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetPayoutReport();
+            }
+        }
+    }
+    private async Task GetRole()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+    }
     async Task PeriodChanged()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };

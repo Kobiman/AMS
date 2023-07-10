@@ -1,6 +1,7 @@
-﻿@attribute [Authorize(Roles = "Admin, Sales")]
+﻿@page "/EditPayin"
+@attribute [Authorize(Roles = "Admin, Sales")]
 
-@if (accounts == null)
+@if (agents == null)
 {
     <div>Loading Data...</div>
 }
@@ -9,10 +10,9 @@ else
     <div style="width: 450px;">
         <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
-                       RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
-            @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
-                       RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />*@
+            <MudDatePicker  Date="@model.EntryDate" DateChanged="OnDateChanged"
+                       RequiredError="Entry date is required!"   />
+
 
             <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                 @foreach (var agent in agents)
@@ -36,49 +36,57 @@ else
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    AddPayoutDto model = new AddPayoutDto();
+    Payout model = new Payout();
+    [Parameter]public PayoutDto editPayout { get; set; }
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
     private IEnumerable<Game>? games { get; set; }
+    DateTime? _date = DateTime.Today;
     bool success;
     string[] errors = { };
 
     private async void OnValidSubmit(EditContext context)
     {
-        //model.SourceAccountType = accounts.FirstOrDefault(x => x.AccountId == model.SourceAccountId).Type;
-        //model.DestinationAccountType = accounts.FirstOrDefault(x => x.AccountId == model.DestinationAccountId).Type;
-        model.Type = "Payin";
+        //model.Type = "Payin";
         model.Amount = Math.Abs(model.Amount);
 
-        var response = await Http.PostAsJsonAsync("api/AccountTransaction/Payout", model);
+        var response = await Http.PutAsJsonAsync("api/AccountTransaction/EditPayout", model);
         if (response.IsSuccessStatusCode)
         {
-            model = new AddPayoutDto();
-            var result = await response.Content.ReadFromJsonAsync<AddPayoutDto>();
-            Snackbar.Add("Transaction Saved", Severity.Success);
+            model = new Payout();
+            var result = await response.Content.ReadFromJsonAsync<Result<AccountTransactionDto>>();
+            Snackbar.Add(result.Message, Severity.Success);
             accountEvents.OnAccountAdded(this);
-            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+            await ModalInstance.CloseAsync(ModalResult.Ok(result.Value));
         }
         else
         {
-            model = new AddPayoutDto();
+            model = new Payout();
             Snackbar.Add("Save Transaction Failed", Severity.Error);
         }
     }
-
+    protected override async Task OnParametersSetAsync()
+    {
+        await GetAgents();
+        model = new Payout();
+        model.Id = editPayout.Id;
+        model.Type = editPayout.Type;
+        model.AgentId = editPayout.AgentId;
+        model.Amount = editPayout.Amount;
+        model.Description = editPayout.Description;
+        model.DestinationAccountId = editPayout.DestinationAccountId;
+        model.EntryDate = editPayout.EntryDate;
+        //OnDateChanged();
+        model.SourceAccountId = editPayout.SourceAccountId;
+    }
+    void OnDateChanged(DateTime? newdate)
+    {
+        model.EntryDate = (DateTime)newdate;
+    }
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
-        if (result is not null)
-        {
-            accounts = result;
-        }
-        else
-        {
-            accounts = new List<AccountDto>();
-        }
-        await GetAgents();
+        await GetAccounts();        
         await GetGames();
     }
     private async Task GetAgents()
@@ -91,6 +99,18 @@ else
         else
         {
             agents = new List<Agent>();
+        }
+    }
+    private async Task GetAccounts()
+    {
+         var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
+        if (result is not null)
+        {
+            accounts = result;
+        }
+        else
+        {
+            accounts = new List<AccountDto>();
         }
     }
     private async Task GetGames()

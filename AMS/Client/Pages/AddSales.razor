@@ -99,7 +99,8 @@ else{
 
     private async Task GetAgents()
     {
-        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        var r = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        var result =  r.Where(x => x.Approved);
         if(result is not null)
         {
             agents = result;

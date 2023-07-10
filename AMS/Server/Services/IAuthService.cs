@@ -12,5 +12,7 @@
 
         Task<Result<UserDto>> EditUserRole(int userId, string role);
 
+        string GetStaffID();
+
     }
 }
