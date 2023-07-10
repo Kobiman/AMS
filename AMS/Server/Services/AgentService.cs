@@ -2,6 +2,7 @@
 using AMS.Server.Migrations;
 using AMS.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace AMS.Server.Services
 {
@@ -62,7 +63,9 @@ namespace AMS.Server.Services
                         x.Description,
                         x.EntryDate,
                         x.WinAmount,
-                        x.ReceiptNumber
+                        x.ReceiptNumber,
+                        0,
+                        0
                     )).ToList()
                 })
                 .Select(x => new
@@ -118,12 +121,34 @@ namespace AMS.Server.Services
                     Payin = payinAmount,
                     Payout = payoutAmount,
                     Balance = x.DailySales - x.WinAmount - amount,
-                    Details = x.Details,
+                    Details = TransformDetails(x.Details),
                     Payouts = payout_payin.Where(y => y.AgentId == x.AgentId && y.Type == "Payout").ToList(),
                     Payins = payout_payin.Where(y => y.AgentId == x.AgentId && y.Type == "Payin").ToList()
                 };
             });
             return rr;
+        }
+
+        private List<SalesDetails> TransformDetails(List<SalesDetails> details)
+        {
+            List<SalesDetails> list = details.OrderBy(x=>x.EntryDate).ToList();
+            List<SalesDetails> sales = new();
+            for (int i = 0; i < list.Count; i++)
+            {
+                SalesDetails? s = list[i];
+                if(i == 0)
+                {
+                    SalesDetails s2 = s with { OpeningBalance = 0, EndBalance = s.DailySales - s.WinAmount };
+                    sales.Add(s2);
+                }
+                else
+                {
+                    SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount + sales[i - 1].EndBalance };
+                    sales.Add(s2);
+                }
+                
+            }
+            return sales;
         }
 
         public async Task<Result<Agent>> EditAgent(Agent agent)
