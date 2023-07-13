@@ -30,7 +30,7 @@ namespace AMS.Server.Services
         //}
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
-            var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+            //var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
             var result = await appDbContext.Sales.AddAsync(
                 new Sales { AgentId = sales.AgentId,
                     AccountId = sales.AccountId,
@@ -44,26 +44,26 @@ namespace AMS.Server.Services
                     StaffId = _authService.GetStaffID() }
                 );
 
-            var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
-            await appDbContext.AccountTransactions.AddAsync(
-                new AccountTransaction
-                {
-                    Amount = Increase.Amount,
-                    Credit = Increase.Credit,
-                    Debit = Increase.Debit,
-                    Description = sales.Description,
-                    AccountId = cachAccount?.AccountId
-                });
+            //var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
+            //await appDbContext.AccountTransactions.AddAsync(
+            //    new AccountTransaction
+            //    {
+            //        Amount = Increase.Amount,
+            //        Credit = Increase.Credit,
+            //        Debit = Increase.Debit,
+            //        Description = sales.Description,
+            //        AccountId = cachAccount?.AccountId
+            //    });
 
-            await appDbContext.AccountTransactions.AddAsync(
-                new AccountTransaction
-                {
-                    AccountId = sales.AccountId,
-                    Amount = sales.DailySales,
-                    Credit = sales.DailySales,
-                    Description = sales.Description
-                }
-                );
+            //await appDbContext.AccountTransactions.AddAsync(
+            //    new AccountTransaction
+            //    {
+            //        AccountId = sales.AccountId,
+            //        Amount = sales.DailySales,
+            //        Credit = sales.DailySales,
+            //        Description = sales.Description
+            //    }
+            //    );
             if (await appDbContext.SaveChangesAsync() > 0)
             {
                 return await GetTransactionById(result.Entity.Id); 
@@ -112,6 +112,7 @@ namespace AMS.Server.Services
                                     //AccountId = t.AccountId,
                                     //AccountName = a.AccountName,
                                     AgentId = t.AgentId,
+                                    AccountId = t.AccountId,
                                     AgentName = x == null ? string.Empty : x.Name,
                                     Id = t.Id,
                                     WinAmount = t.WinAmount,
@@ -122,6 +123,7 @@ namespace AMS.Server.Services
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     StaffId = t.StaffId,
+                                    Approved = t.Approved,
                                     GameName = gme == null? string.Empty : gme.Name,
                                 }).OrderBy(x=>x.EntryDate)
                                 .ToListAsync();
@@ -141,10 +143,13 @@ namespace AMS.Server.Services
                 preAmount = result.WinAmount;
                 result.WinAmount = agentTransaction.WinAmount;
                 result.Description = agentTransaction.Description;
-                //result.AccountId = agentTransaction.AccountId;
+                result.AccountId = agentTransaction.AccountId;
                 result.AgentId = agentTransaction.AgentId;
                 result.DailySales = agentTransaction.DailySales;
-                result.EntryDate = agentTransaction.EntryDate;
+                result.EntryDate = DateTime.Today;
+                //result.GameId = agentTransaction.GameId;
+                result.AccountId = agentTransaction.AccountId;
+                result.StaffId = _authService.GetStaffID();
                 //result.TransactionType = "Agent";
 
                 //update account balance
@@ -180,8 +185,47 @@ namespace AMS.Server.Services
             }
             return null;
         }
+        public async Task<SalesDto> ApproveSales(string SalesId)
+        {
+            var sales = await appDbContext.Sales.FirstOrDefaultAsync(x => x.Id == SalesId);
+            if(sales != null)
+            {
+                sales.Approved = true;
+                sales.ApprovedBy = _authService.GetStaffID();
 
-        public async Task<IEnumerable<Sales>> GetTransactionsByAccountId(string accountId)
+                var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+
+                var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        Amount = Increase.Amount,
+                        Credit = Increase.Credit,
+                        Debit = Increase.Debit,
+                        Description = sales.Description,
+                        AccountId = cachAccount?.AccountId
+                    });
+
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = sales.AccountId,
+                        Amount = sales.DailySales,
+                        Credit = sales.DailySales,
+                        Description = sales.Description
+                    }
+                    );
+                if (await appDbContext.SaveChangesAsync() > 0)
+                {
+                    return await GetTransactionById(SalesId);
+                }
+                return null;
+            }
+            return new SalesDto();
+
+        }
+
+            public async Task<IEnumerable<Sales>> GetTransactionsByAccountId(string accountId)
         {
             List<Sales> transactions = await appDbContext.Sales.Where(t => t.AgentId == accountId).ToListAsync();
             return transactions;

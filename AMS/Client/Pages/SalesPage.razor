@@ -1,9 +1,15 @@
 ﻿@page "/Sales"
+@implements IDisposable
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
 @attribute [Authorize(Roles ="Admin, Sales")]
 
 <MudText>SALES</MudText>
-<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
+<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
+@if (!isAdmin)
+{
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
+}
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
@@ -46,8 +52,17 @@
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Description">@context.StaffId</MudTd>
         <MudTd DataLabel="">
-            @*<MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />*@
-            @*@<MudFab @onclick="@(()=>DeleteTransaction(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />*@
+            @if (context.Approved == false)
+                {
+                    @if (isAdmin)
+                    {
+                        <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+                    }
+                    else
+                    {
+                        <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                    }
+                }
         </MudTd>
     </RowTemplate>
     <FooterContent>
@@ -90,6 +105,7 @@
 
     private List<SalesDto>? Elements { get; set; }
     string period = "Today";
+    private bool isAdmin = false;
 
     public int TotalNum { get; set; }
     public decimal DailySales { get; set; }
@@ -97,6 +113,12 @@
     public decimal Wins { get; set; }
 
     protected override async Task OnInitializedAsync()
+    {
+        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetRole();
+        await GetSalesRecords();
+    }
+    private async Task GetSalesRecords()
     {
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", new AMS.Shared.DateRange());
         if (response.IsSuccessStatusCode)
@@ -107,7 +129,19 @@
             TotalNum = Elements.Count;
         }
     }
+    private async Task App_StateChanged(ComponentBase Source)
+    {
+        if (Source != this)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
 
+    public async Task ReloadAccounts(object source, EventArgs e)
+    {
+        await GetSalesRecords();
+        await App_StateChanged((ComponentBase)source);
+    }
 
     private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
 
@@ -150,7 +184,7 @@
             var parameters = new ModalParameters();
             parameters.Add(nameof(EditAgentsTransaction.Transaction), transaction);
 
-            var transactionModal = Modal.Show<EditAgentsTransaction>("Edit Agents Transaction", parameters);
+            var transactionModal = Modal.Show<EditAgentsTransaction>("Edit Sales", parameters);
             var result = await transactionModal.Result;
             if(result.Cancelled)
             {
@@ -158,20 +192,31 @@
             }
             else
             {
-                SalesDto updatedTransaction = (SalesDto)result.Data;
-                var originalTransaction = Elements.FirstOrDefault(t => t.Id == updatedTransaction.Id);
-                if(originalTransaction != null)
-                {
-                    originalTransaction.AccountId = updatedTransaction.AccountId;
-                    originalTransaction.AccountName = updatedTransaction.AccountName;
-                    originalTransaction.AgentId = updatedTransaction.AgentId;
-                    originalTransaction.AgentName = updatedTransaction.AgentName;
-                    originalTransaction.WinAmount = updatedTransaction.WinAmount;
-                    originalTransaction.DailySales = updatedTransaction.DailySales;
-                    originalTransaction.OutstandingBalance = updatedTransaction.OutstandingBalance;
-                    originalTransaction.Description = updatedTransaction.Description;
-                    StateHasChanged();
-                }         
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetSalesRecords();
+                         
+            }
+        }
+    }
+    async Task ApproveTransaction(string TransactionId)
+    {
+        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        if(transaction != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(ApproveSales.Transaction), transaction);
+
+            var transactionModal = Modal.Show<ApproveSales>("Approve Sales Transaction", parameters);
+            var result = await transactionModal.Result;
+            if(result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetSalesRecords();
+                         
             }
         }
     }
@@ -210,9 +255,11 @@
         }
         else
         {
-            Console.WriteLine(result.Data);
-            Elements.Add((SalesDto) result.Data);
-            StateHasChanged();
+            //Console.WriteLine(result.Data);
+            //Elements.Add((SalesDto) result.Data);
+            //StateHasChanged();
+            accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+            await GetSalesRecords();
         }
     }
 
@@ -227,5 +274,19 @@
             Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
         }
+    }
+
+    private async Task GetRole()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+    }
+    void IDisposable.Dispose()
+    {
+        accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
     }
 }

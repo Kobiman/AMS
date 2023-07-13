@@ -29,5 +29,6 @@ namespace AMS.Shared.Dto
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }
         public string StaffId { get; set; } = String.Empty;
+        public bool Approved { get; set; } = false;
     }
 }

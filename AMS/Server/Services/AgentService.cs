@@ -37,6 +37,7 @@ namespace AMS.Server.Services
                 HouseNo = x.HouseNo,
                 Region = x.Region,
                 Approved = x.Approved,
+                
                 Sales = x.Transactions.Sum(x => x.DailySales),
                 AmountPaid = x.Transactions.Sum(x => x.WinAmount),
                 OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.WinAmount)

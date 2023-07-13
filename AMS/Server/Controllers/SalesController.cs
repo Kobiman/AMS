@@ -93,6 +93,19 @@ namespace AMS.Server.Controllers
             }
         }
 
+        [HttpPost("ApproveTransaction")]
+        public async Task<ActionResult<SalesDto>> ApproveTransaction(Sales accountTransaction)
+        {
+            try
+            {
+                return await accTransactionService.ApproveSales(accountTransaction.Id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+        }
+
         [HttpDelete("{Id}")]
         public async Task<ActionResult<SalesDto>> DeleteTransaction(string Id)
         {

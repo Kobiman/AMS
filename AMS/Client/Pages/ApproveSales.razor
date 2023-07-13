@@ -1,4 +1,4 @@
-﻿@page "/EditAgentsTransaction"
+﻿@page "/ApproveSales"
 @inject MudBlazor.ISnackbar Snackbar
 
 @if(accounts == null)
@@ -9,38 +9,38 @@ else{
 <div style="width: 450px;">
     <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
           <DataAnnotationsValidator />
-                <MudSelect T="string" Label=""  @bind-Value="model.AccountId" Text="@Transaction.AccountName"   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                <MudSelect T="string" Label=""  @bind-Value="model.AccountId" Text="@Transaction.AccountName"   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
                     @foreach(var account in accounts)
                     {
                         <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
                     }
                 </MudSelect>
 
-                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId" Text="@Transaction.AgentName"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                 <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId" Text="@Transaction.AgentName"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
                     @foreach(var agent in agents)
                     {
                         <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
                     }
                 </MudSelect>
-                <MudSelect T="string" Label="Select Game"  @bind-Value="model.GameId" Text="@Transaction.GameName"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                <MudSelect T="string" Label="Select Game"  @bind-Value="model.GameId" Text="@Transaction.GameName"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
                     @foreach(var game in games)
                     {
                         <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
                     }
                 </MudSelect>
 
-             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
+             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" ReadOnly
             RequiredError="Description is required!" For="@(() => model.Description)"/>
 
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.WinAmount"
+            <MudNumericField HideSpinButtons="true"  @bind-Value="model.WinAmount" ReadOnly
             Label="Pay-In Amount" Variant="Variant.Text" />
 
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.DailySales"
+            <MudNumericField HideSpinButtons="true"  @bind-Value="model.DailySales" ReadOnly
             Label="Daily Sales" Variant="Variant.Text" />
 
             <ValidationSummary />
      <div style="margin-top:15px"  class="mud-card-actions">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Approve</MudButton>
     </div>
     </EditForm>
 </div>
@@ -59,19 +59,19 @@ else{
     private async void OnValidSubmit(EditContext context)
     {
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-        var response = await Http.PutAsJsonAsync("api/Sales", model);
+        var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
         if(response.IsSuccessStatusCode)
         {
             model = new SalesDto();
             //var result = await response.Content.ReadFromJsonAsync<Result>();
             var result = await response.Content.ReadFromJsonAsync<SalesDto>();
-            Snackbar.Add("Transaction Updated", Severity.Success);
+            Snackbar.Add("Transaction Approved", Severity.Success);
             await ModalInstance.CloseAsync(ModalResult.Ok(result));
         }
         else
         {
             model = new SalesDto();
-            Snackbar.Add("Update Failed", Severity.Error);   
+            Snackbar.Add("Transaction Failed", Severity.Error);   
         }
 
     }
