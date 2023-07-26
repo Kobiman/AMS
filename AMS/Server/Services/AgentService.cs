@@ -26,7 +26,7 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<AgentDto>> GetAgents()
         {
-            var results =  await _context.Agents.Include(x=> x.Transactions).ToListAsync();
+            var results =  await _context.Agents.Include(x=> x.Transactions).Where(x=>x.Approved).ToListAsync();
             return results.Select(x => new AgentDto
             {
                 AgentId = x.AgentId,
@@ -48,7 +48,7 @@ namespace AMS.Server.Services
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
 
-            var sales = await _context.Sales
+            var sales = await _context.Sales.Where(x=>x.Approved)
                 .GroupBy(x => x.AgentId)
                 .Select(x => new
                 {

@@ -1,0 +1,5 @@
+﻿@AMS.Server_HostAddress = https://localhost:7114
+
+GET {{AMS.Server_HostAddress}}/api/agent/GetAgents
+
+###

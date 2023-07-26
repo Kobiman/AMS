@@ -106,6 +106,7 @@ namespace AMS.Server.Services
                                 from gme in _gme.DefaultIfEmpty()
                                 where
                                 t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
+                                &&t.Approved
 
                                 select new SalesDto
                                 {

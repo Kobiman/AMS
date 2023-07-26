@@ -49,11 +49,31 @@
         <Columns>
         <HierarchyColumn T="AgentReportDto" />
         <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Sales"/>
-        <PropertyColumn Property="x => x.Wins"/>
-        <PropertyColumn Property="x => x.Payin"/>
-        <PropertyColumn Property="x => x.Payout"/>
-        <PropertyColumn Property="x => x.Balance"/>
+        <PropertyColumn Property="x => x.Sales">
+            <FooterTemplate>
+              @String.Format("{0:0,0.00}",DailySales)
+            </FooterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Wins">
+           <FooterTemplate>
+              @String.Format("{0:0,0.00}",Wins)
+           </FooterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Payin">
+           <FooterTemplate>
+               @String.Format("{0:0,0.00}",Payin)
+           </FooterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Payout">
+           <FooterTemplate>
+              @String.Format("{0:0,0.00}",Payout)
+           </FooterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Balance">
+           <FooterTemplate>
+               @String.Format("{0:0,0.00}",OutstandingBalance)
+           </FooterTemplate>
+        </PropertyColumn>
     </Columns>
     <ChildRowContent>
         <MudCard>
