@@ -259,7 +259,7 @@ namespace AMS.Server.Services
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                 from gme in _gme.DefaultIfEmpty()
-                                where t.Id == transactionID
+                                where t.Id == transactionID && t.Approved
 
                                 select new SalesDto
                                 {
@@ -286,7 +286,7 @@ namespace AMS.Server.Services
 
         public async Task<Sales> GetTransaction(string transactionID)
         {
-            return await appDbContext.Sales.FirstOrDefaultAsync(t => t.Id == transactionID);
+            return await appDbContext.Sales.FirstOrDefaultAsync(t => t.Id == transactionID && t.Approved);
         }
 
         public async Task<IEnumerable<SalesDto>> GetTransactionsCashInCashOut(string inOut, DateRange period)
