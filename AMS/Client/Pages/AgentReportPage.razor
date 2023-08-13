@@ -77,79 +77,79 @@
         </PropertyColumn>
     </Columns>
     <ChildRowContent>
-        <MudCard>
-            <MudCardContent>
-                    <MudText>Sales</MudText>
-                    <MudTable Items="@context.Item.Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
-                        <HeaderContent>
-                            <MudTh>Date</MudTh>
-                            <MudTh>Opening Balance</MudTh>
-                            <MudTh>Sales</MudTh>
-                            <MudTh>Wins</MudTh>
-                            <MudTh>End Balance</MudTh>
-                        </HeaderContent>
-                        <RowTemplate Context="d">
-                            <MudTd>@d.EntryDate</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",d.OpeningBalance)</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",d.DailySales)</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",d.WinAmount)</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",d.EndBalance)</MudTd>
-                        </RowTemplate>
-                        <FooterContent>
-                            <MudTd></MudTd>
-                            <MudTd></MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales))</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales) - @context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
-                        </FooterContent>
-                        @*      <PagerContent>
-                        <MudTablePager />
-                        </PagerContent>*@
-                    </MudTable>
-            </MudCardContent>
+        <MudGrid>
+            <MudItem xs="6">
+               <MudText>Sales</MudText>
+               <MudTable Items="@context.Item.Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                   <HeaderContent>
+                       <MudTh>Date</MudTh>
+                       <MudTh>Opening Balance</MudTh>
+                       <MudTh>Sales</MudTh>
+                       <MudTh>Wins</MudTh>
+                       <MudTh>End Balance</MudTh>
+                   </HeaderContent>
+                   <RowTemplate Context="d">
+                       <MudTd>@d.EntryDate?.ToShortDateString()</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",d.OpeningBalance)</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",d.DailySales)</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",d.WinAmount)</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",d.EndBalance)</MudTd>
+                   </RowTemplate>
+                   <FooterContent>
+                       <MudTd></MudTd>
+                       <MudTd></MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales))</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales) - @context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
+                   </FooterContent>
+                   @*      <PagerContent>
+                   <MudTablePager />
+                   </PagerContent>*@
+               </MudTable>
+            </MudItem>
 
-            <MudCardContent>
-                    <MudText>Payin</MudText>
-                    <MudTable Items="@context.Item.Payins" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
-                        <HeaderContent>
-                            <MudTh>Date</MudTh>
-                            <MudTh>Payin Amount</MudTh>
-                        </HeaderContent>
-                        <RowTemplate Context="d">
-                            <MudTd>@d.EntryDate</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",d.PayinAmount)</MudTd>
-                        </RowTemplate>
-                        <FooterContent>
-                            <MudTd></MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Payins.Sum(x=>x.PayinAmount))</MudTd>
-                        </FooterContent>
-                        @*            <PagerContent>
-                        <MudTablePager />
-                        </PagerContent>*@
-                    </MudTable>
-            </MudCardContent>
+            <MudItem xs="3">
+                <MudText>Payin</MudText>
+                <MudTable Items="@context.Item.Payins" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                    <HeaderContent>
+                        <MudTh>Date</MudTh>
+                        <MudTh>Payin Amount</MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="d">
+                        <MudTd>@d.EntryDate.ToShortDateString()</MudTd>
+                        <MudTd>@String.Format("{0:0,0.00}",d.PayinAmount)</MudTd>
+                    </RowTemplate>
+                    <FooterContent>
+                        <MudTd></MudTd>
+                        <MudTd>@String.Format("{0:0,0.00}",@context.Item.Payins.Sum(x=>x.PayinAmount))</MudTd>
+                    </FooterContent>
+                    @*            <PagerContent>
+                    <MudTablePager />
+                    </PagerContent>*@
+                </MudTable>
+            </MudItem>
 
-            <MudCardContent>
-                    <MudText>Payout</MudText>
-                    <MudTable Items="@context.Item.Payouts" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
-                        <HeaderContent>
-                            <MudTh>Date</MudTh>
-                            <MudTh>Payout Amount</MudTh>
-                        </HeaderContent>
-                        <RowTemplate Context="d">
-                            <MudTd>@d.EntryDate</MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",d.PayoutAmount)</MudTd>
-                        </RowTemplate>
-                        <FooterContent>
-                            <MudTd></MudTd>
-                            <MudTd>@String.Format("{0:0,0.00}",@context.Item.Payouts.Sum(x=>x.PayoutAmount))</MudTd>
-                        </FooterContent>
-                        @*            <PagerContent>
-                        <MudTablePager />
-                        </PagerContent>*@
-                    </MudTable>
-            </MudCardContent>
-        </MudCard>
+            <MudItem xs="3">
+               <MudText>Payout</MudText>
+               <MudTable Items="@context.Item.Payouts" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                   <HeaderContent>
+                       <MudTh>Date</MudTh>
+                       <MudTh>Payout Amount</MudTh>
+                   </HeaderContent>
+                   <RowTemplate Context="d">
+                       <MudTd>@d.EntryDate.ToShortDateString()</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",d.PayoutAmount)</MudTd>
+                   </RowTemplate>
+                   <FooterContent>
+                       <MudTd></MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",@context.Item.Payouts.Sum(x=>x.PayoutAmount))</MudTd>
+                   </FooterContent>
+                   @*            <PagerContent>
+                   <MudTablePager />
+                   </PagerContent>*@
+               </MudTable>
+            </MudItem>
+        </MudGrid>
     </ChildRowContent>
     <PagerContent>
          <MudDataGridPager T="AgentReportDto" />
