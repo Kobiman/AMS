@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace AMS.Shared.Dto
 {
-    public record SalesDetails(string? AccountId, string? AgentId, string? Name, decimal DailySales, string? Description, DateTime? EntryDate, decimal WinAmount, string? ReceiptNumber, decimal OpeningBalance, decimal EndBalance);
+    public record SalesDetails(string? AccountId, string? AgentId, string? Name, decimal DailySales, string? Description, DateTime? EntryDate, DateTime? DrawDate, decimal WinAmount, string? ReceiptNumber, decimal OpeningBalance, decimal EndBalance);
 }
