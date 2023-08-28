@@ -9,13 +9,19 @@ namespace AMS.Server.Services
     public class AgentService : IAgentService
     {
         private readonly ApplicationDbContext _context;
-        public AgentService(ApplicationDbContext context)
+        private readonly IAuthService _authService;
+
+        public AgentService(ApplicationDbContext context,
+            IAuthService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         public async Task<Shared.IResult> AddAgent(Agent agent)
         {
+            agent.StaffId = _authService.GetStaffID();
+            agent.LocationId = _authService.GetLocationID() == ""? 0: Convert.ToInt16(_authService.GetLocationID());
             var originalAccount = _context.Agents.FirstOrDefault(x => x.Name == agent.Name);
             if (originalAccount != null) return new Result(false, $"Agent with name {agent.Name} already exist.");
             _context.Agents.Add(agent);
@@ -154,6 +160,8 @@ namespace AMS.Server.Services
 
         public async Task<Result<Agent>> EditAgent(Agent agent)
         {
+            agent.StaffId = _authService.GetStaffID();
+            agent.LocationId = Convert.ToInt16(_authService.GetLocationID());
             _context.Agents.UpdateRange(agent);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
@@ -173,7 +181,8 @@ namespace AMS.Server.Services
         public async Task<Result<bool>> ApproveAgent(string id)
         {
             var agent = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == id);
-            agent.Approved= true;
+            agent.Approved = true;
+            agent.ApprovedBy = _authService.GetStaffID();
             if(await _context.SaveChangesAsync() > 0) {
                 return new Result<bool>(true, true, "Record Approved!");
             }

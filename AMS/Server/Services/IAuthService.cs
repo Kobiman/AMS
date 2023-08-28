@@ -10,9 +10,10 @@
         Task<IEnumerable<UserDto>> GetUsers();
         Task<Result<int>> DeleteUser(int userId);
 
-        Task<Result<UserDto>> EditUserRole(int userId, string role);
+        Task<Result<UserDto>> EditUserRole(int userId, string role,int locationId);
 
         string GetStaffID();
+        string GetLocationID();
 
     }
 }

@@ -11,6 +11,8 @@ namespace AMS.Shared.Dto
         public int Id { get; set; }
         public string Email { get; set; }
         public string StaffId { get; set; } = String.Empty;
+
+        public int LocationId { get; set; }
         public string Role { get; set; }
     }
 }

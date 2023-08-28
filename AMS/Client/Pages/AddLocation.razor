@@ -1,0 +1,55 @@
+﻿@using System.Text.RegularExpressions
+@page "/AddLocation"
+@attribute [Authorize(Roles ="Admin")]
+
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+            <MudTextField T="string" Label="Location Name" Required="true" @bind-Value="model.LocationName" 
+            RequiredError="Location Name is required!" For="@(() => model.LocationName)"/>
+
+            <MudTextField T="string" Label="Location Abbreviation" Required="true" @bind-Value="model.LocationABV" 
+            RequiredError="Location Abbreviation is required!" For="@(() => model.LocationABV)"/>
+            
+            
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    bool success;
+    Location model = new Location();
+    string[] errors = { };
+
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PostAsJsonAsync("api/Location",model);
+
+        if (response.IsSuccessStatusCode)
+        {
+            model = new Location();
+            var result = await response.Content.ReadFromJsonAsync<Result<Location>>();
+            if(result.IsSucessful)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Warning);
+            }
+            
+            await ModalInstance.CloseAsync(ModalResult.Ok(result.Value));
+        }
+        else
+        {
+            model = new Location();
+            await ModalInstance.CloseAsync();            
+            Snackbar.Add("Save Transaction Failed", Severity.Error); 
+        }
+        StateHasChanged();
+    }
+}

@@ -13,6 +13,13 @@
         <MudTextField T="string" Label="Staff ID" Required="true" @bind-Value="model.StaffId" 
         RequiredError="Staff is a required field" For="@(() => model.StaffId)" />
 
+        <MudSelect T="int?" Label="Select Location" @bind-Value="model.LocationId"   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                 @foreach(var loc in locations)
+                 {
+                     <MudSelectItem T="int?" Value="@loc.Id">@loc.LocationName (@loc.LocationABV)</MudSelectItem>
+                 }
+        </MudSelect>
+
         <MudTextField T="string" Label="Password" Required="true" @bind-Value="model.Password" 
         RequiredError="Password is a required field" For="@(() => model.Password)" InputType="InputType.Password"/>
 
@@ -26,6 +33,8 @@
               <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
               <MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
           </MudSelect>
+
+          
             
             
      <div style="margin-top:15px"  class="mud-card-actions">
@@ -39,9 +48,14 @@
 
     bool success;
     UserRegister model = new UserRegister();
-   
+    private IList<Location> locations = new List<Location>();
+
     string errors = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLocations();
+    }
 
     private async void OnValidSubmit(EditContext context)
     {
@@ -50,15 +64,28 @@
         var content = await response.Content.ReadFromJsonAsync<Result<int>>();
         if(content.IsSucessful)
         {
-            errors = "";
-            model = new UserRegister();
+            errors = "";            
             Snackbar.Add(content.Message,Severity.Success);
+            model = new UserRegister();
         }
         else
         {
             errors = content.Message;
-            model = new UserRegister();
             Snackbar.Add(errors, Severity.Error);
+            model = new UserRegister();
+        }
+    }
+
+    private async Task LoadLocations()
+    {
+         var result = await Http.GetFromJsonAsync<List<Location>>($"api/Location");
+        if(result is not null)
+        {
+            locations = result;
+        }
+        else
+        {
+            locations = new List<Location>();
         }
     }
 }

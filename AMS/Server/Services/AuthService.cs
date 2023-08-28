@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 //using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,7 +13,9 @@ namespace AMS.Server.Services
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(ApplicationDbContext dbContext, IConfiguration configuration,IHttpContextAccessor httpContextAccessor)
+        public AuthService(ApplicationDbContext dbContext, 
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _configuration = configuration;
@@ -20,6 +23,7 @@ namespace AMS.Server.Services
         }
 
         public string GetStaffID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber);
+        public string GetLocationID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Locality);
 
         public async Task<Result<string>> Login(string email, string password)
         {
@@ -97,7 +101,8 @@ namespace AMS.Server.Services
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim(ClaimTypes.SerialNumber, user.StaffId)
+                new Claim(ClaimTypes.SerialNumber, user.StaffId),
+                new Claim(ClaimTypes.Locality, user.LocationId.ToString())
             };
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -131,7 +136,7 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<UserDto>> GetUsers()
         {
             var users =  _dbContext.Users.ToList();
-            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role,StaffId = x.StaffId });
+            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role,StaffId = x.StaffId,LocationId= Convert.ToInt32(x.LocationId) });
         }
 
         public async Task<Result<int>> DeleteUser(int userId)
@@ -147,18 +152,32 @@ namespace AMS.Server.Services
 
         }
 
-        public async Task<Result<UserDto>> EditUserRole(int userId, string role)
+        public async Task<Result<UserDto>> EditUserRole(int userId, string role,int locationId)
         {
             UserDto userDto = null;
             var user = await _dbContext.Users.FindAsync(userId);
             if (user != null)
             {
                 user.Role = role;
+                user.LocationId = locationId;
                 await _dbContext.SaveChangesAsync();
-                userDto = new UserDto { Id= user.Id,Email=user.Email,Role=user.Role};
+                userDto = new UserDto { Id= user.Id,Email=user.Email,Role=user.Role,LocationId=Convert.ToInt16(user.LocationId)};
                 return new Result<UserDto> { IsSucessful = true, Message = "User Deleted Successfully", Value = userDto };
             }
             return new Result<UserDto> { IsSucessful = false, Message = "Operation Failed!", Value = userDto };
         }
+
+        //public async Task<UserInfo> GetUserInfo()
+        //{
+        //    UserInfo userInfo = new UserInfo();
+        //    int userId = Convert.ToInt16( _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        //    var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        //    if(user != null)
+        //    {
+        //        userInfo.StaffId= user.StaffId;
+        //        userInfo.Location = await _locationService.GetLocationById(Convert.ToInt16(user.LocationId));
+        //    }
+        //    return userInfo;
+        //}
     }
 }
