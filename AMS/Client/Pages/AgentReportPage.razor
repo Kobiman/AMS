@@ -82,7 +82,8 @@
                <MudText>Sales</MudText>
                <MudTable Items="@context.Item.Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
                    <HeaderContent>
-                       <MudTh>Date</MudTh>
+                       <MudTh>Entry Date</MudTh>
+                       <MudTh>Draw Date</MudTh>
                        <MudTh>Opening Balance</MudTh>
                        <MudTh>Sales</MudTh>
                        <MudTh>Wins</MudTh>
@@ -90,6 +91,7 @@
                    </HeaderContent>
                    <RowTemplate Context="d">
                        <MudTd>@d.EntryDate?.ToShortDateString()</MudTd>
+                       <MudTd>@d.DrawDate?.ToShortDateString()</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.OpeningBalance)</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.DailySales)</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.WinAmount)</MudTd>
