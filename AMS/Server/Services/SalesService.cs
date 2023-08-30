@@ -41,6 +41,7 @@ namespace AMS.Server.Services
                     ReceiptNumber = sales.ReceiptNumber,
                     EntryDate = sales.EntryDate,
                     DrawDate = sales.DrawDate,
+                    LocationId =_authService.GetLocationID() == "" ? 0 :Convert.ToInt16(_authService.GetLocationID()),
                     StaffId = _authService.GetStaffID() }
                 );
 
@@ -106,7 +107,7 @@ namespace AMS.Server.Services
                                 from gme in _gme.DefaultIfEmpty()
                                 where
                                 t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
-                                &&t.Approved
+                                //&& t.LocationId == 
 
                                 select new SalesDto
                                 {
@@ -151,6 +152,7 @@ namespace AMS.Server.Services
                 //result.GameId = agentTransaction.GameId;
                 result.AccountId = agentTransaction.AccountId;
                 result.StaffId = _authService.GetStaffID();
+                result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
                 //result.TransactionType = "Agent";
 
                 //update account balance
@@ -226,7 +228,7 @@ namespace AMS.Server.Services
 
         }
 
-            public async Task<IEnumerable<Sales>> GetTransactionsByAccountId(string accountId)
+        public async Task<IEnumerable<Sales>> GetTransactionsByAccountId(string accountId)
         {
             List<Sales> transactions = await appDbContext.Sales.Where(t => t.AgentId == accountId).ToListAsync();
             return transactions;
@@ -259,7 +261,7 @@ namespace AMS.Server.Services
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                 from gme in _gme.DefaultIfEmpty()
-                                where t.Id == transactionID && t.Approved
+                                where t.Id == transactionID 
 
                                 select new SalesDto
                                 {
@@ -286,7 +288,7 @@ namespace AMS.Server.Services
 
         public async Task<Sales> GetTransaction(string transactionID)
         {
-            return await appDbContext.Sales.FirstOrDefaultAsync(t => t.Id == transactionID && t.Approved);
+            return await appDbContext.Sales.FirstOrDefaultAsync(t => t.Id == transactionID);
         }
 
         public async Task<IEnumerable<SalesDto>> GetTransactionsCashInCashOut(string inOut, DateRange period)

@@ -1,0 +1,61 @@
+﻿@using System.Security.Claims
+@inject AuthenticationStateProvider AuthStateProvider
+
+@if(location != null)
+{
+    <div class="">
+        <AuthorizeView>
+            <Authorized>
+                <h4>
+                    Location: @location.LocationName
+                </h4>
+            </Authorized>
+           
+        </AuthorizeView>
+        
+    </div>
+}
+
+    
+
+
+@code {
+    Location location = new Location();
+    protected async override Task OnInitializedAsync()
+    {
+        var authstate = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            string strLoc = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value;
+            if(strLoc != "")
+            {
+                int locId = Convert.ToInt16(strLoc);
+                var result = await Http.GetFromJsonAsync<Location>($"api/Location/{locId}");
+                if(result != null)
+                {
+                    location = result;
+                }
+            }
+            else
+            {
+                
+            }           
+        }
+    }
+
+    //private async Task<string> GetLocation()
+    //{
+
+    //    string strLoc = (await AuthStateProvider.GetAuthenticationStateAsync())
+    //    .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value;
+    //    int loc = Convert.ToInt16(strLoc);
+
+    //    var result = await Http.GetFromJsonAsync<Location>($"api/Location/GetLocationById/{loc}");
+    //    if(result != null)
+    //    {
+    //        location = result;
+    //    }
+    //    return location.LocationName;
+    //}
+}

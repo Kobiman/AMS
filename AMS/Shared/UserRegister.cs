@@ -17,6 +17,7 @@ namespace AMS.Shared
         public string ConfirmPassword { get; set; } = string.Empty;
         [Required]
         public string Role { get; set; }
+        public int? LocationId { get; set; } = null;
 
         [Required]
         public string StaffId { get; set; }

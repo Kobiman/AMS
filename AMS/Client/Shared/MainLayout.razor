@@ -7,6 +7,12 @@
 <MudLayout>
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+       @* <MudSpacer />*@
+        <AuthorizeView>
+            <Authorized>
+                <LocationInfo />
+            </Authorized>
+        </AuthorizeView>
         <MudSpacer />
        @* <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />*@
        <UserButton />

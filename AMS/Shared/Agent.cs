@@ -22,7 +22,10 @@ namespace AMS.Shared
         public string? HouseNo { get; set; }
         public string? Region { get; set; }
         public string? Phone { get; set; }
-        public bool Approved { get; set; }
+        public string StaffId { get; set; } = String.Empty;
+        public bool Approved { get; set; } = false;
+        public string ApprovedBy { get; set; } = String.Empty;
+        public int LocationId { get; set; }
         public IList<Sales> Transactions { get; set; }
     }
 }

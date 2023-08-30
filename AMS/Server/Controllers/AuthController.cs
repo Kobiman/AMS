@@ -23,7 +23,7 @@ namespace AMS.Server.Controllers
         {
             try
             {
-                var response = await _authService.Register(new User { Email = user.Email,Role=user.Role,StaffId=user.StaffId }, user.Password);
+                var response = await _authService.Register(new User { Email = user.Email,Role=user.Role,StaffId=user.StaffId,LocationId=user.LocationId }, user.Password);
                 if (response.IsSucessful)
                 {
                     return Ok(response);
@@ -81,7 +81,7 @@ namespace AMS.Server.Controllers
         {
             try
             {
-                return await _authService.EditUserRole(user.Id, user.Role);
+                return await _authService.EditUserRole(user.Id, user.Role,user.LocationId);
             }
             catch (Exception)
             {

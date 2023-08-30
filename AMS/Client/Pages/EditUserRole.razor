@@ -10,6 +10,13 @@
              <MudTextField T="string" Required="true" @bind-Value="model.Email" 
             RequiredError="Description is required!" For="@(() => model.Email)" ReadOnly="true" Variant="Variant.Filled"/>
 
+        <MudSelect T="int" Label="Select Location" @bind-Value="model.LocationId"   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                 @foreach(var loc in locations)
+                 {
+                     <MudSelectItem T="int" Value="@loc.Id">@loc.LocationName (@loc.LocationABV)</MudSelectItem>
+                 }
+        </MudSelect>
+
             <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
                 Variant="Variant.Outlined">
               <MudSelectItem T="string" Value="@("Account")">Account</MudSelectItem>
@@ -17,6 +24,7 @@
               <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
               <MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
             </MudSelect>
+
 
             <ValidationSummary />
      <div style="margin-top:15px"  class="mud-card-actions">
@@ -28,6 +36,7 @@
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public UserDto User { get; set; }
+    private IList<Location> locations = new List<Location>();
     UserDto model = new UserDto();
 
     bool success;
@@ -52,10 +61,24 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadLocations();
         model = new UserDto();
         model.Id = User.Id;
         model.Email = User.Email;
         model.Role = User.Role;
         model.StaffId = User.StaffId;
+        model.LocationId = User.LocationId;
+    }
+    private async Task LoadLocations()
+    {
+         var result = await Http.GetFromJsonAsync<List<Location>>($"api/Location");
+        if(result is not null)
+        {
+            locations = result;
+        }
+        else
+        {
+            locations = new List<Location>();
+        }
     }
 }
