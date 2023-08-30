@@ -16,7 +16,7 @@
                 <MudSelectItem Value="@("")">All</MudSelectItem>
                 @foreach (var game in games)
                 {
-                    <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
                 }
             </MudSelect>
         </ToolBarContent>
@@ -95,6 +95,8 @@
         if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         if (element.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.GameName.Equals(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;

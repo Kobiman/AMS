@@ -49,6 +49,7 @@ namespace AMS.Server.Services
             period.GetDates(out DateTime startDate, out DateTime endDate);
 
             var sales = await _context.Sales.Where(x => x.Approved)
+                .OrderBy(x=>x.EntryDate)
                 .GroupBy(x => x.AgentId)
                 .Select(x => new
                 {
