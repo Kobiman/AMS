@@ -1,8 +1,11 @@
 ﻿using AMS.Client.Pages;
+using AMS.Server.Extensions;
 using AMS.Server.Migrations;
 using AMS.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace AMS.Server.Services
 {
@@ -53,38 +56,35 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
+            var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
 
-            var sales = await _context.Sales.Where(x => x.Approved)
-                .OrderBy(x=>x.EntryDate)
-                .GroupBy(x => x.AgentId)
-                .Select(x => new
-                {
-                    AgentId = x.Key,
-                    DailySales = x.Sum(x => x.DailySales),
-                    WinAmount = x.Sum(x => x.WinAmount),
-                    Details = x.Select(x =>  new SalesDetails
-                    (
-                        x.AccountId,
-                        x.AgentId,
-                        "",
-                        x.DailySales,
-                        x.Description,
-                        x.EntryDate,
-                        x.DrawDate,
-                        x.WinAmount,
-                        x.ReceiptNumber,
-                        0,
-                        0
-                    )).ToList()
-                })
-                .Select(x => new
-                {
-                    x.AgentId,
-                    x.WinAmount,
-                    x.DailySales,
-                    x.Details
-                }).ToListAsync();
-            var payout_payin = await _context.Payouts.Select(x=>new
+            var sales = await _context.Sales.Where(x => x.Approved && x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).OrderBy(x=>x.EntryDate).Select(x => new
+            {
+                x.AccountId,
+                x.AgentId,
+                x.DailySales,
+                x.Description,
+                x.EntryDate,
+                x.DrawDate,
+                x.WinAmount,
+                x.GameId,
+                x.ReceiptNumber
+            })
+            .Select(x => new SalesDto2
+            (
+                x.AccountId,
+                x.AgentId,
+                x.DailySales,
+                x.Description,
+                x.EntryDate,
+                x.DrawDate,
+                x.WinAmount,
+                x.GameId,
+                x.ReceiptNumber
+            ))
+            .ToListAsync();
+
+            var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Where(x => x.Approved && x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).Select(x => new
             {
                 x.AgentId,
                 x.GameId,
@@ -103,61 +103,9 @@ namespace AMS.Server.Services
                 x.Amount,
                 x.Type,
                 x.EntryDate
-            ))
-            .ToListAsync();
-            var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
-            //var games = await _context.Games.Select(x => new { x.Name, x.Id }).ToDictionaryAsync(x => x.Id, x => x.Name);
-            var rr = sales.Select(x =>
-            {
-                var payinAmount = payout_payin
-                .Where(y => y.AgentId == x.AgentId)
-                .Sum(y => y.PayinAmount);
-                var payoutAmount = payout_payin
-                .Where(y => y.AgentId == x.AgentId)
-                .Sum(y => y.PayoutAmount);
-                var amount = payout_payin
-                .Where(y => y.AgentId == x.AgentId)
-                .Sum(y => y.Amount);
-                return new AgentReportDto
-                {
-                    //EntryDate = x.EntryDate,
-                    //DrawDate = x.DrawDate,
-                    AgentId = x.AgentId,
-                    Name = agents.TryGetValue(x.AgentId, out string? agent) ? agent : "",
-                    Sales = x.DailySales,
-                    //Game = games.TryGetValue(x.GameId, out string? game) ? game : "",
-                    Wins = x.WinAmount,
-                    Payin = payinAmount,
-                    Payout = payoutAmount,
-                    Balance = x.DailySales - x.WinAmount - amount,
-                    Details = TransformDetails(x.Details),
-                    Payouts = payout_payin.Where(y => y.AgentId == x.AgentId && y.Type == "Payout").ToList(),
-                    Payins = payout_payin.Where(y => y.AgentId == x.AgentId && y.Type == "Payin").ToList()
-                };
-            });
-            return rr;
-        }
+            )).ToListAsync();
 
-        private List<SalesDetails> TransformDetails(List<SalesDetails> details)
-        {
-            List<SalesDetails> list = details.OrderBy(x=>x.EntryDate).ToList();
-            List<SalesDetails> sales = new();
-            for (int i = 0; i < list.Count; i++)
-            {
-                SalesDetails? s = list[i];
-                if(i == 0)
-                {
-                    SalesDetails s2 = s with { OpeningBalance = 0, EndBalance = s.DailySales - s.WinAmount };
-                    sales.Add(s2);
-                }
-                else
-                {
-                    SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount + sales[i - 1].EndBalance };
-                    sales.Add(s2);
-                }
-                
-            }
-            return sales;
+            return sales.GetAgentReport(agents, payout_payin);
         }
 
         public async Task<Result<Agent>> EditAgent(Agent agent)

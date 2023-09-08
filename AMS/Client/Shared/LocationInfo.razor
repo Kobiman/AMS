@@ -7,7 +7,7 @@
         <AuthorizeView>
             <Authorized>
                 <h4>
-                    Location: @location.LocationName
+                    Location: @location?.LocationName
                 </h4>
             </Authorized>
            
@@ -27,8 +27,8 @@
         var user = authstate.User;
         if (user.Identity.IsAuthenticated)
         {
-            string strLoc = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value;
-            if(strLoc != "")
+            string strLoc = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality)?.Value;
+            if(!string.IsNullOrWhiteSpace(strLoc))
             {
                 int locId = Convert.ToInt16(strLoc);
                 var result = await Http.GetFromJsonAsync<Location>($"api/Location/{locId}");
