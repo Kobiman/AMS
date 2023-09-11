@@ -181,7 +181,8 @@ namespace AMS.Server.Services
                     //GameId = addPayoutDto.GameId,
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
-                    StaffId = _authService.GetStaffID()
+                    StaffId = _authService.GetStaffID(),
+                    SalesId = addPayoutDto.SalesId
                     //DrawDate = addPayoutDto.DrawDate.Value
                 });
                 await appDbContext.SaveChangesAsync();

@@ -13,6 +13,7 @@ namespace AMS.Shared.Dto
                decimal PayoutAmount,
                decimal Amount,
                string Type,
+               string SalesId,
                DateTime EntryDate
         );
 }

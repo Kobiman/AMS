@@ -1,29 +1,29 @@
-﻿namespace AMS.Server.Extensions
+﻿using AMS.Shared;
+
+namespace AMS.Server.Extensions
 {
     public static class AgentServiceExtensions
     {
         public static IEnumerable<Sales_Payin_Payout> JoinPayInPayOut(this List<SalesDto2> sales, List<PayinPayout> payout_payin)
         {
-            var list = payout_payin.ToList();
+            var list = payout_payin.GroupBy(x=>x.SalesId).ToDictionary(x=>x.Key,x=>x.ToList());
             foreach (var s in sales)
             {
-                var p = list.FirstOrDefault(x=>x.AgentId == s.AgentId);
-                if (p != null)
+                if(list.TryGetValue(s.Id, out List<PayinPayout> p))
                 {
                     yield return new Sales_Payin_Payout
-                    (
-                        s.AccountId,
-                        s.AgentId,
-                        s.DailySales,
-                        s.Description,
-                        s.EntryDate,
-                        s.DrawDate,
-                        s.WinAmount,
-                        s.ReceiptNumber,
-                        p.PayinAmount,
-                        p.PayoutAmount
-                    );
-                    list.Remove(p);
+                        (
+                            s.AccountId,
+                            s.AgentId,
+                            s.DailySales,
+                            s.Description,
+                            s.EntryDate,
+                            s.DrawDate,
+                            s.WinAmount,
+                            s.ReceiptNumber,
+                            p.Sum(x=>x.PayinAmount),
+                            p.Sum(x => x.PayoutAmount)
+                        );
                 }
                 else
                 {

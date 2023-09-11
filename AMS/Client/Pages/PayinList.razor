@@ -6,7 +6,7 @@
 
 <MudText>PAY-IN REPORT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
-<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayin>("Cash Pay-In"))">Payin</MudButton>
+@* <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayin>("Cash Pay-In"))">Payin</MudButton> *@
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent> 

@@ -14,12 +14,14 @@ else
             @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
                        RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />*@
 
-            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            @* <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                 @foreach (var agent in agents)
                 {
                     <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
                 }
-            </MudSelect>
+            </MudSelect> *@
+
+            <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true"/>
 
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
@@ -37,6 +39,11 @@ else
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     AddPayoutDto model = new AddPayoutDto();
+
+
+    [Parameter] public string? SalesId { get; set; }
+    [Parameter] public string? AgentId { get; set; }
+    [Parameter] public string? AgentName { get; set; }
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -78,8 +85,11 @@ else
         {
             accounts = new List<AccountDto>();
         }
-        await GetAgents();
+        //await GetAgents();
         await GetGames();
+
+        model.AgentId = AgentId;
+        model.SalesId = SalesId;
     }
     private async Task GetAgents()
     {

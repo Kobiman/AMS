@@ -68,7 +68,8 @@ namespace AMS.Server.Services
                 x.DrawDate,
                 x.WinAmount,
                 x.GameId,
-                x.ReceiptNumber
+                x.ReceiptNumber,
+                x.Id
             })
             .Select(x => new SalesDto2
             (
@@ -80,7 +81,8 @@ namespace AMS.Server.Services
                 x.DrawDate,
                 x.WinAmount,
                 x.GameId,
-                x.ReceiptNumber
+                x.ReceiptNumber,
+                x.Id
             ))
             .ToListAsync();
 
@@ -92,6 +94,7 @@ namespace AMS.Server.Services
                 x.PayoutAmount,
                 x.Amount,
                 x.Type,
+                x.SalesId,
                 x.EntryDate
             })
             .Select(x => new PayinPayout
@@ -102,6 +105,7 @@ namespace AMS.Server.Services
                 x.PayoutAmount,
                 x.Amount,
                 x.Type,
+                x.SalesId,
                 x.EntryDate
             )).ToListAsync();
 

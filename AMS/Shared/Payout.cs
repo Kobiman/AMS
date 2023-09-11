@@ -24,6 +24,7 @@ namespace AMS.Shared
         public string? Description { get; set; }
         public string? AgentId { get; set; }
         public string? GameId { get; set; }
+        public string? SalesId { get; set; }
 
         //[Required]
         public string? SourceAccountId { get; set; }

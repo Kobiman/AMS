@@ -38,9 +38,9 @@
         <MudTh>Game</MudTh>
         <MudTh>Sales</MudTh>
         <MudTh>Wins</MudTh>
-        @*<MudTh>Outstanding Balance</MudTh>*@
         <MudTh>Description</MudTh>
         <MudTh>Staff ID</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
@@ -49,7 +49,6 @@
         <MudTd DataLabel="Game">@context.GameName</MudTd>
         <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
-        @*<MudTd DataLabel="Sales">@String.Format("{0:0,0.00}",context.OutstandingBalance)</MudTd>*@
         <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Description">@context.StaffId</MudTd>
         <MudTd DataLabel="">
@@ -65,9 +64,27 @@
                     }
                 }
         </MudTd>
+        <MudTd DataLabel="">
+                @if (!isAdmin)
+                {
+                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
+                        var parameters = new ModalParameters();
+                        parameters.Add("SalesId",@context.Id);
+                        parameters.Add("AgentId",@context.AgentId);
+                        parameters.Add("AgentName",context.AgentName);
+                        Modal.Show<AddPayin>("Cash Pay-In",parameters);
+                            })">Payin</MudButton>
+                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Tertiary" @onclick="@(() => {
+                        var parameters = new ModalParameters();
+                        parameters.Add("SalesId",@context.Id);
+                        parameters.Add("AgentId",@context.AgentId);
+                        parameters.Add("AgentName",context.AgentName);
+                        Modal.Show<AddPayout>("Cash Pay-Out",parameters);
+                            })">Payout</MudButton>
+                }
+        </MudTd>
     </RowTemplate>
     <FooterContent>
-        @*<MudTFootRow Class="bold-text">*@
           <MudTd>&nbsp</MudTd>
           <MudTd>&nbsp</MudTd>
           <MudTd>&nbsp</MudTd>
@@ -75,8 +92,6 @@
           <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
           <MudTd>@String.Format("{0:0,0.00}",Wins)</MudTd>
           <MudTd>&nbsp</MudTd>
-          @*<MudTd>@String.Format("{0:0,0.00}",OutstandingBalance)</MudTd>*@
-        @*</MudTFootRow>*@
     </FooterContent>
     <PagerContent>
         <MudTablePager />
