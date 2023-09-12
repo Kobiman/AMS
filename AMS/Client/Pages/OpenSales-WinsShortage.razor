@@ -1,0 +1,153 @@
+﻿@page "/OpenSales-Wins-Shortage"
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+@attribute [Authorize(Roles = "Admin, Sales")]
+
+<h3>Open Sales / Wins Shortages</h3>
+
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
+
+@*         <MudSpacer />
+        <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                   SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("")">All</MudSelectItem>
+            @foreach (var game in games)
+            {
+                <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
+            }
+        </MudSelect> *@
+
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Entry Date</MudTh>
+        <MudTh>Draw Date</MudTh>
+        <MudTh>Agent</MudTh>
+        <MudTh>Game</MudTh>
+        <MudTh>Sales</MudTh>
+        <MudTh>Wins</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Staff ID</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
+        <MudTd DataLabel="Agent">@context.AgentName</MudTd>
+        <MudTd DataLabel="Game">@context.GameName</MudTd>
+        <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="Description">@context.StaffId</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTd>&nbsp</MudTd>
+        <MudTd>&nbsp</MudTd>
+        <MudTd>&nbsp</MudTd>
+        <MudTd>&nbsp</MudTd>
+        <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
+        <MudTd>@String.Format("{0:0,0.00}",Wins)</MudTd>
+        <MudTd>&nbsp</MudTd>
+    </FooterContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private SalesDto selectedItem1 = null;
+    DateTime? start = DateTime.Today;
+    DateTime? end = DateTime.Today;
+    private IEnumerable<Game>? games { get; set; }
+
+    private IList<SalesDto>? Elements { get; set; }
+    string period = "Today";
+    private bool isAdmin = false;
+
+    public int TotalNum { get; set; }
+    public decimal DailySales { get; set; }
+    public decimal OutstandingBalance { get; set; }
+    public decimal Wins { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetRole();
+        await GetSalesRecords();
+        await GetGames();
+    }
+    private async Task GetSalesRecords()
+    {
+
+        var result = await Http.GetFromJsonAsync<List<SalesDto>?>("api/Sales/GetOpenSalesWinsStortage");
+        if (result is not null)
+        {
+            Elements = result;
+            DailySales = Elements.Sum(x => x.DailySales);
+            Wins = Elements.Sum(x => x.WinAmount);
+            TotalNum = Elements.Count;
+        }
+    }
+
+    private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(SalesDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.GameName.Equals(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private void CalculateSummuries(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            DailySales = Elements.Sum(x => x.DailySales);
+            Wins = Elements.Sum(x => x.WinAmount);
+        }
+        if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
+        }
+        if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
+        }
+    }
+
+    private async Task GetGames()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+        if (result is not null)
+        {
+            games = result;
+        }
+        else
+        {
+            games = new List<Game>();
+        }
+    }
+
+    private async Task GetRole()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+    }
+
+}

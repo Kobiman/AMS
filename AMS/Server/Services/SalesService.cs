@@ -3,6 +3,7 @@ using AMS.Shared;
 using AMS.Shared.Dto;
 using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 //using System.Data.Entity;
 
 namespace AMS.Server.Services
@@ -132,7 +133,41 @@ namespace AMS.Server.Services
             return result;
         }
 
-    
+        public async Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage()
+        {
+            var bfAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
+            var result = await(from t in appDbContext.Sales
+                                   //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                               join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
+                               from x in gj.DefaultIfEmpty()
+                               join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
+                               from gme in _gme.DefaultIfEmpty()
+                               where
+                               t.AccountId == bfAccount.AccountId
+
+                               select new SalesDto
+                               {
+                                   //AccountId = t.AccountId,
+                                   //AccountName = a.AccountName,
+                                   AgentId = t.AgentId,
+                                   AccountId = t.AccountId,
+                                   AgentName = x == null ? string.Empty : x.Name,
+                                   Id = t.Id,
+                                   WinAmount = t.WinAmount,
+                                   DailySales = t.DailySales,
+                                   OutstandingBalance = t.DailySales - t.WinAmount,
+                                   Description = t.Description,
+                                   EntryDate = t.EntryDate,
+                                   DrawDate = t.DrawDate,
+                                   GameId = t.GameId,
+                                   StaffId = t.StaffId,
+                                   Approved = t.Approved,
+                                   GameName = gme == null ? string.Empty : gme.Name,
+                               }).OrderBy(x => x.EntryDate)
+                                .ToListAsync();
+            return result;
+        }
+
 
         public async Task<SalesDto> UpdateAgentsTrasaction(Sales agentTransaction)
         {

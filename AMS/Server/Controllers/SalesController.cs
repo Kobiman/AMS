@@ -28,6 +28,19 @@ namespace AMS.Server.Controllers
             }
         }
 
+        [HttpGet("GetOpenSalesWinsStortage")]
+        public async Task<IActionResult> GetOpenSalesWinsStortage()
+        {
+            try
+            {
+                return Ok(await accTransactionService.GetOpenSalesWinsStortage());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
+            }
+        }
+
         [HttpPost("{inOut}")]
         public async Task<IActionResult> GetTransactionsCashInOut([FromQuery]string inOut, DateRange period)
         {
