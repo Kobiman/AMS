@@ -73,12 +73,12 @@ namespace AMS.Server.Extensions
                 SalesDetails? s = list[i];
                 if (i == 0)
                 {
-                    SalesDetails s2 = s with { OpeningBalance = 0, EndBalance = s.DailySales - s.WinAmount };
+                    SalesDetails s2 = s with { OpeningBalance = 0, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount - s.PayoutAmount };
                     sales.Add(s2);
                 }
                 else
                 {
-                    SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount + sales[i - 1].EndBalance };
+                    SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount - s.PayoutAmount + sales[i - 1].EndBalance };
                     sales.Add(s2);
                 }
 
