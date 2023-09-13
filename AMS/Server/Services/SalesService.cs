@@ -99,6 +99,7 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<SalesDto>> GetAgentsTransaction(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
+            var bfAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
 
             var result = await (from t in appDbContext.Sales
                                 //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
@@ -108,7 +109,7 @@ namespace AMS.Server.Services
                                 from gme in _gme.DefaultIfEmpty()
                                 where
                                 t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
-                                //&& t.LocationId == 
+                                && t.AccountId != bfAccount.AccountId
 
                                 select new SalesDto
                                 {
