@@ -52,9 +52,9 @@
                        <MudTh>Opening Balance</MudTh>
                        <MudTh>Sales</MudTh>
                        <MudTh>Wins</MudTh>
-                       <MudTh>End Balance</MudTh>
                        <MudTh>Payin</MudTh>
                        <MudTh>Payout</MudTh>
+                       <MudTh>End Balance</MudTh>
                    </HeaderContent>
                    <RowTemplate Context="d">
                        <MudTd>@d.EntryDate?.ToShortDateString()</MudTd>
@@ -62,9 +62,9 @@
                        <MudTd>@String.Format("{0:0,0.00}",d.OpeningBalance)</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.DailySales)</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.WinAmount)</MudTd>
-                       <MudTd>@String.Format("{0:0,0.00}",d.EndBalance)</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.PayinAmount)</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",d.PayoutAmount)</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}",d.EndBalance)</MudTd>
                    </RowTemplate>
                    <FooterContent>
                        <MudTd></MudTd>
