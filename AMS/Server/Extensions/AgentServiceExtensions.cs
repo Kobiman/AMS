@@ -66,21 +66,16 @@ namespace AMS.Server.Extensions
 
         public static List<SalesDetails> TransformDetails(this List<SalesDetails> details)
         {
-            List<SalesDetails> list = details.OrderBy(x => x.EntryDate).ToList();
             List<SalesDetails> sales = new();
-            for (int i = 0; i < list.Count; i++)
+            List<SalesDetails> list = details.OrderBy(x => x.EntryDate).ToList();
+            SalesDetails s1 = list[0] with { OpeningBalance = list[0].DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = list[0].DailySales };
+            sales.Add(s1);
+            
+            for (int i = 1; i < list.Count; i++)
             {
                 SalesDetails? s = list[i];
-                if (i == 0)
-                {
-                    SalesDetails s2 = s with { OpeningBalance = 0, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount - s.PayoutAmount };
-                    sales.Add(s2);
-                }
-                else
-                {
-                    SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount - s.PayoutAmount + sales[i - 1].EndBalance };
-                    sales.Add(s2);
-                }
+                SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount - s.PayoutAmount + sales[i - 1].EndBalance };
+                sales.Add(s2);
 
             }
             return sales;
