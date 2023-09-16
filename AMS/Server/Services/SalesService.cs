@@ -136,15 +136,13 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage()
         {
-            var bfAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
+            //var bfAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
             var result = await(from t in appDbContext.Sales
                                    //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                from x in gj.DefaultIfEmpty()
                                join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                from gme in _gme.DefaultIfEmpty()
-                               where
-                               t.AccountId == bfAccount.AccountId
 
                                select new SalesDto
                                {
