@@ -3,7 +3,7 @@
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin, Sales")]
 
-<h3>Open Sales / Wins Shortages</h3>
+<h3>Open Win Balance / Sales Shortages</h3>
 
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
@@ -24,8 +24,8 @@
         <MudTh>Draw Date</MudTh>
         <MudTh>Agent</MudTh>
         <MudTh>Game</MudTh>
-        <MudTh>Sales</MudTh>
-        <MudTh>Wins</MudTh>
+        <MudTh>Opening Sales Shortages</MudTh>
+        <MudTh>Opening Wins Balance</MudTh>
         <MudTh>Description</MudTh>
         <MudTh>Staff ID</MudTh>
     </HeaderContent>

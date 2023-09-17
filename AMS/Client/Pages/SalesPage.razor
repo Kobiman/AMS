@@ -12,25 +12,36 @@
 }
     <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
-    <ToolBarContent>
-        
-        <MudSpacer />
-        @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
-        <MudSpacer />
-        <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-        <MudSpacer />
-        <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-        <MudSpacer />
-        <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                   SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-            <MudSelectItem Value="@("")">All</MudSelectItem>
-            @foreach (var game in games)
-            {
-                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
-            }
-        </MudSelect>
+        <ToolBarContent>
 
-    </ToolBarContent>
+            <MudSpacer />
+            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudSpacer />
+            <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            <MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
+                {
+                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+
+
+
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (var game in games)
+                {
+                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+        </ToolBarContent>
     <HeaderContent>
         <MudTh>Entry Date</MudTh>
         <MudTh>Draw Date</MudTh>
