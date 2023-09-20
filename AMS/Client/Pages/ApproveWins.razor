@@ -1,0 +1,133 @@
+﻿@page "/ApproveWins"
+@inject MudBlazor.ISnackbar Snackbar
+
+@if (accounts == null)
+{
+    <div>Loading Data...</div>
+}
+else
+{
+    <div style="width: 450px;">
+        <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudSelect T="string" Label="" @bind-Value="model.AccountId" Text="@Transaction.AccountName" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
+                @foreach (var account in accounts)
+                {
+                    <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" Text="@Transaction.AgentName" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
+                @foreach (var agent in agents)
+                {
+                    <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" Text="@Transaction.GameName" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
+                @foreach (var game in games)
+                {
+                    <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" ReadOnly
+                          RequiredError="Description is required!" For="@(() => model.Description)" />
+
+            <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount" ReadOnly
+                             Label="Pay-In Amount" Variant="Variant.Text" />
+
+            <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales" ReadOnly
+                             Label="Daily Sales" Variant="Variant.Text" />
+
+            <ValidationSummary />
+            <div style="margin-top:15px" class="mud-card-actions">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Approve</MudButton>
+            </div>
+        </EditForm>
+    </div>
+}
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public SalesDto Transaction { get; set; }
+    SalesDto model = new SalesDto();
+
+    private IEnumerable<AccountDto> accounts { get; set; }
+    private IEnumerable<Agent> agents { get; set; } = new List<Agent>();
+    private IEnumerable<Game>? games { get; set; }
+    bool success;
+    string[] errors = { };
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
+        var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
+        if (response.IsSuccessStatusCode)
+        {
+            model = new SalesDto();
+            //var result = await response.Content.ReadFromJsonAsync<Result>();
+            var result = await response.Content.ReadFromJsonAsync<SalesDto>();
+            Snackbar.Add("Transaction Approved", Severity.Success);
+            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+        }
+        else
+        {
+            model = new SalesDto();
+            Snackbar.Add("Transaction Failed", Severity.Error);
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAccounts();
+        await GetAgents();
+        await GetGames();
+        model = new SalesDto();
+        model.Id = Transaction.Id;
+        model.AccountId = Transaction.AccountId;
+        model.EntryDate = Transaction.EntryDate;
+        model.AgentId = Transaction.AgentId;
+        model.GameId = Transaction.GameId;
+        model.WinAmount = Transaction.WinAmount;
+        model.DailySales = Transaction.DailySales;
+        model.Description = Transaction.Description;
+
+    }
+
+    async Task LoadAccounts()
+    {
+        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
+        if (result is not null)
+        {
+            accounts = result;
+        }
+        else
+        {
+            accounts = new List<AccountDto>();
+        }
+    }
+    private async Task GetAgents()
+    {
+        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
+        if (result is not null)
+        {
+            agents = result;
+        }
+        else
+        {
+            agents = new List<Agent>();
+        }
+    }
+    private async Task GetGames()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+        if (result is not null)
+        {
+            games = result;
+        }
+        else
+        {
+            games = new List<Game>();
+        }
+    }
+}

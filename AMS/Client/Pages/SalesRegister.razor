@@ -1,0 +1,132 @@
+﻿@page "/SalesRegister"
+
+
+@attribute [Authorize(Roles = "Admin, Sales")]
+
+
+<div style="width: 450px;">
+    <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date" />
+        <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date" />
+        <MudSelect T="string" Label="Select Account" @bind-Value="model.AccountId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            @foreach (var account in accounts)
+            {
+                <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            @foreach (var agent in agents)
+            {
+                <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            @foreach (var game in games)
+            {
+                <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
+                      RequiredError="Description is required!" For="@(() => model.Description)" />
+
+        <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="model.Description"
+                      RequiredError="Description is required!" For="@(() => model.Description)" />
+
+        <MudTextField T="string" Label="Number of Books" Required="true" @bind-Value="model.Description"
+                      RequiredError="Description is required!" For="@(() => model.Description)" />
+
+        <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
+                         Label="Daily Sales" Variant="Variant.Text" />
+
+        <MudTextField T="string" Label="Entered By" Required="true" @bind-Value="model.Description"
+                      RequiredError="Description is required!" For="@(() => model.Description)" />
+
+
+
+
+
+        <ValidationSummary />
+        <div style="margin-top:15px" class="mud-card-actions">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    SalesDto model = new SalesDto();
+
+    private IEnumerable<AccountDto> accounts { get; set; }
+    private IEnumerable<Agent> agents = new List<Agent>();
+    private IEnumerable<Game>? games { get; set; }
+    bool success;
+    string[] errors = { };
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
+        //model.TransactionType = "Agent";
+        var response = await Http.PostAsJsonAsync("api/Sales/AddTransaction", model);
+
+        if (response.IsSuccessStatusCode)
+        {
+            model = new SalesDto();
+            //var result = await response.Content.ReadFromJsonAsync<Result>();
+            var result = await response.Content.ReadFromJsonAsync<SalesDto>();
+            Snackbar.Add("Transaction Saved", Severity.Success);
+            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+        }
+        else
+        {
+            model = new SalesDto();
+            Snackbar.Add("Save Transaction Failed", Severity.Error);
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
+        if (result is not null)
+        {
+            accounts = result.Where(x => x.Type == AccountTypes.Revenue);
+        }
+        else
+        {
+            accounts = new List<AccountDto>();
+        }
+        await GetAgents();
+        await GetGames();
+    }
+
+    private async Task GetAgents()
+    {
+        var r = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        var result = r.Where(x => x.Approved);
+        if (result is not null)
+        {
+            agents = result;
+        }
+        else
+        {
+            agents = new List<Agent>();
+        }
+    }
+    private async Task GetGames()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+        if (result is not null)
+        {
+            games = result;
+        }
+        else
+        {
+            games = new List<Game>();
+        }
+    }
+}
+
