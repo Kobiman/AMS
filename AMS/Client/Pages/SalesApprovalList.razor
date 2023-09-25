@@ -1,4 +1,4 @@
-﻿@page "/SalesReport"
+﻿@page "/SalesApprovalList"
 
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
@@ -6,11 +6,8 @@
 @attribute [Authorize(Roles = "Admin, Sales")]
 
 <MudText>SALES</MudText>
-<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-@if (!isAdmin)
-{
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
-}
+@*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
+
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
@@ -22,7 +19,7 @@
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
-            <MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+            @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
                        SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
                 <MudSelectItem Value="@("")">All</MudSelectItem>
                 @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
@@ -40,7 +37,7 @@
                 {
                     <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
                 }
-            </MudSelect>
+            </MudSelect>*@
 
         </ToolBarContent>
         <HeaderContent>
@@ -51,9 +48,9 @@
             <MudTh>Area of Operations</MudTh>
             <MudTh>Number of Books</MudTh>
             <MudTh>Sales</MudTh>
-            <MudTh>Entered By</MudTh>
-            <MudTh>Approved By</MudTh>
+            <MudTh>Entered By</MudTh>            
             <MudTh>Description</MudTh>
+            <MudTh>Approve</MudTh>
           
             <MudTh></MudTh>
         </HeaderContent>
@@ -62,18 +59,18 @@
             <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Area of Operations">&nbsp</MudTd>
-            <MudTd DataLabel="Number of Books">&nbsp</MudTd>
+            <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
+            <MudTd DataLabel="Number of Books">&nbsp;</MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
-            <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
-            <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
+            <MudTd DataLabel="Entered By">@context.StaffId</MudTd>            
             <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
 
 
 
 
         </RowTemplate>
-        <FooterContent>
+       @* <FooterContent>
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
@@ -81,7 +78,7 @@
             <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
        
             <MudTd>&nbsp</MudTd>
-        </FooterContent>
+        </FooterContent>*@
         <PagerContent>
             <MudTablePager />
         </PagerContent>
@@ -105,18 +102,16 @@
     private bool bordered = false;
     private string searchString1 = "";
     private SalesDto selectedItem1 = null;
-    DateTime? start = DateTime.Today;
+    DateTime? start = DateTime.Today.AddMonths(-12);
     DateTime? end = DateTime.Today;
     private IEnumerable<Game>? games { get; set; }
 
     private List<SalesDto>? Elements { get; set; }
-    string period = "Today";
+    string period = "This Week";
     private bool isAdmin = false;
 
     public int TotalNum { get; set; }
-    public decimal DailySales { get; set; }
-    public decimal OutstandingBalance { get; set; }
-    public decimal Wins { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,12 +122,15 @@
     }
     private async Task GetSalesRecords()
     {
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", new AMS.Shared.DateRange());
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
-            DailySales = Elements.Sum(x => x.DailySales);
-            Wins = Elements.Sum(x => x.WinAmount);
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            if(results != null)
+            {
+                Elements = results.Where(x => x.Approved == false).ToList();
+            }
             TotalNum = Elements.Count;
         }
     }
@@ -166,24 +164,24 @@
         return false;
     }
 
-    private void CalculateSummuries(string searchString)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-        {
-            DailySales = Elements.Sum(x => x.DailySales);
-            Wins = Elements.Sum(x => x.WinAmount);
-        }
-        if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
-        {
-            DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
-            Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
-        }
-        if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
-        {
-            DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
-            Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
-        }
-    }
+    //private void CalculateSummuries(string searchString)
+    //{
+    //    if (string.IsNullOrWhiteSpace(searchString))
+    //    {
+    //        DailySales = Elements.Sum(x => x.DailySales);
+    //        Wins = Elements.Sum(x => x.WinAmount);
+    //    }
+    //    if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
+    //    {
+    //        DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+    //        Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
+    //    }
+    //    if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
+    //    {
+    //        DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+    //        Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
+    //    }
+    //}
 
     private async Task GetGames()
     {
@@ -267,23 +265,23 @@
         }
     }
 
-    async Task ShowModal()
-    {
-        var transactionModal = Modal.Show<AddSales>("Add Sales/Wins");
-        var result = await transactionModal.Result;
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-        }
-        else
-        {
-            //Console.WriteLine(result.Data);
-            //Elements.Add((SalesDto) result.Data);
-            //StateHasChanged();
-            accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
-            await GetSalesRecords();
-        }
-    }
+    //async Task ShowModal()
+    //{
+    //    var transactionModal = Modal.Show<AddSales>("Add Sales/Wins");
+    //    var result = await transactionModal.Result;
+    //    if (result.Cancelled)
+    //    {
+    //        Console.WriteLine("Modal was cancelled");
+    //    }
+    //    else
+    //    {
+    //        //Console.WriteLine(result.Data);
+    //        //Elements.Add((SalesDto) result.Data);
+    //        //StateHasChanged();
+    //        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+    //        await GetSalesRecords();
+    //    }
+    //}
 
     async Task PeriodChanged()
     {
@@ -292,8 +290,6 @@
         if (response.IsSuccessStatusCode)
         {
             Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
-            DailySales = Elements.Sum(x => x.DailySales);
-            Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
         }
     }

@@ -30,5 +30,6 @@ namespace AMS.Shared.Dto
         public decimal OutstandingBalance { get; set; }
         public string StaffId { get; set; } = String.Empty;
         public bool Approved { get; set; } = false;
+        public string ApprovedBy { get; set; } = string.Empty;
     }
 }

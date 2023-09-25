@@ -1,4 +1,4 @@
-﻿@page "/PayinReport"
+﻿@page "/PayInApprovalList"
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
@@ -11,7 +11,7 @@
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent> 
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"  IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudSpacer />
         <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
         <MudSpacer />
@@ -32,9 +32,8 @@
         <MudTh>Cheque No.</MudTh>
         <MudTh>Amount</MudTh>
         <MudTh>Entered By</MudTh>
-        <MudTh>Approved By</MudTh>
         <MudTh>Description</MudTh>
-
+        <MudTh>Approve</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
@@ -42,23 +41,23 @@
         <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
         <MudTd DataLabel="Payment Type">&nbsp;</MudTd>
         <MudTd DataLabel="Cheque No.">&nbsp;</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
+        <MudTd DataLabel="Amount">@context.Amount</MudTd>
         <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
-        <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
-        <MudTd DataLabel="Description"></MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="Approve">
 
-
+        <MudFab @onclick="@(()=>Approve(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+               
+        </MudTd>
     </RowTemplate>
-     <FooterContent>
+     @*<FooterContent>
         <MudTFootRow Class="bold-text">
-          <MudTd></MudTd>
-          <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
         </MudTFootRow>
-    </FooterContent>
+    </FooterContent>*@
     <PagerContent>
         <MudTablePager />
     </PagerContent>
@@ -82,7 +81,7 @@
     private bool bordered = false;
     private string searchString1 = "";
     private PayoutDto selectedItem1 = null;
-    DateTime? start = DateTime.Today;
+    DateTime? start = DateTime.Today.AddYears(-1);
     DateTime? end = DateTime.Today;
 
     private IEnumerable<PayoutDto> Elements = new List<PayoutDto>();
@@ -122,40 +121,7 @@
         return false;
     }
 
-    private void CalculateSummuries(string searchString)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-        {
-            TotalBalance = Elements.Sum(x => x.Amount);   
-        }
-        if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
-        {
-            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
-        }
-    }
-
-    private async Task Edit(string id)
-    {
-        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
-        if (toEdit != null)
-        {
-            toEdit.Type = "Payin";
-            var parameters = new ModalParameters();
-            parameters.Add(nameof(EditPayin.editPayout), toEdit);
-
-            var editModal = Modal.Show<EditPayin>("Edit Pay-In", parameters);
-            var result = await editModal.Result;
-            if (result.Cancelled)
-            {
-                Console.WriteLine("Modal was cancelled");
-            }
-            else
-            {
-                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
-                await GetRecords();
-            }
-        }
-    }
+  
     private async Task Approve(string id)
     {
         var toEdit = Elements.FirstOrDefault(x => x.Id == id);
@@ -200,19 +166,24 @@
             Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
 
         }
-        TotalBalance = Elements.Sum(x => x.Amount);
+        //TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
     }
 
     private async Task GetRecords()
     {
-        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayinReport", new AMS.Shared.DateRange());
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayinReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            if(results != null)
+            {
+                Elements = results.Where(x => x.Approved == false);
+            }
 
         }
-        TotalBalance = Elements.Sum(x => x.Amount);
+        //TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
     }
 

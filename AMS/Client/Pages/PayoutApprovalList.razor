@@ -1,4 +1,4 @@
-﻿@page "/PayoutReport"
+﻿@page "/PayoutApprovalList"
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
@@ -13,7 +13,7 @@
     <ToolBarContent>
         
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
          <MudSpacer />
          <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
          <MudSpacer />
@@ -26,41 +26,38 @@
             <MudSelectItem Value="@("All")" />
         </MudSelect>*@
     </ToolBarContent>
-        <HeaderContent>
+    <HeaderContent>
         <MudTh>Date</MudTh>
         <MudTh>Agent</MudTh>
-        <MudTh>Area of Operations</MudTh>
+         <MudTh>Area of Operations</MudTh>
         <MudTh>Payment Type</MudTh>
         <MudTh>Cheque No.</MudTh>
-        <MudTh>Amount</MudTh>
-        <MudTh>Entered By</MudTh>
-        <MudTh>Approved By</MudTh>
         <MudTh>Description</MudTh>
-
+        <MudTh>Amount</MudTh>
+        <MudTh>Approve</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
-        <MudTd DataLabel="Agent">@context.Agent</MudTd>
+        <MudTd DataLabel="CreatedOn">@context.EntryDate</MudTd>
+        <MudTd DataLabel="Agent">@context.Agent</MudTd> 
         <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
         <MudTd DataLabel="Payment Type">&nbsp;</MudTd>
         <MudTd DataLabel="Cheque No.">&nbsp;</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
-        <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
-        <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
-        <MudTd DataLabel="Description"></MudTd>
+        <MudTd DataLabel="Approve">
 
-
+        <MudFab @onclick="@(()=>Approve(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />       
+         
+        </MudTd>
     </RowTemplate>
-    <FooterContent>
-        @*<MudTFootRow Class="bold-text">*@
-          <MudTd></MudTd>
-          <MudTd></MudTd>
+    @*<FooterContent>
+        <MudTFootRow Class="bold-text">
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd></MudTd>
           <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalAmount)</MudTd>
-        @*</MudTFootRow>*@
-    </FooterContent>
+        @*</MudTFootRow>
+    </FooterContent>*@
     <PagerContent>
         <MudTablePager />
     </PagerContent>
@@ -81,7 +78,7 @@
     private IEnumerable<PayoutDto> Elements = new List<PayoutDto>();
     private decimal TotalAmount;
     private bool isAdmin;
-    DateTime? start = DateTime.Today;
+    DateTime? start = DateTime.Today.AddYears(-1);
     DateTime? end = DateTime.Today;
 
     string period = "Today";
@@ -96,11 +93,16 @@
 
     private async Task GetPayoutReport()
     {
-        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayoutReport", new AMS.Shared.DateRange());
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayoutReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
-            TotalAmount = Elements.Sum(x => x.Amount);
+            var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            if(results != null)
+            {
+                Elements = results.Where(x => x.Approved == false).ToList();
+                TotalAmount = Elements.Sum(x => x.Amount);
+            }           
         }
     }
 
@@ -132,48 +134,27 @@
         return false;
     }
 
-    private void CalculateSummuries(string searchString)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-        {
-           TotalAmount = Elements.Sum(x => x.Amount);   
-        }
-        if (Elements.Select(x=>x.SourceAccount.ToUpper()).Contains(searchString.ToUpper()))
-        {
-            TotalAmount = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
-        }
-        if (Elements.Select(x=>x.DestinationAccount.ToUpper()).Contains(searchString.ToUpper()))
-        {
-            TotalAmount = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
-        }
-    }
+    //private void CalculateSummuries(string searchString)
+    //{
+    //    if (string.IsNullOrWhiteSpace(searchString))
+    //    {
+    //       TotalAmount = Elements.Sum(x => x.Amount);   
+    //    }
+    //    if (Elements.Select(x=>x.SourceAccount.ToUpper()).Contains(searchString.ToUpper()))
+    //    {
+    //        TotalAmount = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+    //    }
+    //    if (Elements.Select(x=>x.DestinationAccount.ToUpper()).Contains(searchString.ToUpper()))
+    //    {
+    //        TotalAmount = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+    //    }
+    //}
 
     void IDisposable.Dispose()
     {
         accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
     }
-    private async Task Edit(string id)
-    {
-        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
-        if (toEdit != null)
-        {
-            toEdit.Type = "Payout";
-            var parameters = new ModalParameters();
-            parameters.Add(nameof(EditPayin.editPayout), toEdit);
 
-            var editModal = Modal.Show<EditPayin>("Edit Pay-Out", parameters);
-            var result = await editModal.Result;
-            if (result.Cancelled)
-            {
-                Console.WriteLine("Modal was cancelled");
-            }
-            else
-            {
-                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
-                await GetPayoutReport();
-            }
-        }
-    }
     private async Task Approve(string id)
     {
         var toEdit = Elements.FirstOrDefault(x => x.Id == id);

@@ -125,7 +125,8 @@ namespace AMS.Server.Services
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     StaffId = t.StaffId,
-                                    Approved = t.Approved,
+                                    Approved = t.Approved == null ? false : t.Approved,
+                                    ApprovedBy = t.ApprovedBy,
                                     GameName = gme == null? string.Empty : gme.Name,
                                 }).OrderBy(x=>x.EntryDate)
                                 .ToListAsync();

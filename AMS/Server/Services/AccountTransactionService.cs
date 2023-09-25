@@ -263,6 +263,8 @@ namespace AMS.Server.Services
                                     AgentId = p.AgentId,
                                     Approved = p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
+                                    StaffId = p.StaffId,
+                                    ApprovedBy = p.ApprovedBy
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();
@@ -287,8 +289,10 @@ namespace AMS.Server.Services
                                     //DrawDate = p.DrawDate,
                                     Description = p.Description,
                                     AgentId = p.AgentId,
-                                    Approved = p.Approved,
+                                    Approved = p.Approved == null? false: p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
+                                    StaffId = p.StaffId,
+                                    ApprovedBy = p.ApprovedBy
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();

@@ -23,5 +23,6 @@ namespace AMS.Shared.Dto
         public DateTime EntryDate { get; set; }
         public bool Approved { get; set; } = false;
         public string StaffId { get; set; } = String.Empty;
+        public string ApprovedBy { get; set; } = String.Empty;
     }
 }
