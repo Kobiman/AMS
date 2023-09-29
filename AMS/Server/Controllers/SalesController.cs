@@ -1,12 +1,14 @@
 ﻿using AMS.Server.Services;
 using AMS.Shared;
 using AMS.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AMS.Server.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
+    [Authorize]
     public class SalesController : ControllerBase
     {
         private readonly ISalesService accTransactionService;
