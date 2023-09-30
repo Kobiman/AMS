@@ -40,8 +40,8 @@ else
         <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
 
-        <MudTextField T="string" Label="Number of Books" Required="true" @bind-Value="model.Description"
-                      RequiredError="Description is required!" For="@(() => model.Description)" />
+        <MudNumericField T="int" Label="Number of Books" Required="true" @bind-Value="model.NumberOfBooks"
+                          RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" />
 
         <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
                          Label="Daily Sales" Variant="Variant.Text" />
@@ -84,7 +84,8 @@ else
             //var result = await response.Content.ReadFromJsonAsync<Result>();
             var result = await response.Content.ReadFromJsonAsync<SalesDto>();
             Snackbar.Add("Transaction Saved", Severity.Success);
-            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+            model = new SalesDto();
+            //await ModalInstance.CloseAsync(ModalResult.Ok(result));
         }
         else
         {

@@ -26,6 +26,7 @@ namespace AMS.Shared.Dto
         public DateTime? DrawDate { get; set; }
         [Required]
         public decimal DailySales { get; set; }
+        public int NumberOfBooks { get; set; }
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }
         public string StaffId { get; set; } = String.Empty;

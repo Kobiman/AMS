@@ -50,7 +50,7 @@
             <MudTh>Sales</MudTh>
             <MudTh>Entered By</MudTh>            
             <MudTh>Description</MudTh>
-            <MudTh>Approve</MudTh>
+            @* <MudTh>Approve</MudTh> *@
           
             <MudTh></MudTh>
         </HeaderContent>
@@ -64,8 +64,17 @@
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="Entered By">@context.StaffId</MudTd>            
             <MudTd DataLabel="Description">@context.Description</MudTd>
-            <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
-
+            @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
+            <MudTd DataLabel="">
+                @if (!isAdmin)
+                {
+                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
+                        var parameters = new ModalParameters();
+                        parameters.Add("model",@context);
+                        Modal.Show<WinsRegister>("Wins Register",parameters);
+                            })">Add Win Amount</MudButton>
+                }
+            </MudTd>
 
 
 

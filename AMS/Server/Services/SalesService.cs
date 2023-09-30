@@ -31,7 +31,6 @@ namespace AMS.Server.Services
         //}
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
-            //var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
             var result = await appDbContext.Sales.AddAsync(
                 new Sales { AgentId = sales.AgentId,
                     AccountId = sales.AccountId,
@@ -42,30 +41,11 @@ namespace AMS.Server.Services
                     ReceiptNumber = sales.ReceiptNumber,
                     EntryDate = sales.EntryDate,
                     DrawDate = sales.DrawDate,
+                    NumberOfBooks = sales.NumberOfBooks,
                     LocationId =_authService.GetLocationID() == "" ? 0 :Convert.ToInt16(_authService.GetLocationID()),
                     StaffId = _authService.GetStaffID() }
                 );
 
-            //var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
-            //await appDbContext.AccountTransactions.AddAsync(
-            //    new AccountTransaction
-            //    {
-            //        Amount = Increase.Amount,
-            //        Credit = Increase.Credit,
-            //        Debit = Increase.Debit,
-            //        Description = sales.Description,
-            //        AccountId = cachAccount?.AccountId
-            //    });
-
-            //await appDbContext.AccountTransactions.AddAsync(
-            //    new AccountTransaction
-            //    {
-            //        AccountId = sales.AccountId,
-            //        Amount = sales.DailySales,
-            //        Credit = sales.DailySales,
-            //        Description = sales.Description
-            //    }
-            //    );
             if (await appDbContext.SaveChangesAsync() > 0)
             {
                 return await GetTransactionById(result.Entity.Id); 
@@ -176,7 +156,6 @@ namespace AMS.Server.Services
             var result = await appDbContext.Sales.FirstOrDefaultAsync(i => i.Id == agentTransaction.Id);
             if (result != null)
             {
-                //preAccountId = result.AccountId;
                 preAmount = result.WinAmount;
                 result.WinAmount = agentTransaction.WinAmount;
                 result.Description = agentTransaction.Description;
@@ -188,35 +167,7 @@ namespace AMS.Server.Services
                 result.AccountId = agentTransaction.AccountId;
                 result.StaffId = _authService.GetStaffID();
                 result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
-                //result.TransactionType = "Agent";
 
-                //update account balance
-                //if (preAccountId  == agentTransaction.AccountId)
-                //{
-                //    var accToUpdate = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountId == result.AccountId);
-                //    if (accToUpdate != null)
-                //    {
-                //        accToUpdate.Balance -= preAmount;
-                //        await appDbContext.SaveChangesAsync();
-                //        accToUpdate.Balance += result.PayInAmount;
-                //        await appDbContext.SaveChangesAsync();
-                //    }
-                //}
-                //else
-                //{
-                //    var accToUpdate1 = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountId == result.AccountId);
-                //    if (accToUpdate1 != null)
-                //    {
-                //        accToUpdate1.Balance += result.PayInAmount;
-                //        await appDbContext.SaveChangesAsync();
-                //    }
-                //    var accToUpdate2 = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountId == preAccountId);
-                //    if (accToUpdate2 != null)
-                //    {
-                //        accToUpdate2.Balance -= preAmount;
-                //        await appDbContext.SaveChangesAsync();
-                //    }
-                //}
 
                 await appDbContext.SaveChangesAsync();
                 return await GetTransactionById(result.Id);

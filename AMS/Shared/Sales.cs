@@ -34,5 +34,6 @@ namespace AMS.Shared
         public string ApprovedBy { get; set; } = String.Empty;
 
         public int? LocationId { get; set; }
+        public int NumberOfBooks { get; set; }
     }
 }

@@ -65,12 +65,13 @@ else
             var result = await response.Content.ReadFromJsonAsync<AddPayoutDto>();
             Snackbar.Add("Transaction Saved", Severity.Success);
             accountEvents.OnAccountAdded(this);
-            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+            StateHasChanged();
         }
         else
         {
             model = new AddPayoutDto();
             Snackbar.Add("Save Transaction Failed", Severity.Error);
+            StateHasChanged();
         }
     }
 
