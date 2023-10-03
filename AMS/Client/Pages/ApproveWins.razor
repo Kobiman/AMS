@@ -1,61 +1,116 @@
 ﻿@page "/ApproveWins"
 @inject MudBlazor.ISnackbar Snackbar
 
-@if (accounts == null)
-{
-    <div>Loading Data...</div>
-}
-else
-{
-    <div style="width: 450px;">
-        <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
-            <DataAnnotationsValidator />
-            <MudSelect T="string" Label="" @bind-Value="model.AccountId" Text="@Transaction.AccountName" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
-                @foreach (var account in accounts)
-                {
-                    <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
-                }
-            </MudSelect>
+<MudText>WINS</MudText>
+@*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
-            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" Text="@Transaction.AgentName" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
-                @foreach (var agent in agents)
+<div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+        <ToolBarContent>
+
+            <MudSpacer />
+            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudSpacer />
+            <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
                 {
-                    <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
                 }
             </MudSelect>
-            <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" Text="@Transaction.GameName" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" ReadOnly>
+            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+
+
+
+                <MudSelectItem Value="@("")">All</MudSelectItem>
                 @foreach (var game in games)
                 {
-                    <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
                 }
-            </MudSelect>
+            </MudSelect>*@
 
-            <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" ReadOnly
-                          RequiredError="Description is required!" For="@(() => model.Description)" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Entry Date</MudTh>
+            <MudTh>Draw Date</MudTh>
+            <MudTh>Agent</MudTh>
+            <MudTh>Game</MudTh>
+            <MudTh>Area of Operations</MudTh>
+            <MudTh>No. of Books</MudTh>
+            <MudTh>Win Amount</MudTh>
+            <MudTh>Entered By</MudTh>            
+            <MudTh>Description</MudTh>
+            @* <MudTh>Approve</MudTh> *@
+          
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+            <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
+            <MudTd DataLabel="Agent">@context.AgentName</MudTd>
+            <MudTd DataLabel="Game">@context.GameName</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.LocationName</MudTd>
+            <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
+            <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
+            <MudTd DataLabel="Entered By">@context.StaffId</MudTd>            
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
+            <MudTd DataLabel="">
+                @if (isAdmin)
+                {
+                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
+                        var parameters = new ModalParameters();
+                        parameters.Add("model",@context);
+                        Modal.Show<WinsRegister>("Wins Register",parameters);
+                            })">Add Win Amount</MudButton>
+                }
+            </MudTd>
 
-            <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount" ReadOnly
-                             Label="Pay-In Amount" Variant="Variant.Text" />
 
-            <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales" ReadOnly
-                             Label="Daily Sales" Variant="Variant.Text" />
 
-            <ValidationSummary />
-            <div style="margin-top:15px" class="mud-card-actions">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Approve</MudButton>
-            </div>
-        </EditForm>
-    </div>
-}
+        </RowTemplate>
+       @* <FooterContent>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
+       
+            <MudTd>&nbsp</MudTd>
+        </FooterContent>*@
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</div>
+
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public SalesDto Transaction { get; set; }
     SalesDto model = new SalesDto();
 
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private SalesDto selectedItem1 = null;
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents { get; set; } = new List<Agent>();
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
+    DateTime? start = DateTime.Today.AddMonths(-12);
+    DateTime? end = DateTime.Today;
+    private List<SalesDto>? Elements { get; set; }
+    private bool isAdmin = false;
+    public int TotalNum { get; set; }
 
     private async void OnValidSubmit(EditContext context)
     {
@@ -82,16 +137,43 @@ else
         await LoadAccounts();
         await GetAgents();
         await GetGames();
-        model = new SalesDto();
-        model.Id = Transaction.Id;
-        model.AccountId = Transaction.AccountId;
-        model.EntryDate = Transaction.EntryDate;
-        model.AgentId = Transaction.AgentId;
-        model.GameId = Transaction.GameId;
-        model.WinAmount = Transaction.WinAmount;
-        model.DailySales = Transaction.DailySales;
-        model.Description = Transaction.Description;
+        await GetSalesRecords();
+        // model = new SalesDto();
+        // model.Id = Transaction.Id;
+        // model.AccountId = Transaction.AccountId;
+        // model.EntryDate = Transaction.EntryDate;
+        // model.AgentId = Transaction.AgentId;
+        // model.GameId = Transaction.GameId;
+        // model.WinAmount = Transaction.WinAmount;
+        // model.DailySales = Transaction.DailySales;
+        // model.Description = Transaction.Description;
 
+    }
+
+    private async Task GetSalesRecords()
+    {
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        if (response.IsSuccessStatusCode)
+        {
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            if (results != null)
+            {
+                Elements = results.Where(x => x.Approved == false).ToList();
+            }
+            TotalNum = Elements.Count;
+        }
+    }
+
+    async Task PeriodChanged()
+    {
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            TotalNum = Elements.Count;
+        }
     }
 
     async Task LoadAccounts()
@@ -129,5 +211,21 @@ else
         {
             games = new List<Game>();
         }
+    }
+
+    private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(SalesDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.GameName.Equals(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
     }
 }

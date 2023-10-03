@@ -79,9 +79,10 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<SalesDto>> GetAgentsTransaction(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
+            var locations = await appDbContext.Locations.ToDictionaryAsync(x => x.Id, x => x);
 
             var result = await (from t in appDbContext.Sales
-                                //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                    //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
@@ -107,11 +108,14 @@ namespace AMS.Server.Services
                                     StaffId = t.StaffId,
                                     Approved = t.Approved == null ? false : t.Approved,
                                     ApprovedBy = t.ApprovedBy,
-                                    GameName = gme == null? string.Empty : gme.Name,
-                                }).OrderBy(x=>x.EntryDate)
+                                    GameName = gme == null ? string.Empty : gme.Name,
+                                    NumberOfBooks = t.NumberOfBooks,
+                                    LocationName = GetLocation(locations, t)
+                                }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
                                 .ToListAsync();
             return result;
         }
+        
 
         public async Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage()
         {
@@ -294,6 +298,11 @@ namespace AMS.Server.Services
                 accToUpdate.Balance += amount;
                 await appDbContext.SaveChangesAsync();
             }
+        }
+
+        private static string GetLocation(Dictionary<int, Location> locations, Sales t)
+        {
+            return locations.TryGetValue(t.LocationId.Value, out Location location) ? location.LocationName : "";
         }
     }
 }

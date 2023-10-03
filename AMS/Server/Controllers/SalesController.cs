@@ -92,7 +92,7 @@ namespace AMS.Server.Controllers
             
         }
 
-        [HttpPut]
+        [HttpPut("EditTransaction")]
         public async Task<ActionResult<SalesDto>> EditTransaction(Sales accountTransaction)
         {
             try

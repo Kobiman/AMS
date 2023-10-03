@@ -46,7 +46,7 @@
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Area of Operations</MudTh>
-            <MudTh>Number of Books</MudTh>
+            <MudTh>No. of Books</MudTh>
             <MudTh>Sales</MudTh>
             <MudTh>Entered By</MudTh>            
             <MudTh>Description</MudTh>
@@ -59,14 +59,14 @@
             <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
-            <MudTd DataLabel="Number of Books">&nbsp;</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.LocationName</MudTd>
+            <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="Entered By">@context.StaffId</MudTd>            
             <MudTd DataLabel="Description">@context.Description</MudTd>
             @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
             <MudTd DataLabel="">
-                @if (!isAdmin)
+                @if (isAdmin)
                 {
                     <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
                         var parameters = new ModalParameters();

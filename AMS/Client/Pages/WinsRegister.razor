@@ -59,7 +59,7 @@
     {
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
         //model.TransactionType = "Agent";
-        var response = await Http.PostAsJsonAsync("api/Sales/AddTransaction", model);
+        var response = await Http.PutAsJsonAsync("api/Sales/EditTransaction", model);
 
         if (response.IsSuccessStatusCode)
         {
