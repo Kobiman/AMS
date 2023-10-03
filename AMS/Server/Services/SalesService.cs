@@ -110,7 +110,7 @@ namespace AMS.Server.Services
                                     ApprovedBy = t.ApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
-                                    LocationName = GetLocation(locations, t)
+                                    //LocationName = GetLocation(locations, t)
                                 }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
                                 .ToListAsync();
             return result;
@@ -298,11 +298,6 @@ namespace AMS.Server.Services
                 accToUpdate.Balance += amount;
                 await appDbContext.SaveChangesAsync();
             }
-        }
-
-        private static string GetLocation(Dictionary<int, Location> locations, Sales t)
-        {
-            return locations.TryGetValue(t.LocationId.Value, out Location location) ? location.LocationName : "";
         }
     }
 }

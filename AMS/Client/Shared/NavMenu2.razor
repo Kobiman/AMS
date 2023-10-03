@@ -24,14 +24,19 @@
 
                 <MudNavGroup Title="Sales" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
                     <MudNavLink Href="/SalesRegister" Icon="@Icons.Filled.AlignVerticalBottom">Sales Register</MudNavLink>
-                    <MudNavLink Href="/SalesApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Sales</MudNavLink>
+                    @*<MudNavLink Href="/SalesApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Sales</MudNavLink>*@
                     <MudNavLink Href="/SalesReport" Icon="@Icons.Filled.AssuredWorkload">Sales Report</MudNavLink>
 
                 </MudNavGroup>
                 <MudNavGroup Title="Wins" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/WinsRegister" Icon="@Icons.Filled.AlignVerticalBottom">Wins Register</MudNavLink>
-                    <MudNavLink Href="/ApproveWins" Icon="@Icons.Filled.AlignVerticalBottom">Approve Wins</MudNavLink>
+                    <MudNavLink Href="/WinsRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Wins Register</MudNavLink>
+                   
                     <MudNavLink Href="/WinsReport" Icon="@Icons.Filled.AssuredWorkload">Wins Report</MudNavLink>
+
+                </MudNavGroup>
+                <MudNavGroup Title="Approval" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                    <MudNavLink Href="/ApproveSalesWinsList" Icon="@Icons.Filled.AlignVerticalBottom">Approval</MudNavLink>
+                   
 
                 </MudNavGroup>
                 <MudNavGroup Title="Pay In" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
@@ -46,7 +51,7 @@
                     <MudNavLink Href="/PayoutReport" Icon="@Icons.Filled.AssuredWorkload">Pay-Out Report</MudNavLink>
 
                 </MudNavGroup>
-              
+
                 <MudNavLink Href="/TransferReport" Icon="@Icons.Filled.CompareArrows">Transfer Report</MudNavLink>
 
 
