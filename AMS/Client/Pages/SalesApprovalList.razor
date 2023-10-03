@@ -66,7 +66,7 @@
             <MudTd DataLabel="Description">@context.Description</MudTd>
             @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
             <MudTd DataLabel="">
-                @if (isAdmin)
+                @if (!isAdmin)
                 {
                     <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
                         var parameters = new ModalParameters();
