@@ -5,9 +5,12 @@
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin, Sales")]
 
-<MudText><strong>SALES REPORT</strong></MudText>
-<MudText><hr/></MudText>
-<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp
+<MudText>SALES</MudText>
+<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
+@if (!isAdmin)
+{
+    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
+}
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
@@ -52,14 +55,13 @@
             <MudTh>Approved By</MudTh>
             <MudTh>Description</MudTh>
           
-            <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
             <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Area of Operations">@context.LocationName</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
             <MudTd DataLabel="Number of Books">@context.NumberOfBooks</MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
@@ -75,10 +77,8 @@
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
             <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-
+       
             <MudTd>&nbsp</MudTd>
         </FooterContent>
         <PagerContent>
