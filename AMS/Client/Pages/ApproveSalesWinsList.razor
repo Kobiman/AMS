@@ -2,8 +2,7 @@
 @implements IDisposable
 @inject MudBlazor.ISnackbar Snackbar
 
-<MudText><strong>APPROVAL</strong></MudText>
-<MudText><hr /></MudText>
+<MudText>WINS</MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
@@ -18,24 +17,24 @@
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                           SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-                    <MudSelectItem Value="@("")">All</MudSelectItem>
-                    @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
-                    {
-                        <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                           SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
+                {
+                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
 
 
 
-                    <MudSelectItem Value="@("")">All</MudSelectItem>
-                    @foreach (var game in games)
-                    {
-                        <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
-                    }
-                </MudSelect>*@
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (var game in games)
+                {
+                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
+                }
+            </MudSelect>*@
 
         </ToolBarContent>
         <HeaderContent>
@@ -46,10 +45,10 @@
             <MudTh>Area of Operations</MudTh>
             <MudTh>No. of Books</MudTh>
             <MudTh>Win Amount</MudTh>
-            <MudTh>Entered By</MudTh>
+            <MudTh>Entered By</MudTh>            
             <MudTh>Description</MudTh>
             <MudTh>Approve</MudTh>
-
+          
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -64,28 +63,28 @@
             <MudTd DataLabel="Description">@context.Description</MudTd>
             <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
             @*<MudTd DataLabel="">
-                    @if (!isAdmin)
-                    {
-                        <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
-                            var parameters = new ModalParameters();
-                            parameters.Add("model",@context);
-                            Modal.Show<WinsRegister>("Wins Register",parameters);
-                                })">Add Win Amount</MudButton>
-                    }
-                </MudTd>*@
+            @if (!isAdmin)
+            {
+                <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
+                    var parameters = new ModalParameters();
+                    parameters.Add("model",@context);
+                    Modal.Show<WinsRegister>("Wins Register",parameters);
+                        })">Add Win Amount</MudButton>
+            }
+        </MudTd>*@
 
 
 
         </RowTemplate>
-        @* <FooterContent>
-                <MudTd>&nbsp</MudTd>
-                <MudTd>&nbsp</MudTd>
-                <MudTd>&nbsp</MudTd>
-                <MudTd>&nbsp</MudTd>
-                <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-
-                <MudTd>&nbsp</MudTd>
-            </FooterContent>*@
+       @* <FooterContent>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
+       
+            <MudTd>&nbsp</MudTd>
+        </FooterContent>*@
         <PagerContent>
             <MudTablePager />
         </PagerContent>
