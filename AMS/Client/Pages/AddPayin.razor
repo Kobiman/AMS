@@ -11,17 +11,19 @@ else
             <DataAnnotationsValidator />
             <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
                        RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
-            @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
-                       RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />*@
 
-            @* <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                @foreach (var agent in agents)
-                {
-                    <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
-                }
-            </MudSelect> *@
 
-            <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true"/>
+            <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
+
+            <MudTextField T="string" Label="Area Of Operations" Required="true" @bind-Value="AreaOfOperations" ReadOnly="true"/>
+
+            <MudSelect T="string" Label="Payment Method"  AnchorOrigin="Origin.BottomCenter"
+                Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Cash")">Cash</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Cheque")">Cheque</MudSelectItem>
+          </MudSelect>
+
+          <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="model.ChequeNo"/>
 
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
@@ -44,6 +46,7 @@ else
     [Parameter] public string? SalesId { get; set; }
     [Parameter] public string? AgentId { get; set; }
     [Parameter] public string? AgentName { get; set; }
+    [Parameter] public string? AreaOfOperations { get; set; }
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -63,6 +66,7 @@ else
         {
             model = new AddPayoutDto();
             var result = await response.Content.ReadFromJsonAsync<AddPayoutDto>();
+            await ModalInstance.CloseAsync();
             Snackbar.Add("Transaction Saved", Severity.Success);
             accountEvents.OnAccountAdded(this);
             StateHasChanged();
@@ -70,6 +74,7 @@ else
         else
         {
             model = new AddPayoutDto();
+            await ModalInstance.CloseAsync();
             Snackbar.Add("Save Transaction Failed", Severity.Error);
             StateHasChanged();
         }
@@ -91,6 +96,7 @@ else
 
         model.AgentId = AgentId;
         model.SalesId = SalesId;
+        model.AreaOfOperations = AreaOfOperations;
     }
     private async Task GetAgents()
     {

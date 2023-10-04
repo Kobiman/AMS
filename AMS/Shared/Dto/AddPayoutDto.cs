@@ -29,5 +29,8 @@ namespace AMS.Shared.Dto
         public bool Approved { get; set; } = false;
         public string StaffId { get; set; } = String.Empty;
         public string? SalesId { get; set; }
+
+        public string AreaOfOperations { get; set; } = string.Empty;
+        public string ChequeNo { get; set; } = string.Empty;
     }
 }

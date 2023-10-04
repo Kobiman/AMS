@@ -24,14 +24,19 @@ else
             }
         </MudSelect> *@
 
-        <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
-        <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="AgentName" ReadOnly="true" />
-        <MudTextField T="string" Label="Cash/Cheque" Required="true" @bind-Value="AgentName" ReadOnly="true" />
-        <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="AgentName" ReadOnly="true" />
+        <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            @foreach(var agent in agents)
+            {
+                <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="AgentName" />
+        <MudTextField T="string" Label="Cash/Cheque" Required="true" @bind-Value="AgentName"  />
+        <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="AgentName"/>
         <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
                          Label="Amount" Variant="Variant.Text" />
-        <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
-                         Label="Entered By" Variant="Variant.Text" />
+        @*<MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
+                         Label="Entered By" Variant="Variant.Text" />*@
         <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
 

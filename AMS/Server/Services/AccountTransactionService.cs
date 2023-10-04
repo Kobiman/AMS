@@ -182,7 +182,9 @@ namespace AMS.Server.Services
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
                     StaffId = _authService.GetStaffID(),
-                    SalesId = addPayoutDto.SalesId
+                    SalesId = addPayoutDto.SalesId,
+                    AreaOfOperations = addPayoutDto.AreaOfOperations,
+                    ChequeNo = addPayoutDto.ChequeNo
                     //DrawDate = addPayoutDto.DrawDate.Value
                 });
                 await appDbContext.SaveChangesAsync();
@@ -292,7 +294,9 @@ namespace AMS.Server.Services
                                     Approved = p.Approved == null? false: p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     StaffId = p.StaffId,
-                                    ApprovedBy = p.ApprovedBy
+                                    ApprovedBy = p.ApprovedBy,
+                                    ChequeNo = p.ChequeNo,
+                                    AreaOfOperations = p.AreaOfOperations
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();
