@@ -32,7 +32,7 @@ namespace AMS.Shared
         public string StaffId { get; set; }
         public bool Approved { get; set; } = false;
         public string ApprovedBy { get; set; } = String.Empty;
-
+        public string AreaOfOperations { get; set; } = string.Empty;
         public int? LocationId { get; set; }
         public int NumberOfBooks { get; set; }
     }

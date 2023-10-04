@@ -32,6 +32,6 @@ namespace AMS.Shared.Dto
         public string StaffId { get; set; } = String.Empty;
         public bool Approved { get; set; } = false;
         public string ApprovedBy { get; set; } = string.Empty;
-        public string LocationName { get; set; } = string.Empty;
+        public string AreaOfOperations { get; set; } = string.Empty;
     }
 }

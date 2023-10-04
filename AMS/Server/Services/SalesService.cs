@@ -43,6 +43,7 @@ namespace AMS.Server.Services
                     DrawDate = sales.DrawDate,
                     NumberOfBooks = sales.NumberOfBooks,
                     LocationId =_authService.GetLocationID() == "" ? 0 :Convert.ToInt16(_authService.GetLocationID()),
+                    AreaOfOperations = sales.AreaOfOperations,
                     StaffId = _authService.GetStaffID() }
                 );
 
@@ -79,7 +80,8 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<SalesDto>> GetAgentsTransaction(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
-            var locations = await appDbContext.Locations.ToDictionaryAsync(x => x.Id, x => x);
+
+            var users = await appDbContext.Users.ToDictionaryAsync(x => x.Id, x => x.Email);
 
             var result = await (from t in appDbContext.Sales
                                     //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
@@ -110,12 +112,11 @@ namespace AMS.Server.Services
                                     ApprovedBy = t.ApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
-                                    //LocationName = GetLocation(locations, t)
+                                    AreaOfOperations = t.AreaOfOperations
                                 }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
                                 .ToListAsync();
             return result;
         }
-        
 
         public async Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage()
         {

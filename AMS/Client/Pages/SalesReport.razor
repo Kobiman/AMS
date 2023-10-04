@@ -55,15 +55,14 @@
             <MudTh>Approved By</MudTh>
             <MudTh>Description</MudTh>
           
-            <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
             <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Area of Operations">&nbsp</MudTd>
-            <MudTd DataLabel="Number of Books">&nbsp</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+            <MudTd DataLabel="Number of Books">@context.NumberOfBooks</MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
             <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
