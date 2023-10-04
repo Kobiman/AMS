@@ -37,8 +37,8 @@ else
         <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
 
-        <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="model.Description"
-                      RequiredError="Description is required!" For="@(() => model.Description)" />
+        <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="model.LocationName"
+                      RequiredError="Area of Operation Required!" For="@(() => model.LocationName)" />
 
         <MudNumericField T="int" Label="Number of Books" Required="true" @bind-Value="model.NumberOfBooks"
                           RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" />
@@ -46,8 +46,8 @@ else
         <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
                          Label="Daily Sales" Variant="Variant.Text" />
 
-        <MudTextField T="string" Label="Entered By" Required="true" @bind-Value="model.Description"
-                      RequiredError="Description is required!" For="@(() => model.Description)" />
+        <MudTextField T="string" Label="Entered By" Required="true" @bind-Value="model.StaffId"
+                      RequiredError="Staff ID" For="@(() => model.StaffId)" />
 
 
 
