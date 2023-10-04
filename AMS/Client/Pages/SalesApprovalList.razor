@@ -19,25 +19,6 @@
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
-            @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
-                {
-                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-
-
-
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var game in games)
-                {
-                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
-                }
-            </MudSelect>*@
 
         </ToolBarContent>
         <HeaderContent>
