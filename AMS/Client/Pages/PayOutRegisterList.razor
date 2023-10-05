@@ -3,14 +3,14 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
 @attribute [Authorize]
-
 @*
-    This list contains sales records where the wins amount is higher than the 
+    This list contains sales records where the wins amount is higher than the
     sales amount, and the sales record has been approved.
 *@
 
 
-<MudText Typo="Typo.h5">PayOut</MudText>
+<MudText>PAY-OUT REGISTER</MudText>
+<MudText><hr /></MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
@@ -18,31 +18,31 @@
         <ToolBarContent>
 
             <MudSpacer />
-            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"  IconSize="Size.Medium" Class="mt-0"></MudTextField> 
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
-                {
-                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                           SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                    <MudSelectItem Value="@("")">All</MudSelectItem>
+                    @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
+                    {
+                        <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                           SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
 
 
 
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var game in games)
-                {
-                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
-                }
-            </MudSelect>*@
+                    <MudSelectItem Value="@("")">All</MudSelectItem>
+                    @foreach (var game in games)
+                    {
+                        <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
+                    }
+                </MudSelect>*@
 
         </ToolBarContent>
         <HeaderContent>
@@ -54,10 +54,10 @@
             <MudTh>No. of Books</MudTh>
             <MudTh>Sales</MudTh>
             <MudTh>Win Amount</MudTh>
-            <MudTh>Entered By</MudTh>            
+            <MudTh>Entered By</MudTh>
             <MudTh>Description</MudTh>
             @* <MudTh>Approve</MudTh> *@
-          
+
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -69,7 +69,7 @@
             <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
-            <MudTd DataLabel="Entered By">@context.StaffId</MudTd>            
+            <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
             @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
             <MudTd DataLabel="">
@@ -89,15 +89,15 @@
 
 
         </RowTemplate>
-       @* <FooterContent>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-       
-            <MudTd>&nbsp</MudTd>
-        </FooterContent>*@
+        @* <FooterContent>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
+
+                <MudTd>&nbsp</MudTd>
+            </FooterContent>*@
         <PagerContent>
             <MudTablePager />
         </PagerContent>

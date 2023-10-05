@@ -9,6 +9,8 @@
 else
 {
     <div style="width: 450px;">
+        <MudText>SALES REGISTER</MudText>
+        <MudText><hr/></MudText>
     <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
         <DataAnnotationsValidator />
         <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date" />

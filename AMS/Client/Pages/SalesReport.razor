@@ -5,12 +5,13 @@
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin, Sales")]
 
-<MudText>SALES</MudText>
+<MudText>SALES REPORT</MudText>
+<MudText><hr /></MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-@if (!isAdmin)
-{
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
-}
+@*@if (!isAdmin)
+    {
+        <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
+    }*@
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
@@ -54,7 +55,7 @@
             <MudTh>Entered By</MudTh>
             <MudTh>Approved By</MudTh>
             <MudTh>Description</MudTh>
-          
+
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy")</MudTd>
@@ -77,8 +78,11 @@
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+
             <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-       
+
             <MudTd>&nbsp</MudTd>
         </FooterContent>
         <PagerContent>

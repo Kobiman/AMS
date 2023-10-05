@@ -8,41 +8,42 @@
 }
 else
 {
-    <div style="width: 450px;">
-        <h4>PAY OUT REGISTER</h4>
-        <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
-            <DataAnnotationsValidator />
-            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
-                           RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
-            @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
-                RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />*@
+<div style="width: 450px;">
+    <MudText>PAY-OUT REGISTER</MudText>
+    <MudText><hr /></MudText>
+    <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
+                       RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
+        @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
+            RequiredError="Draw date is required!" For="@(() => model.DrawDate)" />*@
 
-            @* <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                    @foreach (var agent in agents)
-                    {
-                        <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
-                    }
-                </MudSelect> *@
+        @* <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                @foreach (var agent in agents)
+                {
+                    <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+                }
+            </MudSelect> *@
 
-            <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
-            <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="AgentName" ReadOnly="true" />
-            <MudTextField T="string" Label="Cash/Cheque" Required="true" @bind-Value="AgentName" ReadOnly="true" />
-            <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="AgentName" ReadOnly="true" />
-            <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
-                             Label="Amount" Variant="Variant.Text" />
-            <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
-                             Label="Entered By" Variant="Variant.Text" />
-            <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
-                          RequiredError="Description is required!" For="@(() => model.Description)" />
+        <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
+        <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="AgentName" ReadOnly="true" />
+        <MudTextField T="string" Label="Cash/Cheque" Required="true" @bind-Value="AgentName" ReadOnly="true" />
+        <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="AgentName" ReadOnly="true" />
+        <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
+                         Label="Amount" Variant="Variant.Text" />
+        <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
+                         Label="Entered By" Variant="Variant.Text" />
+        <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
+                      RequiredError="Description is required!" For="@(() => model.Description)" />
 
 
 
-            <ValidationSummary />
-            <div style="margin-top:15px" class="mud-card-actions">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
-            </div>
-        </EditForm>
-    </div>
+        <ValidationSummary />
+        <div style="margin-top:15px" class="mud-card-actions">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+        </div>
+    </EditForm>
+</div>
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }

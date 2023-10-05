@@ -4,7 +4,8 @@
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin")]
 
-<MudText Typo="Typo.h5">APPROVE PAY-IN</MudText>
+<MudText>APPROVE PAY-IN</MudText>
+<MudText><hr/></MudText>
 
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
 @* <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayin>("Cash Pay-In"))">Payin</MudButton> *@
