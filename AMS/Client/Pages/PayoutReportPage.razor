@@ -4,7 +4,7 @@
 @using System.Security.Claims
 @attribute [Authorize]
 
-<MudText>PAY-OUT REPORT</MudText>
+<MudText Typo="Typo.h5">PAY-OUT REPORT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
     @* <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Cash Pay-Out"))">Payout</MudButton> *@
     <div style="margin-top:10px">
@@ -39,15 +39,15 @@
 
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+        <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd>
         <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
         <MudTd DataLabel="Payment Type">&nbsp;</MudTd>
-        <MudTd DataLabel="Cheque No.">&nbsp;</MudTd>
+        <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
         <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
         <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
-        <MudTd DataLabel="Description"></MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
 
 
     </RowTemplate>
@@ -125,10 +125,10 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Agent.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.DestinationAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
+        //if (element.DestinationAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
         return false;
     }
 

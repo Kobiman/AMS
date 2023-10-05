@@ -1,7 +1,16 @@
-﻿@page "/WinsRegisterList"
+﻿@page "/PayOutRegisterList"
 @inject MudBlazor.ISnackbar Snackbar
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+@attribute [Authorize]
 
-<MudText Typo="Typo.h5">WINS</MudText>
+@*
+    This list contains sales records where the wins amount is higher than the 
+    sales amount, and the sales record has been approved.
+*@
+
+
+<MudText Typo="Typo.h5">PayOut</MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
@@ -9,7 +18,7 @@
         <ToolBarContent>
 
             <MudSpacer />
-            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"  IconSize="Size.Medium" Class="mt-0"></MudTextField> 
             <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
@@ -43,6 +52,7 @@
             <MudTh>Game</MudTh>
             <MudTh>Area of Operations</MudTh>
             <MudTh>No. of Books</MudTh>
+            <MudTh>Sales</MudTh>
             <MudTh>Win Amount</MudTh>
             <MudTh>Entered By</MudTh>            
             <MudTh>Description</MudTh>
@@ -57,6 +67,7 @@
             <MudTd DataLabel="Game">@context.GameName</MudTd>
             <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
             <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
+            <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
             <MudTd DataLabel="Entered By">@context.StaffId</MudTd>            
             <MudTd DataLabel="Description">@context.Description</MudTd>
@@ -66,9 +77,12 @@
                 {
                     <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
                         var parameters = new ModalParameters();
-                        parameters.Add("model",@context);
-                        Modal.Show<WinsRegister>("Wins Register",parameters);
-                            })">Add Win Amount</MudButton>
+                        parameters.Add("SalesId",@context.Id);
+                        parameters.Add("AgentId",@context.AgentId);
+                        parameters.Add("AgentName",context.AgentName);
+                        parameters.Add("AreaOfOperations",context.AreaOfOperations);
+                        Modal.Show<AddPayout>("Cash Pay-Out",parameters);
+                            })">Payout</MudButton>
                 }
             </MudTd>
 
@@ -112,31 +126,31 @@
     private bool isAdmin = false;
     public int TotalNum { get; set; }
 
-    private async void OnValidSubmit(EditContext context)
-    {
-        //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-        var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
-        if (response.IsSuccessStatusCode)
-        {
-            model = new SalesDto();
-            //var result = await response.Content.ReadFromJsonAsync<Result>();
-            var result = await response.Content.ReadFromJsonAsync<SalesDto>();
-            Snackbar.Add("Transaction Approved", Severity.Success);
-            await ModalInstance.CloseAsync(ModalResult.Ok(result));
-        }
-        else
-        {
-            model = new SalesDto();
-            Snackbar.Add("Transaction Failed", Severity.Error);
-        }
+    //private async void OnValidSubmit(EditContext context)
+    //{
+    //    //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
+    //    var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
+    //    if (response.IsSuccessStatusCode)
+    //    {
+    //        model = new SalesDto();
+    //        //var result = await response.Content.ReadFromJsonAsync<Result>();
+    //        var result = await response.Content.ReadFromJsonAsync<SalesDto>();
+    //        Snackbar.Add("Transaction Approved", Severity.Success);
+    //        await ModalInstance.CloseAsync(ModalResult.Ok(result));
+    //    }
+    //    else
+    //    {
+    //        model = new SalesDto();
+    //        Snackbar.Add("Transaction Failed", Severity.Error);
+    //    }
 
-    }
+    //}
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadAccounts();
-        await GetAgents();
-        await GetGames();
+        //await LoadAccounts();
+        //await GetAgents();
+        //await GetGames();
         await GetSalesRecords();
         // model = new SalesDto();
         // model.Id = Transaction.Id;
@@ -159,7 +173,8 @@
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
             if (results != null)
             {
-                Elements = results.Where(x => x.Approved == false).ToList();
+                Elements = results.Where(x => x.Approved == true)
+                .Where(i => i.DailySales < i.WinAmount).ToList();
             }
             TotalNum = Elements.Count;
         }
@@ -171,47 +186,52 @@
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            if (results != null)
+            {
+                Elements = results.Where(x => x.Approved == true)
+                .Where(i => i.DailySales < i.WinAmount).ToList();
+            }
             TotalNum = Elements.Count;
         }
     }
 
-    async Task LoadAccounts()
-    {
-        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
-        if (result is not null)
-        {
-            accounts = result;
-        }
-        else
-        {
-            accounts = new List<AccountDto>();
-        }
-    }
-    private async Task GetAgents()
-    {
-        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
-        if (result is not null)
-        {
-            agents = result;
-        }
-        else
-        {
-            agents = new List<Agent>();
-        }
-    }
-    private async Task GetGames()
-    {
-        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
-        if (result is not null)
-        {
-            games = result;
-        }
-        else
-        {
-            games = new List<Game>();
-        }
-    }
+    //async Task LoadAccounts()
+    //{
+    //    var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
+    //    if (result is not null)
+    //    {
+    //        accounts = result;
+    //    }
+    //    else
+    //    {
+    //        accounts = new List<AccountDto>();
+    //    }
+    //}
+    //private async Task GetAgents()
+    //{
+    //    var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
+    //    if (result is not null)
+    //    {
+    //        agents = result;
+    //    }
+    //    else
+    //    {
+    //        agents = new List<Agent>();
+    //    }
+    //}
+    //private async Task GetGames()
+    //{
+    //    var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+    //    if (result is not null)
+    //    {
+    //        games = result;
+    //    }
+    //    else
+    //    {
+    //        games = new List<Game>();
+    //    }
+    //}
 
     private bool FilterFunc1(SalesDto element) => FilterFunc(element, searchString1);
 

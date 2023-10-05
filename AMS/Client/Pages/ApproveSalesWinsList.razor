@@ -1,8 +1,9 @@
 ﻿@page "/ApproveSalesWinsList"
 @implements IDisposable
 @inject MudBlazor.ISnackbar Snackbar
+@attribute [Authorize(Roles = "Admin")]
 
-<MudText>WINS</MudText>
+<MudText Typo="Typo.h5">APPROVE WINS</MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
@@ -10,7 +11,7 @@
         <ToolBarContent>
 
             <MudSpacer />
-            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"   IconSize="Size.Medium" Class="mt-0"></MudTextField> 
             <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
@@ -52,8 +53,8 @@
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
-            <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
+            <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy") </MudTd>
+            <MudTd DataLabel="DrawDate">@context.DrawDate.Value.ToString("dd-MMM-yyyy")</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
             <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
@@ -172,7 +173,11 @@
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            if (results != null)
+            {
+                Elements = results.Where(x => x.Approved == false).ToList();
+            }
             TotalNum = Elements.Count;
         }
     }

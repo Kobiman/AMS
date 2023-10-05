@@ -4,7 +4,7 @@
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin")]
 
-<MudText>PAY-OUT REPORT</MudText>
+<MudText Typo="Typo.h5">APPROVE PAY-OUT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
     @* <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayout>("Cash Pay-Out"))">Payout</MudButton> *@
     <div style="margin-top:10px">
@@ -30,20 +30,21 @@
         <MudTh>Date</MudTh>
         <MudTh>Agent</MudTh>
          <MudTh>Area of Operations</MudTh>
-        <MudTh>Payment Type</MudTh>
+        @*<MudTh>Payment Type</MudTh>*@
         <MudTh>Cheque No.</MudTh>
-        <MudTh>Description</MudTh>
         <MudTh>Amount</MudTh>
+        <MudTh>Description</MudTh>       
         <MudTh>Approve</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="CreatedOn">@context.EntryDate</MudTd>
+        <MudTd DataLabel="CreatedOn">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd> 
-        <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
-        <MudTd DataLabel="Payment Type">&nbsp;</MudTd>
-        <MudTd DataLabel="Cheque No.">&nbsp;</MudTd>
-        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+        @*<MudTd DataLabel="Payment Type">&nbsp;</MudTd>*@
+        <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        
         <MudTd DataLabel="Approve">
 
         <MudFab @onclick="@(()=>Approve(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />       
@@ -127,9 +128,9 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.DestinationAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Agent.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }

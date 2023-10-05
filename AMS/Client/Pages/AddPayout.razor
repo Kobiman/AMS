@@ -1,56 +1,39 @@
 ﻿@page "/AddPayout"
 @attribute [Authorize(Roles ="Admin, Sales")]
 
-@if(accounts == null)
-{
-    <div>Loading Data...</div>
-}
-else{
-<div style="width: 450px;">
-    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
-          <DataAnnotationsValidator />
-                <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
-                       RequiredError="Entry is required!" For="@(() => model.EntryDate)" />
-                @*<MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date"
-                       RequiredError="DrawDate is required!" For="@(() => model.DrawDate)" />*@
 
-                @* <MudSelect T="string" Label="Select Agent"  @bind-Value="model.AgentId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                    @foreach(var agent in agents)
-                    {
-                        <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
-                    }
-                </MudSelect> *@
+<div style="width: 450px;">
+        <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Date"
+                       RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
+
 
             <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
 
-                @*<MudSelect T="string" Label="Select Source Account"  @bind-Value="model.SourceAccountId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                    @foreach(var account in accounts)
-                    {
-                        <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
-                    }
-                </MudSelect>
+            <MudTextField T="string" Label="Area Of Operations" Required="true" @bind-Value="AreaOfOperations" />
 
-                 <MudSelect T="string" Label="Select Destination Account"  @bind-Value="model.DestinationAccountId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                    @foreach(var acc in accounts)
-                    {
-                        <MudSelectItem T="string" Value="@acc.AccountId">@acc.AccountName</MudSelectItem>
-                    }
-                </MudSelect>*@
+            <MudSelect T="string" Label="Payment Method"  AnchorOrigin="Origin.BottomCenter"
+                Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Cash")">Cash</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Cheque")">Cheque</MudSelectItem>
+          </MudSelect>
 
+          <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="model.ChequeNo"/>
 
-             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
-            RequiredError="Description is required!" For="@(() => model.Description)"/>
+            <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
+                      RequiredError="Description is required!" For="@(() => model.Description)" />
 
-            <MudNumericField HideSpinButtons="true"  @bind-Value="model.Amount"
-            Label="Amount" Variant="Variant.Text" />
+            <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
+                         Label="Amount" Variant="Variant.Text" />
 
             <ValidationSummary />
-     <div style="margin-top:15px"  class="mud-card-actions">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+            <div style="margin-top:15px" class="mud-card-actions">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+            </div>
+        </EditForm>
     </div>
-    </EditForm>
-</div>
-}
+
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     AddPayoutDto model = new AddPayoutDto();
@@ -58,6 +41,7 @@ else{
     [Parameter] public string? SalesId { get; set; }
     [Parameter] public string? AgentId { get; set; }
     [Parameter] public string? AgentName { get; set; }
+    [Parameter] public string? AreaOfOperations { get; set; }
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -77,6 +61,7 @@ else{
         {
             model = new AddPayoutDto();
             var result = await response.Content.ReadFromJsonAsync<AddPayoutDto>();
+            await ModalInstance.CancelAsync();
             Snackbar.Add("Transaction Saved", Severity.Success);
             accountEvents.OnAccountAdded(this);
             await ModalInstance.CloseAsync(ModalResult.Ok(result));
@@ -84,6 +69,7 @@ else{
         else
         {
             model = new AddPayoutDto();
+            await ModalInstance.CancelAsync();
             Snackbar.Add("Save Transaction Failed", Severity.Error);   
         }
 
@@ -91,42 +77,9 @@ else{
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
-        if(result is not null)
-        {
-            accounts = result;
-        }
-        else
-        {
-            accounts = new List<AccountDto>();
-        }
-        //await GetAgents();
-        await GetGames();
         model.AgentId = AgentId;
         model.SalesId = SalesId;
+        model.AreaOfOperations = AreaOfOperations;
     }
-    private async Task GetAgents()
-    {
-        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
-        if(result is not null)
-        {
-            agents = result;
-        }
-        else
-        {
-            agents = new List<Agent>();
-        }
-    }
-    private async Task GetGames()
-    {
-        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
-        if(result is not null)
-        {
-            games = result;
-        }
-        else
-        {
-            games = new List<Game>();
-        }
-    }
+  
 }

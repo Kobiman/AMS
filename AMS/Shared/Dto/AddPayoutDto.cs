@@ -10,6 +10,7 @@ namespace AMS.Shared.Dto
     public class AddPayoutDto
     {
         [Required]
+        //[Range(0.1, double.MaxValue)]
         public decimal Amount { get; set; }
         [Required]
         public string? Description { get; set; }
@@ -25,6 +26,8 @@ namespace AMS.Shared.Dto
         public string? SourceAccountType { get; set; }
         public string? DestinationAccountType { get; set; }
         public string? Type { get; set; }
+
+        [Required]
         public DateTime? EntryDate { get; set; }
         public bool Approved { get; set; } = false;
         public string StaffId { get; set; } = String.Empty;

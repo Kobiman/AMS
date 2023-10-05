@@ -4,7 +4,8 @@
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin")]
 
-<MudText>PAY-IN REPORT</MudText>
+<MudText Typo="Typo.h5">APPROVE PAY-IN</MudText>
+
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
 @* <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayin>("Cash Pay-In"))">Payin</MudButton> *@
     <div style="margin-top:10px">
@@ -16,13 +17,6 @@
         <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
         <MudSpacer />
         <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-       @* <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
-            <MudSelectItem Value="@("Today")" />
-            <MudSelectItem Value="@("This Week")" />
-            <MudSelectItem Value="@("This Month")" /> 
-            <MudSelectItem Value="@("This Year")" />
-            <MudSelectItem Value="@("All")" />
-        </MudSelect>*@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Date</MudTh>
@@ -36,7 +30,7 @@
         <MudTh>Approve</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
+        <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd>
         <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
         <MudTd DataLabel="Payment Type">&nbsp;</MudTd>
@@ -115,8 +109,8 @@
             return true;
         if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        //if (element.Account.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-        //    return true;
+        if (element.Agent.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
 
         return false;
     }
