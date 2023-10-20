@@ -26,5 +26,6 @@ namespace AMS.Shared.Dto
         public string ApprovedBy { get; set; } = String.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public string ChequeNo { get; set; } = string.Empty;
+        public string TreatedBy { get; set; } = string.Empty;
     }
 }

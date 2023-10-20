@@ -32,12 +32,13 @@ namespace AMS.Shared
         public string? Type { get; set; }
         public DateTime EntryDate { get; set; }
         public bool Approved { get; set; } = false;
-        public string StaffId { get; set; } = String.Empty;
-        public string ApprovedBy { get; set; } = String.Empty;
+        public string StaffId { get; set; } = string.Empty;
+        public string ApprovedBy { get; set; } = string.Empty;
 
         public string AreaOfOperations { get; set; } = string.Empty;
         public string ChequeNo { get; set; } = string.Empty;
 
         public int? LocationId { get; set; }
+        public string TreatedBy { get; set; } = string.Empty;
     }
 }

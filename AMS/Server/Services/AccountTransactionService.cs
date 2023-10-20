@@ -182,6 +182,8 @@ namespace AMS.Server.Services
                     Type = addPayoutDto.Type,
                     EntryDate = addPayoutDto.EntryDate.Value,
                     StaffId = _authService.GetStaffID(),
+                    TreatedBy = addPayoutDto.TreatedBy,
+                    ApprovedBy = addPayoutDto.ApprovedBy,
                     SalesId = addPayoutDto.SalesId,
                     AreaOfOperations = addPayoutDto.AreaOfOperations,
                     ChequeNo = addPayoutDto.ChequeNo
@@ -208,6 +210,8 @@ namespace AMS.Server.Services
                 result.StaffId = _authService.GetStaffID();
                 result.Type = editPayoutDto.Type;
                 result.EntryDate = editPayoutDto.EntryDate;
+                result.TreatedBy = editPayoutDto.TreatedBy;
+                result.ApprovedBy = editPayoutDto.ApprovedBy;
                 await appDbContext.SaveChangesAsync();
                 return new Result<AccountTransactionDto> { IsSucessful = true, Message = "Transaction Updated", Value = await GetAdministrativeTransactionById(result.Id) };
             }
@@ -266,6 +270,7 @@ namespace AMS.Server.Services
                                     Approved = p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     StaffId = p.StaffId,
+                                    TreatedBy = p.TreatedBy,
                                     ApprovedBy = p.ApprovedBy
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
@@ -295,6 +300,7 @@ namespace AMS.Server.Services
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     StaffId = p.StaffId,
                                     ApprovedBy = p.ApprovedBy,
+                                    TreatedBy = p.TreatedBy,
                                     ChequeNo = p.ChequeNo,
                                     AreaOfOperations = p.AreaOfOperations
                                     //GameId = p.GameId,

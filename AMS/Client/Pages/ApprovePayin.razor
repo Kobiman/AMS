@@ -44,7 +44,7 @@
     private async void OnValidSubmit(EditContext context)
     {
 
-        var response = await Http.PutAsJsonAsync("api/AccountTransaction/ApprovePayout", model);
+        var response = await Http.PutAsJsonAsync("api/AccountTransaction/ApprovePayout", editPayout);
         if (response.IsSuccessStatusCode)
         {
             model = new Payout();
