@@ -44,7 +44,10 @@ namespace AMS.Server.Services
                     NumberOfBooks = sales.NumberOfBooks,
                     LocationId =_authService.GetLocationID() == "" ? 0 :Convert.ToInt16(_authService.GetLocationID()),
                     AreaOfOperations = sales.AreaOfOperations,
-                    StaffId = _authService.GetStaffID() }
+                    StaffId = _authService.GetStaffID(),
+                    TreatedBy = sales.TreatedBy,
+                    ApprovedBy = sales.ApprovedBy,
+                }
                 );
 
             if (await appDbContext.SaveChangesAsync() > 0)
@@ -108,6 +111,7 @@ namespace AMS.Server.Services
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     StaffId = t.StaffId,
+                                    TreatedBy = t.TreatedBy,
                                     Approved = t.Approved == null ? false : t.Approved,
                                     ApprovedBy = t.ApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
@@ -171,6 +175,7 @@ namespace AMS.Server.Services
                 //result.GameId = agentTransaction.GameId;
                 result.AccountId = agentTransaction.AccountId;
                 result.StaffId = _authService.GetStaffID();
+                result.TreatedBy = agentTransaction.TreatedBy;
                 result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
 
 
