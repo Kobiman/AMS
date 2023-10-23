@@ -48,13 +48,13 @@
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Area of Operations</MudTh>
-            <MudTh>No. of Books</MudTh>
-            <MudTh>Sales</MudTh>
+            <MudTh>No. of Sheets</MudTh>
+            @*<MudTh>Sales</MudTh>*@
             <MudTh>Win Amount</MudTh>
             <MudTh>Treated By</MudTh>
             <MudTh>Description</MudTh>
             @* <MudTh>Approve</MudTh> *@
-          
+
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -64,7 +64,7 @@
             <MudTd DataLabel="Game">@context.GameName</MudTd>
             <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
             <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
-            <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
+            @*<MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>*@
             <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
             <MudTd DataLabel="Treated By">@context.TreatedBy</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
@@ -117,7 +117,7 @@
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
-    DateTime? start = DateTime.Today.AddMonths(-12);
+    DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
     private List<SalesDto>? Elements { get; set; }
     private bool isAdmin = false;

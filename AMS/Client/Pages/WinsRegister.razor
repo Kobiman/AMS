@@ -11,7 +11,7 @@
         <MudDatePicker Editable="false" @bind-Date="model.DrawDate" Placeholder="Draw Date" ReadOnly="true" />
 
         @* <MudTextField T="string" Label="Account" Required="true" @bind-Value="model.AccountName"
-                      RequiredError="Account is required!" For="@(() => model.AccountName)" ReadOnly="true" /> *@
+        RequiredError="Account is required!" For="@(() => model.AccountName)" ReadOnly="true" /> *@
 
         <MudTextField T="string" Label="Agent" Required="true" @bind-Value="model.AgentName"
                       RequiredError="Agent is required!" For="@(() => model.AgentName)" ReadOnly="true" />
@@ -28,11 +28,12 @@
         <MudTextField T="int" Label="Number of Books" Required="true" @bind-Value="model.NumberOfBooks"
                       RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" ReadOnly="true" />
 
+
         <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount"
                          Label="Wins Amount" Variant="Variant.Text" />
 
         @* <MudTextField T="string" Label="Entered By" Required="true" @bind-Value="model.Description"
-                      RequiredError="Description is required!" For="@(() => model.Description)" /> *@
+        RequiredError="Description is required!" For="@(() => model.Description)" /> *@
 
 
 

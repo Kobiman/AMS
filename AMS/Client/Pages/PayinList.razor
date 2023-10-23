@@ -31,6 +31,7 @@
         <MudTh>Payment Type</MudTh>
         <MudTh>Cheque No.</MudTh>
         <MudTh>Amount</MudTh>
+        <MudTh>Received By</MudTh>
         <MudTh>Entered By</MudTh>
         <MudTh>Approved By</MudTh>
         <MudTh>Description</MudTh>
@@ -39,10 +40,11 @@
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd>
-        <MudTd DataLabel="Area of Operations">&nbsp;</MudTd>
-        <MudTd DataLabel="Payment Type">&nbsp;</MudTd>
-        <MudTd DataLabel="Cheque No.">&nbsp;</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
+        <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+        <MudTd DataLabel="Payment Type">Cheque</MudTd>
+        <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.Amount)</MudTd>
+        <MudTh DataLabel="Received By">09876</MudTh>
         <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
         <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
         <MudTd DataLabel="Description"></MudTd>

@@ -7,10 +7,10 @@
 
 <MudText>Wins Report</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-@if (!isAdmin)
-{
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
-}
+@*  @if (!isAdmin)
+    {
+        <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
+    }*@
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
@@ -49,12 +49,13 @@
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Area of Operations</MudTh>
-            <MudTh>Number of Books</MudTh>
+            <MudTh>Number of Sheets</MudTh>
             <MudTh>Wins</MudTh>
             <MudTh>Treated By</MudTh>
+            <MudTh>Entered By</MudTh>
             <MudTh>Approved By</MudTh>
             <MudTh>Description</MudTh>
-          
+
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -62,10 +63,11 @@
             <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Area of Operations">&nbsp</MudTd>
-            <MudTd DataLabel="Number of Books">&nbsp</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+            <MudTd DataLabel="Number of Books">@context.NumberOfBooks</MudTd>
             <MudTd DataLabel="Wins">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
             <MudTd DataLabel="Treated By">@context.StaffId</MudTd>
+            <MudTd DataLabel="Entered By">98765</MudTd>
             <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
 
@@ -136,7 +138,7 @@
         {
             var result = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
             Elements = result.Where(x => x.WinAmount > 0.0M).ToList();
-          //  Winstotal = Elements.Sum(x => x.WinAmount);
+            //  Winstotal = Elements.Sum(x => x.WinAmount);
             Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
         }
@@ -175,17 +177,17 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
         {
-           // Winstotal = Elements.Sum(x => x.WinAmount);
+            // Winstotal = Elements.Sum(x => x.WinAmount);
             Wins = Elements.Sum(x => x.WinAmount);
         }
         if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
-          //  Winstotal = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            //  Winstotal = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
             Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
         }
         if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
         {
-           //Winstotal = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            //Winstotal = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
             Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
         }
     }

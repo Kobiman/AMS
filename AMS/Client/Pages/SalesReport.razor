@@ -7,10 +7,11 @@
 
 <MudText>SALES</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-@if (!isAdmin)
-{
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
-}
+@*
+    @if (!isAdmin)
+    {
+        <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
+    }*@
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
@@ -52,9 +53,10 @@
             <MudTh>Number of Books</MudTh>
             <MudTh>Sales</MudTh>
             <MudTh>Treated By</MudTh>
-            <MudTh>Approved By</MudTh>
+            <MudTh>Entered By</MudTh>
+            @*<MudTh>Approved By</MudTh>*@
             <MudTh>Description</MudTh>
-          
+
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
@@ -65,7 +67,8 @@
             <MudTd DataLabel="Number of Books">@context.NumberOfBooks</MudTd>
             <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="Treated By">@context.TreatedBy</MudTd>
-            <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
+            <MudTd DataLabel="Entered By">9989787</MudTd>
+            @*<MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>*@
             <MudTd DataLabel="Description">@context.Description</MudTd>
 
 
@@ -78,7 +81,7 @@
             <MudTd>&nbsp</MudTd>
             <MudTd>&nbsp</MudTd>
             <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-       
+
             <MudTd>&nbsp</MudTd>
         </FooterContent>
         <PagerContent>

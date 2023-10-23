@@ -17,11 +17,12 @@ else
 
             <MudTextField T="string" Label="Area Of Operations" Required="true" @bind-Value="AreaOfOperations" ReadOnly="true"/>
 
-            <MudSelect T="string" Label="Payment Method"  AnchorOrigin="Origin.BottomCenter"
-                Variant="Variant.Outlined">
-              <MudSelectItem T="string" Value="@("Cash")">Cash</MudSelectItem>
-              <MudSelectItem T="string" Value="@("Cheque")">Cheque</MudSelectItem>
-          </MudSelect>
+            <MudSelect T="string" Label="Payment Method" AnchorOrigin="Origin.BottomCenter"
+                       Variant="Variant.Outlined">
+                <MudSelectItem T="string" Value="@("Cash")">Cash</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Cheque")">Cheque</MudSelectItem>
+                <MudSelectItem T="string" Value="@("MoMo")">MoMo</MudSelectItem>
+            </MudSelect>
 
           <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="model.ChequeNo"/>
 
