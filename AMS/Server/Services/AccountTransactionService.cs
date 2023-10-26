@@ -263,13 +263,14 @@ namespace AMS.Server.Services
                                 {
                                     Id = p.Id,
                                     Amount = p.Amount,
-                                    EntryDate = p.EntryDate,
-                                    //DrawDate = p.DrawDate,
+                                    EntryDate = p.EntryDate,                                    
                                     Description = p.Description,
                                     AgentId = p.AgentId,
                                     Approved = p.Approved,
+                                    ChequeNo = p.ChequeNo,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     StaffId = p.StaffId,
+                                    AreaOfOperations = p.AreaOfOperations,
                                     TreatedBy = p.TreatedBy,
                                     ApprovedBy = p.ApprovedBy
                                     //GameId = p.GameId,

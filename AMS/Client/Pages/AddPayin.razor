@@ -15,7 +15,7 @@ else
 
             <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
 
-            <MudTextField T="string" Label="Area Of Operations" Required="true" @bind-Value="AreaOfOperations" ReadOnly="true"/>
+            <MudTextField T="string" Label="Area Of Operations" Required="true" @bind-Value="model.AreaOfOperations"/>
 
             <MudSelect T="string" Label="Payment Method" AnchorOrigin="Origin.BottomCenter"
                        Variant="Variant.Outlined">
@@ -24,7 +24,7 @@ else
                 <MudSelectItem T="string" Value="@("MoMo")">MoMo</MudSelectItem>
             </MudSelect>
 
-          <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="model.ChequeNo"/>
+          <MudTextField T="string" Label="Cheque No." @bind-Value="model.ChequeNo"/>
 
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />

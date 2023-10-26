@@ -1,13 +1,16 @@
-﻿@page "/PayInRegisterList"
+﻿@page "/PayOutRegisterList"
 @inject MudBlazor.ISnackbar Snackbar
-
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+@attribute [Authorize]
 @*
-    This list contains sales records where the sales amount is higher than the 
-    wins amount(but not zero), and the sales record has been approved.
+    This list contains sales records where the wins amount is higher than the
+    sales amount, and the sales record has been approved.
 *@
 
 
-<MudText>PayIn</MudText>
+<MudText>PAY-OUT REGISTER</MudText>
+<MudText><hr /></MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
@@ -15,31 +18,31 @@
         <ToolBarContent>
 
             <MudSpacer />
-            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
-                {
-                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                           SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
+                    <MudSelectItem Value="@("")">All</MudSelectItem>
+                    @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
+                    {
+                        <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+                           SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
 
 
 
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var game in games)
-                {
-                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
-                }
-            </MudSelect>*@
+                    <MudSelectItem Value="@("")">All</MudSelectItem>
+                    @foreach (var game in games)
+                    {
+                        <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
+                    }
+                </MudSelect>*@
 
         </ToolBarContent>
         <HeaderContent>
@@ -48,25 +51,25 @@
             <MudTh>Agent</MudTh>
             <MudTh>Game</MudTh>
             <MudTh>Area of Operations</MudTh>
-            <MudTh>No. of Sheets</MudTh>
-            @*<MudTh>Sales</MudTh>*@
+            <MudTh>No. of Books</MudTh>
+            <MudTh>Sales</MudTh>
             <MudTh>Win Amount</MudTh>
-            <MudTh>Treated By</MudTh>
+            <MudTh>Entered By</MudTh>
             <MudTh>Description</MudTh>
             @* <MudTh>Approve</MudTh> *@
 
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
-            <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
+            <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy")</MudTd>
+            <MudTd DataLabel="DrawDate">@context.DrawDate.Value.ToString("dd-MMM-yyyy")</MudTd>
             <MudTd DataLabel="Agent">@context.AgentName</MudTd>
             <MudTd DataLabel="Game">@context.GameName</MudTd>
             <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
             <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
-            @*<MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>*@
+            <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
             <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
-            <MudTd DataLabel="Treated By">@context.TreatedBy</MudTd>
+            <MudTd DataLabel="Entered By">@context.StaffId</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
             @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
             <MudTd DataLabel="">
@@ -78,23 +81,23 @@
                         parameters.Add("AgentId",@context.AgentId);
                         parameters.Add("AgentName",context.AgentName);
                         parameters.Add("AreaOfOperations",context.AreaOfOperations);
-                        Modal.Show<AddPayin>("Cash Pay-In",parameters);
-                            })">Payin</MudButton>
+                        Modal.Show<AddPayout>("Cash Pay-Out",parameters);
+                            })">Payout</MudButton>
                 }
             </MudTd>
 
 
 
         </RowTemplate>
-       @* <FooterContent>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-       
-            <MudTd>&nbsp</MudTd>
-        </FooterContent>*@
+        @* <FooterContent>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>&nbsp</MudTd>
+                <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
+
+                <MudTd>&nbsp</MudTd>
+            </FooterContent>*@
         <PagerContent>
             <MudTablePager />
         </PagerContent>
@@ -145,9 +148,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await LoadAccounts();
-        //await GetAgents();
-        //await GetGames();
         await GetSalesRecords();
     }
 
@@ -161,7 +161,7 @@
             if (results != null)
             {
                 Elements = results
-                .Where(i => i.DailySales > i.WinAmount).ToList();
+                .Where(i => i.DailySales < i.WinAmount).ToList();
             }
             TotalNum = Elements.Count;
         }
@@ -173,7 +173,12 @@
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            if (results != null)
+            {
+                Elements = results.Where(x => x.Approved == true)
+                .Where(i => i.DailySales < i.WinAmount).ToList();
+            }
             TotalNum = Elements.Count;
         }
     }
