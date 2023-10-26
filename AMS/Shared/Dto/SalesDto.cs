@@ -29,10 +29,13 @@ namespace AMS.Shared.Dto
         public int NumberOfBooks { get; set; }
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }
-        public string StaffId { get; set; } = String.Empty;
+        public string SalesStaffId { get; set; } = string.Empty;
+        public string WinsStaffId { get; set; } = string.Empty;
         public bool Approved { get; set; } = false;
-        public string TreatedBy { get; set; } = string.Empty;
-        public string ApprovedBy { get; set; } = string.Empty;
+        public string SalesTreatedBy { get; set; } = string.Empty;
+        public string SalesApprovedBy { get; set; } = string.Empty;
+        public string WinsTreatedBy { get; set; } = string.Empty;
+        public string WinsApprovedBy { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
     }
 }

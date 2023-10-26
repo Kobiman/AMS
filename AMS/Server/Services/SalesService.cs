@@ -32,7 +32,8 @@ namespace AMS.Server.Services
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
             var result = await appDbContext.Sales.AddAsync(
-                new Sales { AgentId = sales.AgentId,
+                new Sales { 
+                    AgentId = sales.AgentId,
                     AccountId = sales.AccountId,
                     DailySales = sales.DailySales, 
                     Description = sales.Description,
@@ -44,9 +45,9 @@ namespace AMS.Server.Services
                     NumberOfBooks = sales.NumberOfBooks,
                     LocationId =_authService.GetLocationID() == "" ? 0 :Convert.ToInt16(_authService.GetLocationID()),
                     AreaOfOperations = sales.AreaOfOperations,
-                    StaffId = _authService.GetStaffID(),
-                    TreatedBy = sales.TreatedBy,
-                    ApprovedBy = sales.ApprovedBy,
+                    SalesStaffId = _authService.GetStaffID(),
+                    SalesTreatedBy = sales.SalesTreatedBy,
+                    SalesApprovedBy = sales.SalesApprovedBy,
                 }
                 );
 
@@ -110,10 +111,13 @@ namespace AMS.Server.Services
                                     EntryDate = t.EntryDate,
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
-                                    StaffId = t.StaffId,
-                                    TreatedBy = t.TreatedBy,
+                                    SalesStaffId = t.SalesStaffId,
+                                    WinsStaffId = t.WinsStaffId,
+                                    SalesTreatedBy = t.SalesTreatedBy,
                                     Approved = t.Approved == null ? false : t.Approved,
-                                    ApprovedBy = t.ApprovedBy,
+                                    SalesApprovedBy = t.SalesApprovedBy,
+                                    WinsApprovedBy = t.WinsApprovedBy,
+                                    WinsTreatedBy = t.WinsApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
                                     AreaOfOperations = t.AreaOfOperations
@@ -149,7 +153,7 @@ namespace AMS.Server.Services
                                    EntryDate = t.EntryDate,
                                    DrawDate = t.DrawDate,
                                    GameId = t.GameId,
-                                   StaffId = t.StaffId,
+                                   SalesStaffId = t.SalesStaffId,
                                    Approved = t.Approved,
                                    GameName = gme == null ? string.Empty : gme.Name,
                                }).OrderBy(x => x.EntryDate)
@@ -174,8 +178,9 @@ namespace AMS.Server.Services
                 result.EntryDate = DateTime.Today;
                 //result.GameId = agentTransaction.GameId;
                 result.AccountId = agentTransaction.AccountId;
-                result.StaffId = _authService.GetStaffID();
-                result.TreatedBy = agentTransaction.TreatedBy;
+                result.WinsStaffId = _authService.GetStaffID();
+                result.WinsTreatedBy = agentTransaction.WinsTreatedBy;
+                result.WinsApprovedBy = agentTransaction.WinsApprovedBy;
                 result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
 
 
@@ -190,7 +195,7 @@ namespace AMS.Server.Services
             if(sales != null)
             {
                 sales.Approved = true;
-                sales.ApprovedBy = _authService.GetStaffID();
+                sales.SalesApprovedBy = _authService.GetStaffID();
 
                 var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
 
@@ -221,7 +226,6 @@ namespace AMS.Server.Services
                 return null;
             }
             return new SalesDto();
-
         }
 
         public async Task<IEnumerable<Sales>> GetTransactionsByAccountId(string accountId)
@@ -270,7 +274,7 @@ namespace AMS.Server.Services
                                     DailySales = t.DailySales,
                                     OutstandingBalance = t.DailySales - t.WinAmount,
                                     Description = t.Description,
-                                    StaffId = t.StaffId,
+                                    SalesStaffId = t.SalesStaffId,
                                     EntryDate = t.EntryDate,
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,

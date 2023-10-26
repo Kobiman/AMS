@@ -32,8 +32,9 @@
         <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount"
                          Label="Wins Amount" Variant="Variant.Text" />
 
-        @* <MudTextField T="string" Label="Entered By" Required="true" @bind-Value="model.Description"
-        RequiredError="Description is required!" For="@(() => model.Description)" /> *@
+        <MudTextField T="string" @bind-Value="model.WinsTreatedBy" Label="Treated By" Variant="Variant.Text" />
+
+        <MudTextField T="string" @bind-Value="model.WinsApprovedBy" Label="Approved By" Variant="Variant.Text" />
 
 
 
