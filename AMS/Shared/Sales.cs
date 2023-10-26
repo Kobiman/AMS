@@ -29,10 +29,13 @@ namespace AMS.Shared
         public DateTime? DrawDate { get; set; }
         public decimal DailySales { get; set; }
         public string? ReceiptNumber { get; set; }
-        public string StaffId { get; set; }
+        public string SalesStaffId { get; set; }
+        public string WinsStaffId { get; set; }
         public bool Approved { get; set; } = false;
-        public string TreatedBy { get; set; } = string.Empty;
-        public string ApprovedBy { get; set; } = String.Empty;
+        public string SalesTreatedBy { get; set; } = string.Empty;
+        public string SalesApprovedBy { get; set; } = string.Empty;
+        public string WinsTreatedBy { get; set; } = string.Empty;
+        public string WinsApprovedBy { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public int? LocationId { get; set; }
         public int NumberOfBooks { get; set; }
