@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AMS.Server;
-
+using Microsoft.AspNetCore.Mvc;
+using static AMS.Server.Controllers.NotificationController;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,5 +107,11 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+app.MapPost("sendMessage", async ([FromServices] INotificationService notificationService, [FromBody] NotificationRequest notification) =>
+{
+    await notificationService.SendSMS("Kobi Man", "0278312378");
+    return Results.Ok();
+});
 
 app.Run();

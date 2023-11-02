@@ -6,7 +6,6 @@ namespace AMS.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
@@ -19,7 +18,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SendBulkSMS([FromBody]string msg)
+        public async Task<ActionResult> SendBulkSMS([FromBody] NotificationRequest notification)
         {
             var allagents = await _agentService.GetAgents();
             string[] phonenos = new string[allagents.Count()];
@@ -29,7 +28,8 @@ namespace AMS.Server.Controllers
             }
             try
             {
-                await _notificationService.SendBulkSMS(msg, phonenos);
+                //await _notificationService.SendBulkSMS(msg, phonenos);
+                await _notificationService.SendSMS("Kobi Man", "0278312378");
                 return Ok();
             }
             catch (Exception)
@@ -37,5 +37,7 @@ namespace AMS.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Sending Message");
             }
         }
+
+        public record NotificationRequest(string  message);
     }
 }
