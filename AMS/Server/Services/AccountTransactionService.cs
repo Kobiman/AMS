@@ -10,14 +10,17 @@ namespace AMS.Server.Services
     public class AccountTransactionService : IAccountTransactionService
     {
         public AccountTransactionService(ApplicationDbContext _appDbContext,
-            IAuthService authService)
+            IAuthService authService,
+            INotificationService notificationService)
         {
             appDbContext = _appDbContext;
             _authService = authService;
+            _notificationService = notificationService;
         }
 
         private readonly ApplicationDbContext appDbContext;
         private readonly IAuthService _authService;
+        private readonly INotificationService _notificationService;
 
         public async Task<Shared.IResult> AddAccountTransaction(AddTransactionDto transactionDto)
         {
@@ -169,6 +172,9 @@ namespace AMS.Server.Services
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
                 var absoluteAmount = Math.Abs(addPayoutDto.Amount);
+                string phoneno = "";
+                var agent = await appDbContext.Agents.FirstOrDefaultAsync(x => x.AgentId == addPayoutDto.AgentId);
+                
                 appDbContext.Payouts.Add(new Payout
                 {
                     Amount = addPayoutDto.Type == "Payout" ? -absoluteAmount : absoluteAmount,
@@ -190,8 +196,14 @@ namespace AMS.Server.Services
                     //DrawDate = addPayoutDto.DrawDate.Value
                 });
                 await appDbContext.SaveChangesAsync();
-            
-            return new AccountTransactionDto();
+            if (agent != null)
+            {
+                phoneno = agent.Phone;
+                if(!string.IsNullOrEmpty(phoneno))
+                    await _notificationService.SendSMS("PayIn/PayOut", phoneno);
+            }
+
+                return new AccountTransactionDto();
         }
 
         public async Task<Result<AccountTransactionDto>> EditPayout(Payout editPayoutDto)

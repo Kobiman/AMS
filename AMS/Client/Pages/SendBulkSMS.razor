@@ -1,0 +1,57 @@
+﻿@using System.ComponentModel.DataAnnotations
+@page "/SendBulkSMS"
+@attribute [Authorize]
+
+<EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+<MudGrid>
+    <MudItem xs="12">
+        <MudCard>
+            <MudCardHeader>
+                <MudText Typo="Typo.h4">Send Bulk SMS</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudTextField T="string" Label="Message" Variant="Variant.Outlined"  Lines="4"
+                              @bind-Value="model.msg" For="@(() => model.msg)"/>
+               
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Send</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+</MudGrid>
+</EditForm>
+@code {
+    Sms model = new Sms();
+    bool success;
+    string[] errors = { };
+
+    public class Sms
+    {
+        [Required]
+        public string msg { get; set; } = "";
+
+    }
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        string msg1 = model.msg;
+        var response = await Http.PostAsJsonAsync("api/Notification/",msg1);
+        if (response.IsSuccessStatusCode)
+        {
+            model = new Sms();
+            Snackbar.Add("Message Sent", Severity.Success);
+            StateHasChanged();
+        }
+        else
+        {
+            model = new Sms();
+            Snackbar.Add("An error occured while sending message", Severity.Error);
+            StateHasChanged();
+        }
+        
+    }
+
+}

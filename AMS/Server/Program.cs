@@ -44,6 +44,7 @@ builder.Services.AddTransient<IAuditService, AuditService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IAuditService, AuditService>();
 builder.Services.AddTransient<ILocationService, LocationService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddControllersWithViews();
 //options => {
 //    options.Filters.Add(typeof(AuditFilterAttribute));
