@@ -48,6 +48,7 @@ namespace AMS.Server.Services
                     SalesStaffId = _authService.GetStaffID(),
                     SalesTreatedBy = sales.SalesTreatedBy,
                     SalesApprovedBy = sales.SalesApprovedBy,
+                    WinsStaffId = string.Empty,
                 }
                 );
 
