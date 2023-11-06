@@ -23,6 +23,8 @@ namespace AMS.Server.Controllers
         }
 
         [HttpGet("{locId}")]
+        [AllowAnonymous]
+
         public async Task<Location> GetLocationById(int locId)
         {
             return await _locationService.GetLocationById(locId);

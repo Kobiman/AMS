@@ -171,36 +171,38 @@ namespace AMS.Server.Services
 
         public async Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto)
         {
-                var absoluteAmount = Math.Abs(addPayoutDto.Amount);
-                string phoneno = "";
-                var agent = await appDbContext.Agents.FirstOrDefaultAsync(x => x.AgentId == addPayoutDto.AgentId);
+            var absoluteAmount = Math.Abs(addPayoutDto.Amount);
+            string phoneno = "";
+            var agent = await appDbContext.Agents.FirstOrDefaultAsync(x => x.AgentId == addPayoutDto.AgentId);
+            
                 
-                appDbContext.Payouts.Add(new Payout
-                {
-                    Amount = addPayoutDto.Type == "Payout" ? -absoluteAmount : absoluteAmount,
-                    PayoutAmount = addPayoutDto.Type == "Payout" ? absoluteAmount : 0,
-                    PayinAmount = addPayoutDto.Type == "Payin" ? absoluteAmount : 0,
-                    Description = addPayoutDto.Description,
-                    DestinationAccountId = addPayoutDto.DestinationAccountId,
-                    SourceAccountId = addPayoutDto.SourceAccountId,
-                    AgentId = addPayoutDto.AgentId,
-                    //GameId = addPayoutDto.GameId,
-                    Type = addPayoutDto.Type,
-                    EntryDate = addPayoutDto.EntryDate.Value,
-                    StaffId = _authService.GetStaffID(),
-                    TreatedBy = addPayoutDto.TreatedBy,
-                    ApprovedBy = addPayoutDto.ApprovedBy,
-                    SalesId = addPayoutDto.SalesId,
-                    AreaOfOperations = addPayoutDto.AreaOfOperations,
-                    ChequeNo = addPayoutDto.ChequeNo
-                    //DrawDate = addPayoutDto.DrawDate.Value
-                });
-                await appDbContext.SaveChangesAsync();
+            appDbContext.Payouts.Add(new Payout
+            {
+                Amount = addPayoutDto.Type == "Payout" ? -absoluteAmount : absoluteAmount,
+                PayoutAmount = addPayoutDto.Type == "Payout" ? absoluteAmount : 0,
+                PayinAmount = addPayoutDto.Type == "Payin" ? absoluteAmount : 0,
+                Description = addPayoutDto.Description,
+                DestinationAccountId = addPayoutDto.DestinationAccountId,
+                SourceAccountId = addPayoutDto.SourceAccountId,
+                AgentId = addPayoutDto.AgentId,
+                //GameId = addPayoutDto.GameId,
+                Type = addPayoutDto.Type,
+                EntryDate = addPayoutDto.EntryDate.Value,
+                StaffId = _authService.GetStaffID(),
+                TreatedBy = addPayoutDto.TreatedBy,
+                ApprovedBy = addPayoutDto.ApprovedBy,
+                SalesId = addPayoutDto.SalesId,
+                AreaOfOperations = addPayoutDto.AreaOfOperations,
+                ChequeNo = addPayoutDto.ChequeNo
+                //DrawDate = addPayoutDto.DrawDate.Value
+            });
+            await appDbContext.SaveChangesAsync();
             if (agent != null)
             {
+                string msg = $"Hello {agent.Name}, an amount of GHC {addPayoutDto.Amount} has been received as payin as at {addPayoutDto.EntryDate.Value.ToShortDateString}";
                 phoneno = agent.Phone;
                 if(!string.IsNullOrEmpty(phoneno))
-                    await _notificationService.SendSMS("PayIn/PayOut", phoneno);
+                    await _notificationService.SendSMS(msg, phoneno);
             }
 
                 return new AccountTransactionDto();

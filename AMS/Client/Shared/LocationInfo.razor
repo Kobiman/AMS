@@ -20,7 +20,7 @@
 
 
 @code {
-    Location location = new Location();
+    Location? location = new Location();
     protected async override Task OnInitializedAsync()
     {
         var authstate = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -39,7 +39,7 @@
             }
             else
             {
-                
+                location = null;
             }           
         }
     }
