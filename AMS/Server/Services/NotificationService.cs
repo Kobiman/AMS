@@ -8,12 +8,12 @@ namespace AMS.Server.Services
     {
         public async Task SendSMS(string message, string contact)
         {
-            var req = new { from = "AMSEROILAPP", content = message, to = contact };
+            var req = new { from = "VAG-OBIRI", content = message, to = contact };
             var json = JsonConvert.SerializeObject(req);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var endPoint = $"https://smsc.hubtel.com/v1/messages/send";
             using HttpClient client = new();
-            var base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes("qxbqqmkn:vngouhbn"));
+            var base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes("ztbaebgs:rtbdbfpw"));
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + base64String);
             var response = await client.PostAsync(endPoint, data).ConfigureAwait(false);
         }
@@ -22,12 +22,12 @@ namespace AMS.Server.Services
         {
             foreach (var contact in contacts)
             {
-                var req = new { from = "AMSEROILAPP", content = message, to = contact };
+                var req = new { from = "VAG-OBIRI", content = message, to = contact };
                 var json = JsonConvert.SerializeObject(req);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
                 var endPoint = $"https://smsc.hubtel.com/v1/messages/send";
                 using HttpClient client = new();
-                var base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes("qxbqqmkn:vngouhbn"));
+                var base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes("ztbaebgs:rtbdbfpw"));
                 client.DefaultRequestHeaders.Add("Authorization", "Basic " + base64String);
                 var response = await client.PostAsync(endPoint, data).ConfigureAwait(false);
             }
