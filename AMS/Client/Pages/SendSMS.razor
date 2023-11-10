@@ -1,0 +1,65 @@
+﻿@using System.ComponentModel.DataAnnotations
+@page "/SendSMS"
+@attribute [Authorize]
+
+<div style="width: 450px;">
+<EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+
+        <MudCard>
+            
+            <MudCardContent>
+                <MudTextField T="string" Label="Agent" Variant="Variant.Outlined"
+                              @bind-Value="Agent" For="@(() => model.Phone)" ReadOnly/>
+                <MudTextField T="string" Label="Phone No." Variant="Variant.Outlined"
+                              @bind-Value="model.Phone" For="@(() => model.Phone)" ReadOnly/>
+                <MudTextField T="string" Label="Message" Variant="Variant.Outlined"  Lines="4"
+                              @bind-Value="model.msg" For="@(() => model.msg)"/>
+               
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Send</MudButton>
+            </MudCardActions>
+        </MudCard>
+
+</EditForm>
+</div>
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    Sms model = new Sms();
+    [Parameter] public string PhoneNo { get; set; }
+    [Parameter] public string Agent { get; set; }
+
+    bool success;
+    string[] errors = { };
+
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        model.Phone = PhoneNo;
+    }
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        
+        var response = await Http.PostAsJsonAsync("api/Notification/SendSms",model);
+        if (response.IsSuccessStatusCode)
+        {
+            model = new Sms();
+            await ModalInstance.CloseAsync();
+            Snackbar.Add("Message Sent", Severity.Success);
+            StateHasChanged();
+        }
+        else
+        {
+            model = new Sms();
+            await ModalInstance.CloseAsync();
+            Snackbar.Add("An error occured while sending message", Severity.Error);
+            StateHasChanged();
+        }
+        
+    }
+
+}
