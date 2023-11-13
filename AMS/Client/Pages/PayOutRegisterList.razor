@@ -176,7 +176,7 @@
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
             if (results != null)
             {
-                Elements = results.Where(x => x.Approved == true)
+                Elements = results
                 .Where(i => i.DailySales < i.WinAmount).ToList();
             }
             TotalNum = Elements.Count;
