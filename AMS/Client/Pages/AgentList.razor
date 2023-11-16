@@ -38,7 +38,8 @@
             <MudTd DataLabel="Sales">@context.Sales</MudTd>
             <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
             <MudTd DataLabel="">
-                @if (context.Approved == false)
+            <MudFab @onclick="@(()=>SendSms(@context.AgentId))" Icon="@Icons.Material.Filled.SendToMobile" Size="Size.Small" />
+                @*@if (context.Approved == false)
                 {
                     @if (isAdmin)
                     {
@@ -48,7 +49,7 @@
                     {
                         <MudFab @onclick="@(()=>Edit(@context.AgentId))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
                     }
-                }
+                }*@
 
                 @*<MudFab @onclick="@(()=>DeleteAgent(@context.Id))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />*@
             </MudTd>
@@ -149,6 +150,28 @@
             parameters.Add(nameof(ApproveAgent.Agent), agent);
 
             var editModal = Modal.Show<ApproveAgent>("Approve Agent Info", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetAccounts();
+            }
+        }
+    }
+    private async Task SendSms(string id)
+    {
+        var agent = Elements.FirstOrDefault(x => x.AgentId == id);
+        if (agent != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add("PhoneNo",agent.Phone);
+            parameters.Add("Agent",agent.Name);
+
+            var editModal = Modal.Show<SendSMS>("Send SMS", parameters);
             var result = await editModal.Result;
             if (result.Cancelled)
             {

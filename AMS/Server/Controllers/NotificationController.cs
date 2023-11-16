@@ -38,6 +38,21 @@ namespace AMS.Server.Controllers
             }
         }
 
+        [HttpPost("SendSms")]
+        public async Task<ActionResult> SendSms(Sms sms)
+        {
+            try
+            {
+                await _notificationService.SendSMS(sms.msg, sms.Phone);
+                return Ok();
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Sending Message");
+            }
+        }
+
         public record NotificationRequest(string  message);
     }
 }
