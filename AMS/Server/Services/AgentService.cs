@@ -87,7 +87,7 @@ namespace AMS.Server.Services
             ))
             .ToListAsync();
 
-            var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Where(x => x.Approved && x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).Select(x => new
+            var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).Select(x => new
             {
                 x.AgentId,
                 x.GameId,
