@@ -67,10 +67,28 @@ namespace AMS.Server.Extensions
         public static List<SalesDetails> TransformDetails(this List<SalesDetails> details)
         {
             List<SalesDetails> sales = new();
-            List<SalesDetails> list = details.OrderBy(x => x.EntryDate).ToList();
-            SalesDetails s1 = list[0] with { OpeningBalance = list[0].DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = list[0].DailySales };
-            sales.Add(s1);
-            
+            List<SalesDetails> list = new();
+            var _list = details.OrderBy(x => x.EntryDate).ToList();
+            // SalesDetails s1 = list.FirstOrDefault(x=>x.Description == "balance b/f") with { OpeningBalance = list[0].DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = list[0].DailySales };
+            //sales.Add(s1);
+
+            var s1 = _list.FirstOrDefault(x => x.Description == "balance b/f");
+            if (s1 != null)
+            {
+                sales.Add(s1 with { OpeningBalance = s1.DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = s1.DailySales });
+                _list.Remove(s1);
+                list = new List<SalesDetails>
+                {
+                    s1
+                };
+                list.AddRange(_list); 
+            }
+            else
+            {
+                sales.Add(_list[0] with { OpeningBalance = _list[0].DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = _list[0].DailySales });
+            }
+
+
             for (int i = 1; i < list.Count; i++)
             {
                 SalesDetails? s = list[i];

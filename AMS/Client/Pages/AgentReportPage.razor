@@ -81,9 +81,9 @@
                        <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.OpeningBalance))</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales))</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
-                       <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.DailySales) - @context.Item.Details.Sum(x=>x.WinAmount))</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.PayinAmount))</MudTd>
                        <MudTd>@String.Format("{0:0,0.00}",@context.Item.Details.Sum(x=>x.PayoutAmount))</MudTd>
+                       <MudTd>@String.Format("{0:0,0.00}", @context.Item.Details.Sum(x => x.EndBalance))</MudTd>
                    </FooterContent>
                </MudTable>
             </MudItem>
