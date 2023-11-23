@@ -37,5 +37,7 @@ namespace AMS.Shared.Dto
         public string WinsTreatedBy { get; set; } = string.Empty;
         public string WinsApprovedBy { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
+        public decimal GrossSales { get; set; }
+        public decimal SalesCommission { get; set; }
     }
 }

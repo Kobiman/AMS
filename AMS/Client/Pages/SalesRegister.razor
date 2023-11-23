@@ -43,8 +43,12 @@ else
         <MudNumericField T="int" Label="Number of Books" Required="true" @bind-Value="model.NumberOfBooks"
                           RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" />
 
+        <MudNumericField HideSpinButtons="true" @bind-Value="model.GrossSales"
+                             Label="Gross Sales" Variant="Variant.Text" />
+        <MudNumericField HideSpinButtons="true" @bind-Value="model.SalesCommission"
+                             Label="Sales Commission" Variant="Variant.Text" />
         <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
-                         Label="Daily Sales" Variant="Variant.Text" />
+                             Label="Net Sales" Variant="Variant.Text" />
         <MudTextField T="string" @bind-Value="model.SalesTreatedBy"
                          Label="Treated By" Variant="Variant.Text" />
         <MudTextField T="string" @bind-Value="model.SalesApprovedBy"

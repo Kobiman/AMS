@@ -39,5 +39,7 @@ namespace AMS.Shared
         public string AreaOfOperations { get; set; } = string.Empty;
         public int? LocationId { get; set; }
         public int NumberOfBooks { get; set; }
+        public decimal GrossSales { get; set; }
+        public decimal SalesCommission { get; set; }
     }
 }

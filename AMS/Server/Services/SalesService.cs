@@ -49,6 +49,8 @@ namespace AMS.Server.Services
                     SalesTreatedBy = sales.SalesTreatedBy,
                     SalesApprovedBy = sales.SalesApprovedBy,
                     WinsStaffId = string.Empty,
+                    GrossSales = sales.GrossSales,
+                    SalesCommission = sales.SalesCommission,
                 }
                 );
 
@@ -121,7 +123,9 @@ namespace AMS.Server.Services
                                     WinsTreatedBy = t.WinsApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
-                                    AreaOfOperations = t.AreaOfOperations
+                                    AreaOfOperations = t.AreaOfOperations,
+                                    SalesCommission = t.SalesCommission,
+                                    GrossSales = t.GrossSales,
                                 }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
                                 .ToListAsync();
             return result;
@@ -157,6 +161,8 @@ namespace AMS.Server.Services
                                    SalesStaffId = t.SalesStaffId,
                                    Approved = t.Approved,
                                    GameName = gme == null ? string.Empty : gme.Name,
+                                   SalesCommission = t.SalesCommission,
+                                   GrossSales = t.GrossSales,
                                }).OrderBy(x => x.EntryDate)
                                 .ToListAsync();
             return result;
@@ -280,6 +286,8 @@ namespace AMS.Server.Services
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     GameName = gme == null ? string.Empty : gme.Name,
+                                    SalesCommission = t.SalesCommission,
+                                    GrossSales = t.GrossSales,
                                 }).FirstOrDefaultAsync();
 
             return result;
