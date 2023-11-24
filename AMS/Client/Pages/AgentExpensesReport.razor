@@ -1,0 +1,188 @@
+﻿@page "/AgentExpensesReport"
+@implements IDisposable
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+@attribute [Authorize]
+
+<MudText>AGENT EXPENSES REPORT</MudText>
+<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
+@* <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddPayin>("Cash Pay-In"))">Payin</MudButton> *@
+    <div style="margin-top:10px">
+    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentExpenseDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent> 
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+        <MudSpacer />
+        <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Enter Date</MudTh>
+        <MudTh>Date</MudTh>
+        <MudTh>Agent</MudTh>
+        <MudTh>Amount</MudTh> 
+        <MudTh>Description</MudTh>
+
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy")</MudTd>
+        <MudTd DataLabel="Date">@context.Date.Value.ToString("dd-MMM-yyyy")</MudTd>
+        <MudTd DataLabel="Agent">@context.Agent</MudTd>
+        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.Amount)</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+
+
+    </RowTemplate>
+     <FooterContent>
+        <MudTFootRow Class="bold-text">
+          <MudTd>&nbsp;</MudTd>
+          <MudTd>&nbsp;</MudTd>
+          <MudTd>&nbsp;</MudTd>
+          <MudTd>&nbsp;</MudTd>
+          <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
+        </MudTFootRow>
+    </FooterContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+  </MudTable>
+</div>
+
+
+@*<MudCard Outlined="true">
+    <MudCardContent>
+        <MudText Typo="Typo.h6">Summary</MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
+        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
+    </MudCardContent>
+</MudCard>*@
+
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private AgentExpenseDto selectedItem1 = null;
+    DateTime? start = DateTime.Today;
+    DateTime? end = DateTime.Today;
+
+    private IEnumerable<AgentExpenseDto> Elements = new List<AgentExpenseDto>();
+    string period = "Today";
+
+    public int TotalNum { get; set; }
+    public decimal TotalCredit { get; set; }
+    public decimal TotalDebit { get; set; }
+    public decimal TotalBalance { get; set; }
+    private bool isAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetRole();
+        await GetRecords();
+    }
+    private async Task App_StateChanged(ComponentBase Source)
+    {
+        if (Source != this)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private bool FilterFunc1(AgentExpenseDto element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(AgentExpenseDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (element.Account.AccountName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+
+        return false;
+    }
+
+    private void CalculateSummuries(string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            TotalBalance = Elements.Sum(x => x.Amount);   
+        }
+        if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
+        {
+            TotalBalance = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+        }
+    }
+
+    //private async Task Edit(string id)
+    //{
+    //    var toEdit = Elements.FirstOrDefault(x => x.Id == id);
+    //    if (toEdit != null)
+    //    {
+    //        toEdit.Type = "Payin";
+    //        var parameters = new ModalParameters();
+    //        parameters.Add(nameof(EditPayin.editPayout), toEdit);
+
+    //        var editModal = Modal.Show<EditPayin>("Edit Pay-In", parameters);
+    //        var result = await editModal.Result;
+    //        if (result.Cancelled)
+    //        {
+    //            Console.WriteLine("Modal was cancelled");
+    //        }
+    //        else
+    //        {
+    //            accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+    //            await GetRecords();
+    //        }
+    //    }
+    //}
+
+    private async Task GetRole()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+    }
+    public async Task ReloadAccounts(object source, EventArgs e)
+    {
+        await GetRecords();
+        await App_StateChanged((ComponentBase)source);
+    }
+    async Task PeriodChanged()
+    {
+        var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/AgentExpensesReport", dateRange);
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<AgentExpenseDto>>();
+
+        }
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalNum = Elements.Count();
+    }
+
+    private async Task GetRecords()
+    {
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/AgentExpensesReport", new AMS.Shared.DateRange());
+        if (response.IsSuccessStatusCode)
+        {
+            Elements = await response.Content.ReadFromJsonAsync<List<AgentExpenseDto>>();
+
+        }
+        TotalBalance = Elements.Sum(x => x.Amount);
+        TotalNum = Elements.Count();
+    }
+
+    void IDisposable.Dispose()
+    {
+        accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
+    }
+}

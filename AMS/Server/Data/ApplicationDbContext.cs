@@ -35,6 +35,7 @@ namespace AMS.Server.Data
         public DbSet<Audit> Audits { get; set; }
 
         public DbSet<Location> Locations { get; set; }
+        public DbSet<AgentExpense> AgentExpenses { get; set; }
 
     }
 }

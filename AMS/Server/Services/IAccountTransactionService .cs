@@ -18,6 +18,9 @@ namespace AMS.Server.Services
         public Task<IEnumerable<TransferDto>> TransferReport(DateRange period);
         public Task<AccountTransactionDto> Payout(AddPayoutDto addPayoutDto);
 
+        public Task<Result> AddAgentExpense(AddAgentExpenseDto addExpenseDto);
+        public Task<IEnumerable<AgentExpenseDto>> AgentExpenses(DateRange period);
+
         public Task<Result<AccountTransactionDto>> EditPayout(Payout editPayoutDto);
         public Task<Result<AccountTransactionDto>> ApprovePayout(string payoutId);
         public Task<IEnumerable<PayoutDto>> PayoutReport(DateRange period);

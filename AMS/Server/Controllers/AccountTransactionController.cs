@@ -154,6 +154,36 @@ namespace AMS.Server.Controllers
             }
 
         }
+        [HttpPost("AddAgentExpense")]
+        public async Task<ActionResult<Result>> AddAgentExpense([FromBody] AddAgentExpenseDto addExpenseDto)
+        {
+            try
+            {
+                if (addExpenseDto == null)
+                    return BadRequest();
+                var result = await accTransactionService.AddAgentExpense(addExpenseDto);
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+
+        }
+        [HttpPost("AgentExpensesReport")]
+        public async Task<IActionResult> AgentExpenses(DateRange period)
+        {
+            try
+            {
+                return Ok(await accTransactionService.AgentExpenses(period));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+
+        }
         [HttpPut("EditPayout")]
         public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody] Payout editPayout)
         {

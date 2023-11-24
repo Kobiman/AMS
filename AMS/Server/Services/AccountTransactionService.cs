@@ -208,6 +208,48 @@ namespace AMS.Server.Services
                 return new AccountTransactionDto();
         }
 
+        public async Task<Result> AddAgentExpense(AddAgentExpenseDto addExpenseDto)
+        {
+
+            appDbContext.AgentExpenses.Add(new AgentExpense
+            {
+                EntryDate = addExpenseDto.EntryDate.Value,
+                AgentId = addExpenseDto.AgentId,
+                Date = addExpenseDto.Date.Value,
+                Description = addExpenseDto.Description,
+                Amount = addExpenseDto.Amount,
+                SalesId = addExpenseDto.SalesId,
+            });
+            if(await appDbContext.SaveChangesAsync() > 0)
+            {
+                return new Result(true, "Saved Successfully");
+            }
+
+            return new Result(false, "Error Occured While Saving!");
+        }
+        public async Task<IEnumerable<AgentExpenseDto>> AgentExpenses(DateRange period)
+        {
+            period.GetDates(out DateTime startDate, out DateTime endDate);
+
+            var result = await (from e in appDbContext.AgentExpenses.Where(x => x.EntryDate >= startDate && x.EntryDate <= endDate)
+                                join ag in appDbContext.Agents on e.AgentId equals ag.AgentId into agac
+                                from agt in agac.DefaultIfEmpty()
+
+                                select new AgentExpenseDto
+                                {
+                                    Id = e.Id,
+                                    Amount = e.Amount,
+                                    EntryDate = e.EntryDate,
+                                    Description = e.Description,
+                                    AgentId = e.AgentId,
+                                    Agent = agt == null ? string.Empty : agt.Name,
+                                    StaffId = e.StaffId,
+                                    SalesId= e.SalesId,
+                                    Date   = e.Date
+                                }).ToListAsync();
+            return result;
+        }
+
         public async Task<Result<AccountTransactionDto>> EditPayout(Payout editPayoutDto)
         {
             var result = await appDbContext.Payouts.FirstOrDefaultAsync(x=> x.Id == editPayoutDto.Id);
