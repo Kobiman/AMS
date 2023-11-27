@@ -20,7 +20,8 @@ else
             }
         </MudSelect>
 
-        <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
+                       SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId))">
             @foreach (var agent in agents)
             {
                 <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
@@ -44,11 +45,11 @@ else
                           RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" />
 
         <MudNumericField HideSpinButtons="true" @bind-Value="model.GrossSales"
-                             Label="Gross Sales" Variant="Variant.Text" />
+                             Label="Gross Sales" Variant="Variant.Text" TextChanged="@(()=>CalculateNetSales(model.GrossSales,model.SalesCommission))" />
         <MudNumericField HideSpinButtons="true" @bind-Value="model.SalesCommission"
-                             Label="Sales Commission" Variant="Variant.Text" />
+                             Label="Sales Commission" Variant="Variant.Text" ReadOnly=true/>
         <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
-                             Label="Net Sales" Variant="Variant.Text" />
+                             Label="Net Sales" Variant="Variant.Text" ReadOnly=true />
         <MudTextField T="string" @bind-Value="model.SalesTreatedBy"
                          Label="Treated By" Variant="Variant.Text" />
         <MudTextField T="string" @bind-Value="model.SalesApprovedBy"
@@ -72,7 +73,7 @@ else
     SalesDto model = new SalesDto();
 
     private IEnumerable<AccountDto> accounts { get; set; }
-    private IEnumerable<Agent> agents = new List<Agent>();
+    private IEnumerable<AgentDto> agents = new List<AgentDto>();
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
@@ -100,6 +101,18 @@ else
 
     }
 
+    private void SetSalesCommission(string agentId)
+    {
+        var agent = agents.FirstOrDefault(x => x.AgentId == agentId);
+        model.SalesCommission = agent?.Commision ?? 0;
+    }
+
+    private void CalculateNetSales(decimal grossSales, decimal salesCommission)
+    {
+        var netSales = grossSales - ((salesCommission / 100) * grossSales);
+        model.DailySales = netSales;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         var result = await Http.GetFromJsonAsync<IList<AccountDto>>("api/Account/GetAccounts");
@@ -117,7 +130,7 @@ else
 
     private async Task GetAgents()
     {
-        var r = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        var r = await Http.GetFromJsonAsync<List<AgentDto>>("api/Agent/GetAgents");
         var result = r.Where(x => x.Approved);
         if (result is not null)
         {
@@ -125,7 +138,7 @@ else
         }
         else
         {
-            agents = new List<Agent>();
+            agents = new List<AgentDto>();
         }
     }
     private async Task GetGames()
