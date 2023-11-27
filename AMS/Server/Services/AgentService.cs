@@ -35,7 +35,8 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<AgentDto>> GetAgents()
         {
-            var results =  await _context.Agents.Include(x=> x.Transactions).Where(x=>x.Approved).ToListAsync();
+            //var results =  await _context.Agents.Include(x=> x.Transactions).Where(x=>x.Approved).ToListAsync();
+            var results = await _context.Agents.Include(x => x.Transactions).ToListAsync();
             return results.Select(x => new AgentDto
             {
                 AgentId = x.AgentId,
@@ -46,7 +47,7 @@ namespace AMS.Server.Services
                 HouseNo = x.HouseNo,
                 Region = x.Region,
                 Approved = x.Approved,
-                
+                Commision = x.Commission,
                 Sales = x.Transactions.Sum(x => x.DailySales),
                 AmountPaid = x.Transactions.Sum(x => x.WinAmount),
                 OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.WinAmount)
@@ -59,8 +60,7 @@ namespace AMS.Server.Services
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
             //var bfAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
 
-            var sales = await _context.Sales.Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).OrderBy(x=>x.EntryDate)
-                .Select(x => new
+            var sales = await _context.Sales.Where(x => x.Approved && x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).OrderBy(x=>x.EntryDate).Select(x => new
             {
                 x.AccountId,
                 x.AgentId,

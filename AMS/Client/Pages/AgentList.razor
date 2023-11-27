@@ -6,10 +6,10 @@
 
 <MudText>AGENTS</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-@if(!isAdmin)
-{
+@*@if(!isAdmin)
+{*@
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAgent>("Add Agent"))">Add Agent</MudButton>
-}
+@*}*@
 <div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<AgentDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
@@ -25,6 +25,7 @@
             <MudTh>Email</MudTh>
             <MudTh>House no.</MudTh>
             <MudTh>Sales</MudTh>
+            <MudTh>Commission (%)</MudTh>
             <MudTh>Wins</MudTh>
             <MudTh>Actions</MudTh>
         </HeaderContent>
@@ -36,6 +37,7 @@
             <MudTd DataLabel="Contact">@context.Email</MudTd>
             <MudTd DataLabel="Contact">@context.HouseNo</MudTd>
             <MudTd DataLabel="Sales">@context.Sales</MudTd>
+            <MudTd DataLabel="Commission">@context.Commision</MudTd>
             <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
             <MudTd DataLabel="">
             <MudFab @onclick="@(()=>SendSms(@context.AgentId))" Icon="@Icons.Material.Filled.SendToMobile" Size="Size.Small" />

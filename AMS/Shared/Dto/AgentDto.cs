@@ -24,6 +24,7 @@ namespace AMS.Shared.Dto
         public bool Approved { get; set; }
         public decimal Sales { get; set; }
 
+        public decimal Commision { get; set; }
         public decimal AmountPaid { get; set; }
 
         public decimal OutstandingBalance { get; set; }
