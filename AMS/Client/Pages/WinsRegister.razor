@@ -19,8 +19,12 @@
         <MudTextField T="string" Label="Game" Required="true" @bind-Value="model.GameName"
                       RequiredError="Game is required!" For="@(() => model.GameName)" ReadOnly="true" />
 
-        <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
-                      RequiredError="Description is required!" For="@(() => model.Description)" ReadOnly="true" />
+       <MudSelect T="string" Label="Description" Required="true"  @bind-Value="model.Description"  AnchorOrigin="Origin.BottomCenter"
+                Variant="Variant.Outlined">
+              <MudSelectItem T="string" Value="@("Oversight Wins")">Oversight Wins</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Late Wins")">Late Wins</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Daily Wins")">Daily Wins</MudSelectItem>
+          </MudSelect>
 
         <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="model.AreaOfOperations"
                       RequiredError="Area of operations is required!" For="@(() => model.AreaOfOperations)" ReadOnly="true" />
@@ -92,6 +96,7 @@
         }
         await GetAgents();
         await GetGames();
+        model.Description = "";
     }
 
     private async Task GetAgents()
