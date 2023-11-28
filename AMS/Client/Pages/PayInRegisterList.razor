@@ -7,7 +7,8 @@
 *@
 
 
-<MudText>PayIn</MudText>
+<MudText>PAY-IN REGISTER</MudText>
+<hr/>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
@@ -78,7 +79,7 @@
                         parameters.Add("AgentId",@context.AgentId);
                         parameters.Add("AgentName",context.AgentName);
                         parameters.Add("AreaOfOperations",context.AreaOfOperations);
-                        Modal.Show<AddPayin>("Cash Pay-In",parameters);
+                        Modal.Show<AddPayin>("PAY-IN REGISTER",parameters);
                             })">Payin</MudButton>
                 }
             </MudTd>

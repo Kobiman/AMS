@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128111644_GameSrl")]
+    partial class GameSrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,86 +265,86 @@ namespace AMS.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a5c49f5d-f597-4274-b950-0c168b7e7377",
-                            Name = "MONDAY SPECIAL",
+                            Id = "b44c7c0f-33df-442a-ad25-35dae2b2314f",
+                            Name = "Monday Special",
                             Srl = 1
                         },
                         new
                         {
-                            Id = "72d2c964-c73b-4369-885a-a953496c9852",
-                            Name = "PIONEER",
+                            Id = "a5038b9d-334b-43e9-a469-c7ae1b1aa9d0",
+                            Name = "Pioneer",
                             Srl = 2
                         },
                         new
                         {
-                            Id = "3f0286fb-4d6b-4121-96f7-bb4f3e567c1e",
-                            Name = "LUCKY TUESDAY",
+                            Id = "23c9de8d-ec28-48c8-8b4f-5d7fe78d30d6",
+                            Name = "Lucky Tuesday",
                             Srl = 3
                         },
                         new
                         {
-                            Id = "89b1df81-e5d8-48be-b3dc-3c6e647b601a",
-                            Name = "VAG EAST",
+                            Id = "c1a4344c-b1a4-4905-91b5-44a0134d9501",
+                            Name = "Vag East",
                             Srl = 4
                         },
                         new
                         {
-                            Id = "dca7dd73-98f5-47ca-8906-3b9662090bad",
-                            Name = "MID-WEEK",
+                            Id = "78c27457-e9bd-4e22-8ccb-5ecded47f5b0",
+                            Name = "Mid-Week",
                             Srl = 5
                         },
                         new
                         {
-                            Id = "9479a6df-de29-4e01-8a57-8dff37875903",
-                            Name = "VAG WEST",
+                            Id = "91cccb6d-c0a3-4bd8-b4cd-15d7644ce80b",
+                            Name = "Vag West",
                             Srl = 6
                         },
                         new
                         {
-                            Id = "6b4314b2-ddd2-491b-b79d-18210f25ce85",
-                            Name = "FORTUNE THURSDAY",
+                            Id = "a2f4c581-8d1a-4e53-88f2-edefc4212b49",
+                            Name = "Fortune Thursday",
                             Srl = 7
                         },
                         new
                         {
-                            Id = "4023d2aa-dca2-4077-9318-1df7e4fefe85",
-                            Name = "AFRICA",
+                            Id = "44cc98e0-8b05-4119-baa1-2bf2f8acd76b",
+                            Name = "Africa",
                             Srl = 8
                         },
                         new
                         {
-                            Id = "79cac339-16eb-429c-905f-1e7d6c7aed74",
-                            Name = "FRIDAY BONANZA",
+                            Id = "2071dc0d-9e76-4003-92f6-d9d701b99016",
+                            Name = "Friday Bonanza",
                             Srl = 9
                         },
                         new
                         {
-                            Id = "ab74a590-2762-4eb8-820f-e62d9ccfbaef",
-                            Name = "OBIRI",
+                            Id = "0fbb9b06-1ed4-403f-a1e0-432599bf928e",
+                            Name = "Obiri",
                             Srl = 10
                         },
                         new
                         {
-                            Id = "a062b20b-cd7d-4a7d-b39a-1ffc464af334",
-                            Name = "NATIONAL",
+                            Id = "7cbebd14-4d4a-4cdc-9f89-987e22fb0e60",
+                            Name = "National",
                             Srl = 11
                         },
                         new
                         {
-                            Id = "e3433ab5-ddd8-4a34-9c50-f7800c2dfff6",
-                            Name = "OLD SOLDIER",
+                            Id = "658e170b-40ff-4121-8b63-451b72c9ef9e",
+                            Name = "Old Soldier",
                             Srl = 12
                         },
                         new
                         {
-                            Id = "f425b971-7e73-42f0-b8a4-fd65a3860bbf",
-                            Name = "ASEDA",
+                            Id = "e8b5c6f8-4fd1-4c1b-880b-39fc8d588ccd",
+                            Name = "Aseda",
                             Srl = 13
                         },
                         new
                         {
-                            Id = "08e46806-f915-4a28-9b33-3ee856bff792",
-                            Name = "SUNDAY SPECIAL",
+                            Id = "5739778d-8365-4371-a795-6c72f0287da6",
+                            Name = "Sunday Special",
                             Srl = 14
                         });
                 });
