@@ -24,7 +24,7 @@ else
                 <MudSelectItem T="string" Value="@("MoMo")">MoMo</MudSelectItem>
             </MudSelect>
 
-          <MudTextField T="string" Label="Cheque No." @bind-Value="model.ChequeNo"/>
+          <MudTextField T="string" Label="Cheque/MoMo Transaction ID" @bind-Value="model.ChequeNo"/>
 
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
@@ -33,9 +33,9 @@ else
                          Label="Amount" Variant="Variant.Text" />
 
             <MudTextField T="string" @bind-Value="model.TreatedBy"
-                          Label="Treated By" Variant="Variant.Text" />
+                          Label="Received By" Variant="Variant.Text" />
             <MudTextField T="string" @bind-Value="model.ApprovedBy"
-                          Label="Approved By" Variant="Variant.Text" />
+                          Label="Received From" Variant="Variant.Text" />
             <ValidationSummary />
             <div style="margin-top:15px" class="mud-card-actions">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>

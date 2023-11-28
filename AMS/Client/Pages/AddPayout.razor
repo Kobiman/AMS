@@ -20,7 +20,7 @@
               <MudSelectItem T="string" Value="@("MoMo")">MoMo</MudSelectItem>
           </MudSelect>
 
-          <MudTextField T="string" Label="Cheque No." Required="true" @bind-Value="model.ChequeNo"/>
+          <MudTextField T="string" Label="Cheque No./MoMo Transaction Id" Required="true" @bind-Value="model.ChequeNo"/>
 
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description"
                       RequiredError="Description is required!" For="@(() => model.Description)" />
@@ -28,9 +28,9 @@
             <MudNumericField HideSpinButtons="true" @bind-Value="model.Amount"
                          Label="Amount" Variant="Variant.Text" />
 
-             <MudTextField T="string" @bind-Value="model.TreatedBy" Label="Treated By" Variant="Variant.Text"
+             <MudTextField T="string" @bind-Value="model.TreatedBy" Label="Received By" Variant="Variant.Text"
                     RequiredError="TreatedBy is a required field" For="@(() => model.TreatedBy)"/>
-            <MudTextField T="string" @bind-Value="model.ApprovedBy" Label="Approved By" Variant="Variant.Text"
+            <MudTextField T="string" @bind-Value="model.ApprovedBy" Label="Approved From" Variant="Variant.Text"
                     RequiredError="ApprovedBy is a required field" For="@(()=> model.ApprovedBy)"/>
 
             <ValidationSummary />
