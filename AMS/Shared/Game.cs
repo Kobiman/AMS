@@ -15,5 +15,6 @@ namespace AMS.Shared
         }
         public string? Id { get; set; }
         public string Name { get; set; }
+        public int? Srl { get; set; }
     }
 }

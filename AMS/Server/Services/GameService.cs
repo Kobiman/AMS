@@ -36,7 +36,9 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<Game>> GetAllGames()
         {
-            return await dbContext.Games.ToListAsync();
+            return await dbContext.Games.Where(x => x.Srl.HasValue)
+                .OrderBy(x => x.Srl)
+                .ToListAsync();
         }
 
         public Task<Game> GetUpdateGame(Game game)
