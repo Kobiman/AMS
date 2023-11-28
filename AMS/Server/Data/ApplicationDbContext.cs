@@ -11,15 +11,28 @@ namespace AMS.Server.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Account>()
-        //        .HasData(
-        //            new Account { AccountName = "Pay-In", Balance = 0, CreatedDate = DateTime.Now, Type = "Revenue", Transactions = new List<AccountTransaction>() },
-        //            new Account { AccountName = "Pay-Out", Balance = 0, CreatedDate = DateTime.Now, Type = "Liability", Transactions = new List<AccountTransaction>() },
-        //            new Account { AccountName = "GCB Bank", Balance = 0, CreatedDate = DateTime.Now, Type = "Asset", Transactions = new List<AccountTransaction>() }
-        //        );
-        //}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Game>()
+                .HasData(
+                    new Game { Name= "Monday Special", Srl=1},
+                    new Game { Name= "Pioneer", Srl=2},
+                    new Game { Name= "Lucky Tuesday", Srl=3},
+                    new Game { Name= "Vag East", Srl=4},
+                    new Game { Name= "Mid-Week", Srl=5},
+                    new Game { Name= "Vag West", Srl=6},
+                    new Game { Name= "Fortune Thursday", Srl=7},
+                    new Game { Name= "Africa", Srl=8},
+                    new Game { Name= "Friday Bonanza", Srl=9},
+                    new Game { Name= "Obiri", Srl=10},
+                    new Game { Name= "National", Srl=11},
+                    new Game { Name= "Old Soldier", Srl=12},
+                    new Game { Name= "Aseda", Srl=13},
+                    new Game { Name= "Sunday Special", Srl=14}
+                );
+        }
+        
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Agent> Agents { get; set; }
         public DbSet<AccountTransaction> AccountTransactions { get; set; }
