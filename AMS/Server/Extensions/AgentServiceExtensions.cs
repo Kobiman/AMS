@@ -68,7 +68,7 @@ namespace AMS.Server.Extensions
         {
             List<SalesDetails> sales = new();
             List<SalesDetails> list = new();
-            var _list = details.OrderBy(x => x.EntryDate).ToList();
+            var _list = details.OrderBy(x => x.DrawDate).ToList();
             // SalesDetails s1 = list.FirstOrDefault(x=>x.Description == "balance b/f") with { OpeningBalance = list[0].DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = list[0].DailySales };
             //sales.Add(s1);
 

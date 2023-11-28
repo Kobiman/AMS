@@ -127,7 +127,7 @@ namespace AMS.Server.Services
                                     AreaOfOperations = t.AreaOfOperations,
                                     SalesCommission = t.SalesCommission,
                                     GrossSales = t.GrossSales,
-                                }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
+                                }).OrderBy<SalesDto, DateTime?>(x => x.DrawDate)
                                 .ToListAsync();
             return result;
         }
@@ -164,7 +164,7 @@ namespace AMS.Server.Services
                                    GameName = gme == null ? string.Empty : gme.Name,
                                    SalesCommission = t.SalesCommission,
                                    GrossSales = t.GrossSales,
-                               }).OrderBy(x => x.EntryDate)
+                               }).OrderBy(x => x.DrawDate)
                                 .ToListAsync();
             return result;
         }

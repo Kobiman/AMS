@@ -60,7 +60,7 @@ namespace AMS.Server.Services
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
             //var bfAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
 
-            var sales = await _context.Sales.Where(x => x.Approved && x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).OrderBy(x=>x.EntryDate).Select(x => new
+            var sales = await _context.Sales.Where(x => x.Approved && x.DrawDate >= startDate.Date && x.DrawDate <= endDate.Date).OrderBy(x=>x.DrawDate).Select(x => new
             {
                 x.AccountId,
                 x.AgentId,
