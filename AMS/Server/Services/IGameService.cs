@@ -8,6 +8,7 @@ namespace AMS.Server.Services
         public Task<Game> AddGame(Game game);
         public Task<IEnumerable<Game>> GetAllGames();
         public Task<Game> GetUpdateGame(Game game);
-        public Task<Game> DeleteGame(int gameId);    
+        public Task<Game> DeleteGame(int gameId);        
+        public Task<Game> UpdateGame(Game game);
     }
 }

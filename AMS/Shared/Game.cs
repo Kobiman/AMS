@@ -16,5 +16,9 @@ namespace AMS.Shared
         public string? Id { get; set; }
         public string Name { get; set; }
         public int? Srl { get; set; }
+
+        [Required]
+        [Range(0.0, 100, ErrorMessage = "The Commission value is not valid.")]
+        public decimal Commission { get; set; } = 0;
     }
 }

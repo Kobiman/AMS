@@ -32,7 +32,22 @@ namespace AMS.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        [HttpPut("EditGame")]
+        public async Task<IActionResult> EditGame(Game game)
+        {
+            try
+            {
+                var results = await gameService.UpdateGame(game);
+                if (results == null)
+                    return NotFound();
+                else
+                    return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
         [HttpGet("GetGames")]
         public async Task<IActionResult> GetGames()
         {

@@ -50,5 +50,15 @@ namespace AMS.Server.Services
         {
             return await dbContext.Games.FirstOrDefaultAsync(x => x.Id == gameId);
         }
+
+        public async Task<Game> UpdateGame(Game game)
+        {
+            dbContext.Games.UpdateRange(game);
+            var result = await dbContext.SaveChangesAsync();
+            if (result > 0)
+                return game;
+            else
+                return new Game();
+        }
     }
 }

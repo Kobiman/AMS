@@ -25,7 +25,7 @@
             <MudTh>Email</MudTh>
             <MudTh>House no.</MudTh>
             <MudTh>Sales</MudTh>
-            <MudTh>Commission (%)</MudTh>
+            @*<MudTh>Commission (%)</MudTh>*@
             <MudTh>Wins</MudTh>
             <MudTh>Actions</MudTh>
         </HeaderContent>
@@ -37,7 +37,7 @@
             <MudTd DataLabel="Contact">@context.Email</MudTd>
             <MudTd DataLabel="Contact">@context.HouseNo</MudTd>
             <MudTd DataLabel="Sales">@context.Sales</MudTd>
-            <MudTd DataLabel="Commission">@context.Commision</MudTd>
+            @*<MudTd DataLabel="Commission">@context.Commision</MudTd>*@
             <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
             <MudTd DataLabel="">
             <MudFab @onclick="@(()=>SendSms(@context.AgentId))" Icon="@Icons.Material.Filled.SendToMobile" Size="Size.Small" />

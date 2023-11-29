@@ -29,7 +29,7 @@ namespace AMS.Shared
 
         [Required]
         public string? Phone { get; set; }
-        [Required]
+        //[Required]
         [Range(0.0, 100, ErrorMessage = "The field {0} value is not valid.")]
         public decimal Commission { get; set; }
         public string StaffId { get; set; } = String.Empty;

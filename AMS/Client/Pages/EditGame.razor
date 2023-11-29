@@ -1,0 +1,53 @@
+﻿@attribute [Authorize(Roles = "Admin, Sales")]
+
+<div style="width: 450px;">
+    <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+
+        <MudTextField T="string" Label="Game" Required="true" @bind-Value="model.Name" ReadOnly="true" />
+
+        <MudNumericField HideSpinButtons="true" @bind-Value="model.Commission"
+                        Label="Commission (%)" Variant="Variant.Text" />
+
+        <ValidationSummary />
+        <div style="margin-top:15px" class="mud-card-actions">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public Game model { get; set; } = new Game();
+
+
+    bool success;
+    string[] errors = { };
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PutAsJsonAsync("api/Game/EditGame", model);
+        if (response.IsSuccessStatusCode)
+        {
+            model = new Game();
+            var result = await response.Content.ReadFromJsonAsync<Game>();
+            await ModalInstance.CloseAsync();
+            Snackbar.Add("Transaction Saved", Severity.Success);
+            accountEvents.OnAccountAdded(this);
+            StateHasChanged();
+        }
+        else
+        {
+            model = new Game();
+            await ModalInstance.CloseAsync();
+            Snackbar.Add("Save Transaction Failed", Severity.Error);
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+}
