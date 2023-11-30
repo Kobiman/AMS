@@ -20,15 +20,15 @@ else
             }
         </MudSelect>
 
-            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
-                       SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId))">
+            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
             @foreach (var agent in agents)
             {
                 <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
             }
         </MudSelect>
 
-        <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+        <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
+                       SelectedValuesChanged="@(()=>SetSalesCommission(model.GameId))">
             @foreach (var game in games)
             {
                 <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
@@ -101,10 +101,10 @@ else
 
     }
 
-    private void SetSalesCommission(string agentId)
+    private void SetSalesCommission(string gameId)
     {
-        var agent = agents.FirstOrDefault(x => x.AgentId == agentId);
-        model.SalesCommission = agent?.Commision ?? 0;
+        var game = games.FirstOrDefault(x => x.Id == gameId);
+        model.SalesCommission = game?.Commission ?? 0;
     }
 
     private void CalculateNetSales(decimal grossSales, decimal salesCommission)
