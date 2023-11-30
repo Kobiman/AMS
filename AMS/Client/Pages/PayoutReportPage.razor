@@ -35,6 +35,7 @@
         <MudTh>Amount</MudTh>
         <MudTh>Received By</MudTh>
         <MudTh>Received From</MudTh>
+        <MudTh>Received's Phone</MudTh>
         <MudTh>Description</MudTh>
 
     </HeaderContent>
@@ -45,8 +46,9 @@
         @*<MudTd DataLabel="Payment Type">&nbsp;</MudTd>*@
         <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
-        <MudTd DataLabel="Treated By">@context.TreatedBy</MudTd>
-        <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
+        <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
+        <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
+        <MudTd DataLabel="Receiver Phone">@context.ReceiverPhone</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
 
 

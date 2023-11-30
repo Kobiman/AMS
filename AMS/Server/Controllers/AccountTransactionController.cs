@@ -101,7 +101,7 @@ namespace AMS.Server.Controllers
              return Ok(await accTransactionService.TransferReport(period));
         }
 
-        [HttpPut()]
+        //[HttpPut]
         public async Task<ActionResult<AccountTransactionDto>> EditTransaction(AccountTransaction adminTransaction)
         {
             try
@@ -185,7 +185,7 @@ namespace AMS.Server.Controllers
 
         }
         [HttpPut("EditPayout")]
-        public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody] Payout editPayout)
+        public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody]  PayoutDto editPayout)
         {
             try
             {

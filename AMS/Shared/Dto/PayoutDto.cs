@@ -27,5 +27,8 @@ namespace AMS.Shared.Dto
         public string AreaOfOperations { get; set; } = string.Empty;
         public string ChequeNo { get; set; } = string.Empty;
         public string TreatedBy { get; set; } = string.Empty;
+        public string ReceivedBy { get; set; } = string.Empty;
+        public string ReceivedFrom { get; set; } = string.Empty;
+        public string ReceiverPhone { get; set; } = string.Empty;
     }
 }

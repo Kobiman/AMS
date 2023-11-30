@@ -16,13 +16,6 @@
         <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
         <MudSpacer />
         <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-       @* <MudSelect T="string" @bind-Value="@period" SelectedValuesChanged="@(() => PeriodChanged())" Label="Transactions For" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" >
-            <MudSelectItem Value="@("Today")" />
-            <MudSelectItem Value="@("This Week")" />
-            <MudSelectItem Value="@("This Month")" /> 
-            <MudSelectItem Value="@("This Year")" />
-            <MudSelectItem Value="@("All")" />
-        </MudSelect>*@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Date</MudTh>
@@ -35,6 +28,10 @@
         <MudTh>Received By</MudTh>
         <MudTh>Received From</MudTh>
         <MudTh>Description</MudTh>
+        @if(isAdmin)
+            {
+                <MudTh>Action</MudTh>
+            }
 
     </HeaderContent>
     <RowTemplate>
@@ -45,9 +42,13 @@
         <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.Amount)</MudTd>
         @*<MudTh DataLabel="Received By">09876</MudTh>*@
-        <MudTd DataLabel="Treated By">@context.TreatedBy</MudTd>
-        <MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>
+        <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
+        <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
+        @if(isAdmin)
+            {
+                <MudFab @onclick="@(()=>Edit(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            }
 
 
     </RowTemplate>
@@ -67,14 +68,7 @@
 </div>
 
 
-@*<MudCard Outlined="true">
-    <MudCardContent>
-        <MudText Typo="Typo.h6">Summary</MudText>
-        <MudSpacer />
-        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
-        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
-    </MudCardContent>
-</MudCard>*@
+
 
 @code {
     private bool dense = false;
@@ -143,6 +137,8 @@
             toEdit.Type = "Payin";
             var parameters = new ModalParameters();
             parameters.Add(nameof(EditPayin.editPayout), toEdit);
+            //parameters.Add("model", toEdit);
+
 
             var editModal = Modal.Show<EditPayin>("Edit Pay-In", parameters);
             var result = await editModal.Result;

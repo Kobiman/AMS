@@ -191,9 +191,13 @@ namespace AMS.Server.Services
                 StaffId = _authService.GetStaffID(),
                 TreatedBy = addPayoutDto.TreatedBy,
                 ApprovedBy = addPayoutDto.ApprovedBy,
+                ReceiverPhone = addPayoutDto.ReceiverPhone,               
                 SalesId = addPayoutDto.SalesId,
                 AreaOfOperations = addPayoutDto.AreaOfOperations,
-                ChequeNo = addPayoutDto.ChequeNo
+                ChequeNo = addPayoutDto.ChequeNo,
+                ReceivedBy = addPayoutDto.ReceivedBy,
+                ReceivedFrom = addPayoutDto.ReceivedFrom
+                
                 //DrawDate = addPayoutDto.DrawDate.Value
             });
             await appDbContext.SaveChangesAsync();
@@ -250,7 +254,7 @@ namespace AMS.Server.Services
             return result;
         }
 
-        public async Task<Result<AccountTransactionDto>> EditPayout(Payout editPayoutDto)
+        public async Task<Result<AccountTransactionDto>> EditPayout(PayoutDto editPayoutDto)
         {
             var result = await appDbContext.Payouts.FirstOrDefaultAsync(x=> x.Id == editPayoutDto.Id);
             var absoluteAmount = Math.Abs(editPayoutDto.Amount);
@@ -268,6 +272,9 @@ namespace AMS.Server.Services
                 result.EntryDate = editPayoutDto.EntryDate;
                 result.TreatedBy = editPayoutDto.TreatedBy;
                 result.ApprovedBy = editPayoutDto.ApprovedBy;
+                result.ReceivedBy = editPayoutDto.ReceivedBy;
+                result.ReceivedFrom = editPayoutDto.ReceivedFrom;
+
                 await appDbContext.SaveChangesAsync();
                 return new Result<AccountTransactionDto> { IsSucessful = true, Message = "Transaction Updated", Value = await GetAdministrativeTransactionById(result.Id) };
             }
@@ -328,7 +335,10 @@ namespace AMS.Server.Services
                                     StaffId = p.StaffId,
                                     AreaOfOperations = p.AreaOfOperations,
                                     TreatedBy = p.TreatedBy,
-                                    ApprovedBy = p.ApprovedBy
+                                    ApprovedBy = p.ApprovedBy,
+                                    ReceivedBy = p.ReceivedBy,
+                                    ReceivedFrom = p.ReceivedFrom,
+                                    ReceiverPhone = p.ReceiverPhone
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();
@@ -359,7 +369,9 @@ namespace AMS.Server.Services
                                     ApprovedBy = p.ApprovedBy,
                                     TreatedBy = p.TreatedBy,
                                     ChequeNo = p.ChequeNo,
-                                    AreaOfOperations = p.AreaOfOperations
+                                    AreaOfOperations = p.AreaOfOperations,
+                                    ReceivedBy = p.ReceivedBy,
+                                    ReceivedFrom = p.ReceivedFrom,
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();

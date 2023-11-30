@@ -32,11 +32,18 @@ namespace AMS.Shared.Dto
         public string StaffId { get; set; } = String.Empty;
         public string? SalesId { get; set; }
 
-        [Required]
+        //[Required]
         public string TreatedBy { get; set; } = string.Empty;
-        [Required]
+        //[Required]
         public string ApprovedBy { get; set; } = string.Empty;
+
+        [Required]
+        public string ReceivedBy { get; set; } = string.Empty;
+        [Required]
+        public string ReceivedFrom { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public string ChequeNo { get; set; } = string.Empty;
+
+        public string ReceiverPhone { get; set; } = string.Empty;
     }
 }
