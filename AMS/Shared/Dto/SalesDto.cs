@@ -27,6 +27,7 @@ namespace AMS.Shared.Dto
         [Required]
         public decimal DailySales { get; set; }
         public int NumberOfBooks { get; set; }
+        public string? Sheet {  get; set; }
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }
         public string SalesStaffId { get; set; } = string.Empty;

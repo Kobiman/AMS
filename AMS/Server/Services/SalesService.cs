@@ -179,6 +179,7 @@ namespace AMS.Server.Services
             {
                 preAmount = result.WinAmount;
                 result.WinAmount = agentTransaction.WinAmount;
+                result.Sheet = agentTransaction.Sheet;
                 result.Description = agentTransaction.Description;
                 result.AccountId = agentTransaction.AccountId;
                 result.AgentId = agentTransaction.AgentId;

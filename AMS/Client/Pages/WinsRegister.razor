@@ -1,4 +1,5 @@
 ﻿@page "/WinsRegister"
+@using System.Text.Json
 
 
 @attribute [Authorize(Roles = "Admin, Sales")]
@@ -32,9 +33,20 @@
         <MudTextField T="int" Label="Number of Sheets" Required="true" @bind-Value="model.NumberOfBooks"
                       RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" ReadOnly="true" />
 
+        <MudGrid>
+            @foreach (var s in sheets)
+            {
+                var sheetNo = $"Sheet {s.SheetNo}";
+                <MudItem xs="6">
+                  <MudNumericField HideSpinButtons="true" @bind-Value="s.Amount"
+                                     Label="@sheetNo" Variant="Variant.Text"
+                                     TextChanged="@(()=>CalculateWinsAmount())" />
+                </MudItem>
+            }
+        </MudGrid>
 
         <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount"
-                         Label="Wins Amount" Variant="Variant.Text" />
+                         Label="Wins Amount" Variant="Variant.Text" ReadOnly="true" />
 
         <MudTextField T="string" @bind-Value="model.WinsTreatedBy" Label="Treated By" Variant="Variant.Text" />
 
@@ -57,6 +69,7 @@
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
+    private IList<Sheet> sheets = new List<Sheet>();
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
@@ -65,6 +78,7 @@
     {
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
         //model.TransactionType = "Agent";
+        model.Sheet = JsonSerializer.Serialize(sheets);
         var response = await Http.PostAsJsonAsync("api/Sales/EditTransaction", model);
 
         if (response.IsSuccessStatusCode)
@@ -97,6 +111,10 @@
         await GetAgents();
         await GetGames();
         model.Description = "";
+        for (int i = 0; i < model.NumberOfBooks; i++)
+        {
+            sheets.Add(new Sheet { SheetNo = (i + 1).ToString() });
+        }
     }
 
     private async Task GetAgents()
@@ -123,6 +141,11 @@
         {
             games = new List<Game>();
         }
+    }
+
+    private void CalculateWinsAmount()
+    {
+        model.WinAmount = sheets.Sum(x=>x.Amount);
     }
 }
 
