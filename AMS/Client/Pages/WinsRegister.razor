@@ -33,11 +33,11 @@
         <MudTextField T="int" Label="Number of Sheets" Required="true" @bind-Value="model.NumberOfBooks"
                       RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" ReadOnly="true" />
 
-        <MudGrid>
+        <MudGrid style="max-height:200px;overflow: auto;">
             @foreach (var s in sheets)
             {
                 var sheetNo = $"Sheet {s.SheetNo}";
-                <MudItem xs="6">
+                <MudItem xs="3">
                   <MudNumericField HideSpinButtons="true" @bind-Value="s.Amount"
                                      Label="@sheetNo" Variant="Variant.Text"
                                      TextChanged="@(()=>CalculateWinsAmount())" />
