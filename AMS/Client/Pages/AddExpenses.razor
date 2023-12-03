@@ -12,12 +12,12 @@
                         <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
                     }
            </MudSelect>
-           <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+@*            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
                @foreach (var agent in agents)
                {
                    <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
                }
-           </MudSelect>
+           </MudSelect> *@
             <MudTextField T="string" Label="Description" Required="true" @bind-Value="model.Description" 
             RequiredError="Description is required!" For="@(() => model.Description)"/>
           <MudNumericField HideSpinButtons="true" Label="Amount" Required="true" @bind-Value="model.Amount" 
