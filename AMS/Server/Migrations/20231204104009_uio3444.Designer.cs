@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231204104009_uio3444")]
+    partial class uio3444
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,98 +264,98 @@ namespace AMS.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "980f1b79-5d1c-437a-98b1-a3d2d4b4ca6c",
+                            Id = "8d064f0f-e39a-4714-9365-73ca7c1e3b6c",
                             Commission = 0m,
                             Name = "MONDAY SPECIAL",
                             Srl = 1
                         },
                         new
                         {
-                            Id = "6a1ae0ce-6670-4fed-9753-d7b26e4def41",
+                            Id = "1ec2fa01-6509-4c44-be36-c14fa1671dc2",
                             Commission = 0m,
                             Name = "PIONEER",
                             Srl = 2
                         },
                         new
                         {
-                            Id = "6e37e316-9a89-4d2d-990e-04fd44cf4455",
+                            Id = "fd09b19a-3113-4f94-952a-1ede5a62d869",
                             Commission = 0m,
                             Name = "LUCKY TUESDAY",
                             Srl = 3
                         },
                         new
                         {
-                            Id = "e1c30a60-dbb9-41a5-93dc-632b840a0bfd",
+                            Id = "04c86eda-3acd-4595-ac91-8c39972444d8",
                             Commission = 0m,
                             Name = "VAG EAST",
                             Srl = 4
                         },
                         new
                         {
-                            Id = "5bd46ef4-3843-4121-940f-93a276001172",
+                            Id = "b91e71d4-b67e-4a33-ad11-2c2117a3e0aa",
                             Commission = 0m,
                             Name = "MID-WEEK",
                             Srl = 5
                         },
                         new
                         {
-                            Id = "6058748d-6eca-4370-b241-44f01b20ea54",
+                            Id = "377e0c3e-47d0-4e8d-a268-358fa4dbfa05",
                             Commission = 0m,
                             Name = "VAG WEST",
                             Srl = 6
                         },
                         new
                         {
-                            Id = "d685e889-5edd-469d-9237-4867d73f530f",
+                            Id = "dedd7e2b-0ee3-48aa-b486-53255c496de5",
                             Commission = 0m,
                             Name = "FORTUNE THURSDAY",
                             Srl = 7
                         },
                         new
                         {
-                            Id = "7e2151eb-85e9-4ee5-ba8a-6a46b4498496",
+                            Id = "82e8258b-1eee-495a-bad7-64384da92505",
                             Commission = 0m,
                             Name = "AFRICA",
                             Srl = 8
                         },
                         new
                         {
-                            Id = "e4c9cb37-eb9a-48c1-96f5-3aa22c07d364",
+                            Id = "8528e265-9fe8-4f9c-8dc1-21cf9d454356",
                             Commission = 0m,
                             Name = "FRIDAY BONANZA",
                             Srl = 9
                         },
                         new
                         {
-                            Id = "e89ee947-72d5-4f89-8775-01693e37f61e",
+                            Id = "9d03483c-0926-43ba-91ea-6cea90f4ab9f",
                             Commission = 0m,
                             Name = "OBIRI",
                             Srl = 10
                         },
                         new
                         {
-                            Id = "69808a35-1a81-47fb-a77a-259998dbcddd",
+                            Id = "fdc4d54b-b20f-4e92-8a43-4584fdd40328",
                             Commission = 0m,
                             Name = "NATIONAL",
                             Srl = 11
                         },
                         new
                         {
-                            Id = "d05bec01-26cb-457e-9afe-53869831ef4c",
+                            Id = "ceb5ebbd-3140-4bf0-9a92-289192d6eb69",
                             Commission = 0m,
                             Name = "OLD SOLDIER",
                             Srl = 12
                         },
                         new
                         {
-                            Id = "aee0ec01-21b9-4188-bf2f-c030bdd04e37",
+                            Id = "51933c44-1c39-493d-8c8c-a2ee51a03e5c",
                             Commission = 0m,
                             Name = "ASEDA",
                             Srl = 13
                         },
                         new
                         {
-                            Id = "eeecca82-b14b-48c5-9588-6caa0c54fbee",
+                            Id = "ccc4fc02-1778-4b35-a098-5fd1c0caef70",
                             Commission = 0m,
                             Name = "SUNDAY SPECIAL",
                             Srl = 14
