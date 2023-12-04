@@ -36,7 +36,7 @@ namespace AMS.Server.Services
                     AccountId = cachAccount?.AccountId.ToString()
                 });
 
-            _context.Expenses.Add(new Expense {  Amount = expense.Amount, Description = expense.Description, AccountId = expense.AccountId, AgentId = expense.AgentId });
+            _context.Expenses.Add(new Expense {  Amount = expense.Amount, Description = expense.Description, AccountId = expense.AccountId });
             var result = await _context.SaveChangesAsync();
             if (result > 0) return new Result(true, "Expense saved successfully.");
             return new Result(false, "Operation failed.");
