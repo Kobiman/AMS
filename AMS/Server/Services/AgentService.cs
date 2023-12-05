@@ -53,6 +53,11 @@ namespace AMS.Server.Services
                 OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.WinAmount)
             }).OrderBy(x=>x.Name);
         }
+        public async Task<Agent> GetAgent(string id)
+        {
+            var results = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == id);
+            return results;
+        }
 
         public async Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period)
         {
@@ -144,6 +149,60 @@ namespace AMS.Server.Services
             }
             return new Result<bool>(false, false, "Operation Failed!");
         }
+
+        public async Task<IEnumerable<AgentGameCommissionDto>> GetAgentGameCommissions(string id)
+        {
+            var list = await _context.AgentGameCommissions.ToListAsync();
+            var result =  (from l in list
+                          join a in _context.Agents on l.AgentId equals a.AgentId
+                          join g in _context.Games on l.GameId equals g.Id
+                          where l.AgentId == id
+
+                          select new AgentGameCommissionDto
+                          {
+                              Id = l.Id,
+                              AgentId = l.AgentId,
+                              Agent = a.Name,
+                              GameId = g.Id,
+                              Game = g.Name,
+                              Commission = l.Commission
+                          }).ToList();
+            return result;
+
+        }
+
+        public async Task<Result> AddCommission(AgentGameCommissionDto commission)
+        {           
+            var exits = await _context.AgentGameCommissions.Where(x => x.AgentId == commission.AgentId && x.GameId == commission.GameId).ToListAsync();
+            if (exits.Any())
+            {
+                return new Result(false, "This game has already been added");
+            }
+            await _context.AgentGameCommissions.AddAsync(new Shared.AgentGameCommission
+            {
+                AgentId = commission.AgentId,
+                GameId = commission.GameId,
+                Commission = commission.Commission,
+            });
+            if(await _context.SaveChangesAsync()>0)
+                return new Result(true, "Game Commission Added Successfully");
+            return new Result(false, "An Error Occured While Adding New Commission");
+        }
+
+        public async Task<Result> EditCommission(AgentGameCommissionDto commission)
+        {
+            var result = await _context.AgentGameCommissions.Where(x => x.AgentId == commission.AgentId && x.GameId == commission.GameId).FirstOrDefaultAsync();
+            if (result != null)
+            {
+                result.Commission = commission.Commission;
+                if (await _context.SaveChangesAsync() > 0)
+                    return new Result(true, "Game Commission Added Successfully");
+                return new Result(false, "An Error Occured While Adding New Commission");
+            }
+            return new Result(false, "Record not found");
+
+        }
+
 
     }
 }

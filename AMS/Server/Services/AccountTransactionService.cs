@@ -264,8 +264,8 @@ namespace AMS.Server.Services
                 result.PayoutAmount = editPayoutDto.Type == "Payout" ? absoluteAmount : 0;
                 result.PayinAmount = editPayoutDto.Type == "Payin" ? absoluteAmount : 0;
                 result.Description = editPayoutDto.Description;
-                result.DestinationAccountId = editPayoutDto.DestinationAccountId;
-                result.SourceAccountId = editPayoutDto.SourceAccountId;
+                //result.DestinationAccountId = editPayoutDto.DestinationAccountId;
+                //result.SourceAccountId = editPayoutDto.SourceAccountId;
                 result.AgentId = editPayoutDto.AgentId;
                 result.StaffId = _authService.GetStaffID();
                 result.Type = editPayoutDto.Type;

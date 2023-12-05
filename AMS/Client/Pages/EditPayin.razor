@@ -47,9 +47,7 @@ else
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    PayoutDto model = new PayoutDto();
-    [Parameter] public PayoutDto editPayout { get; set; } = new PayoutDto();
-    //[Parameter] public PayoutDto model { get; set; } = new PayoutDto();
+    [Parameter] public PayoutDto model { get; set; } = new PayoutDto();
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -63,7 +61,7 @@ else
         //model.Type = "Payin";
         model.Amount = Math.Abs(model.Amount);
 
-        var response = await Http.PutAsJsonAsync("api/AccountTransaction/EditPayout", model);
+         var response = await Http.PutAsJsonAsync("api/AccountTransaction/EditPayout", model);
         if (response.IsSuccessStatusCode)
         {
             model = new PayoutDto();
@@ -81,7 +79,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         await GetAgents();
-        model = editPayout;
+        //model = editPayout;
     }
     void OnDateChanged(DateTime? newdate)
     {

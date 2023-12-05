@@ -1,6 +1,7 @@
 ﻿@page "/Agents"
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager navigationManager
 @using System.Security.Claims
 @attribute [Authorize]
 
@@ -41,6 +42,7 @@
             <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
             <MudTd DataLabel="">
             <MudFab @onclick="@(()=>SendSms(@context.AgentId))" Icon="@Icons.Material.Filled.SendToMobile" Size="Size.Small" />
+            <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>{navigationManager.NavigateTo($"/AgentGameCommission/{@context.AgentId}");})">Commissions</MudButton>
                 @*@if (context.Approved == false)
                 {
                     @if (isAdmin)

@@ -33,6 +33,13 @@ namespace AMS.Server.Controllers
             if (result is not null) return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("GetAgent/{id}")]
+        public async Task<ActionResult<Agent>> GetAgent(string id)
+        {
+            var result = await _agentService.GetAgent(id);
+            if (result is not null) return Ok(result);
+            return BadRequest(result);
+        }
         [HttpGet("GetApprovedAgents")]
         public async Task<IActionResult> GetApprovedAgents()
         {
@@ -75,6 +82,30 @@ namespace AMS.Server.Controllers
         public async Task<ActionResult<Result<bool>>> ApproveAgent(AgentDto agent)
         {
             var result = await _agentService.ApproveAgent(agent.AgentId);
+            if (result != null)
+                return Ok(result);
+            return BadRequest(result);
+        }
+        [HttpGet("GetAgentGameCommissions/{id}")]
+        public async Task<ActionResult<IEnumerable<AgentGameCommissionDto>>> GetAgentGameCommissions(string id)
+        {
+            var result = await _agentService.GetAgentGameCommissions(id);
+            if (result != null)
+                return Ok(result);
+            return BadRequest(result);
+        }
+        [HttpPost("AddCommission")]
+        public async Task<ActionResult<Result>> AddCommission(AgentGameCommissionDto commission)
+        {
+            var result = await _agentService.AddCommission(commission);
+            if (result != null)
+                return Ok(result);
+            return BadRequest(result);
+        }
+        [HttpPut("EditCommission")]
+        public async Task<ActionResult<Result>> EditCommission(AgentGameCommissionDto commission)
+        {
+            var result = await _agentService.EditCommission(commission);
             if (result != null)
                 return Ok(result);
             return BadRequest(result);

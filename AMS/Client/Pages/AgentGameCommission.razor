@@ -1,0 +1,112 @@
+﻿@page "/AgentGameCommission/{AgentId}"
+@implements IDisposable
+@attribute [Authorize]
+
+<MudGrid>
+    <MudItem xs="6">
+        <MudCard>
+            <MudCardHeader>
+                <MudText Typo="Typo.h6">Games Commissions for @agent.Name</MudText>
+                <MudSpacer />
+                <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(()=>ShowModal())">Add New Game</MudButton>
+            </MudCardHeader>
+            <MudCardContent>
+                <div style="margin-top:10px">
+                    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" CustomHeader="true" CustomFooter="true">
+                        <HeaderContent>
+                            <MudTh>Name of Game</MudTh>
+                            <MudTh>Game Commision (%)</MudTh>
+                            <MudTh>Action</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Name of Game">@context.Game</MudTd>
+                            <MudTd DataLabel="Game Commission (%)">@context.Commission</MudTd>
+                            <MudTd DataLabel="">
+                                <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
+                        var parameters = new ModalParameters();
+                        parameters.Add("model",@context);
+                        Modal.Show<EditCommission>("Edit Commission",parameters);
+                            })">Edit</MudButton>
+
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+
+    [Parameter] public string AgentId { get; set; }
+    Agent agent = new Agent();
+
+    private List<AgentGameCommissionDto> Elements { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+        await GetRecords();
+
+        string id = AgentId;
+        var result = await Http.GetFromJsonAsync<Agent>($"api/Agent/GetAgent/{id}");
+        if (result is not null)
+        {
+            agent = result;
+        }
+    }
+
+    private async Task App_StateChanged(ComponentBase Source)
+    {
+        if (Source != this)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    public async Task ReloadAccounts(object source, EventArgs e)
+    {
+        await GetRecords();
+        await App_StateChanged((ComponentBase)source);
+    }
+    public async Task GetRecords()
+    {
+        string id = AgentId;
+        var result = await Http.GetFromJsonAsync<List<AgentGameCommissionDto>>($"api/Agent/GetAgentGameCommissions/{id}");
+        if (result is not null)
+        {
+            Elements = result;
+        }
+        else
+        {
+            Elements = new List<AgentGameCommissionDto>();
+        }
+    }
+    async Task ShowModal()
+    {       
+        var parameters = new ModalParameters();
+        parameters.Add("agentId",AgentId);
+        parameters.Add("agentName",agent.Name);
+        var gameModal = Modal.Show<AddCommision>("Add New Game Commission",parameters);
+        var result = await gameModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+            await GetRecords();
+        }
+    }
+    void IDisposable.Dispose()
+    {
+        accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
+    }
+
+}

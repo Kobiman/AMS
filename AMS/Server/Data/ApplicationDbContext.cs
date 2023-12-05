@@ -12,26 +12,26 @@ namespace AMS.Server.Data
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Game>()
-                .HasData(
-                    new Game { Name= "MONDAY SPECIAL", Srl=1},
-                    new Game { Name= "PIONEER", Srl=2},
-                    new Game { Name= "LUCKY TUESDAY", Srl=3},
-                    new Game { Name= "VAG EAST", Srl=4},
-                    new Game { Name= "MID-WEEK", Srl=5},
-                    new Game { Name= "VAG WEST", Srl=6},
-                    new Game { Name= "FORTUNE THURSDAY", Srl=7},
-                    new Game { Name= "AFRICA", Srl=8},
-                    new Game { Name= "FRIDAY BONANZA", Srl=9},
-                    new Game { Name= "OBIRI", Srl=10},
-                    new Game { Name= "NATIONAL", Srl=11},
-                    new Game { Name= "OLD SOLDIER", Srl=12},
-                    new Game { Name= "ASEDA", Srl=13},
-                    new Game { Name= "SUNDAY SPECIAL", Srl=14}
-                );
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Game>()
+        //        .HasData(
+        //            new Game { Name= "MONDAY SPECIAL", Srl=1},
+        //            new Game { Name= "PIONEER", Srl=2},
+        //            new Game { Name= "LUCKY TUESDAY", Srl=3},
+        //            new Game { Name= "VAG EAST", Srl=4},
+        //            new Game { Name= "MID-WEEK", Srl=5},
+        //            new Game { Name= "VAG WEST", Srl=6},
+        //            new Game { Name= "FORTUNE THURSDAY", Srl=7},
+        //            new Game { Name= "AFRICA", Srl=8},
+        //            new Game { Name= "FRIDAY BONANZA", Srl=9},
+        //            new Game { Name= "OBIRI", Srl=10},
+        //            new Game { Name= "NATIONAL", Srl=11},
+        //            new Game { Name= "OLD SOLDIER", Srl=12},
+        //            new Game { Name= "ASEDA", Srl=13},
+        //            new Game { Name= "SUNDAY SPECIAL", Srl=14}
+        //        );
+        //}
         
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Agent> Agents { get; set; }
@@ -49,6 +49,8 @@ namespace AMS.Server.Data
 
         public DbSet<Location> Locations { get; set; }
         public DbSet<AgentExpense> AgentExpenses { get; set; }
+
+        public DbSet<AgentGameCommission> AgentGameCommissions { get; set; }
 
     }
 }

@@ -185,13 +185,13 @@ namespace AMS.Server.Controllers
 
         }
         [HttpPut("EditPayout")]
-        public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody]  PayoutDto editPayout)
+        public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody] PayoutDto model)
         {
             try
             {
-                if (editPayout == null)
+                if (model == null)
                     return BadRequest();
-                var result = await accTransactionService.EditPayout(editPayout);
+                var result = await accTransactionService.EditPayout(model);
 
                 return Ok(result);
             }
