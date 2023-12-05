@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231204104110_uio88888")]
+    partial class uio88888
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,30 +168,6 @@ namespace AMS.Server.Migrations
                     b.ToTable("AgentExpenses");
                 });
 
-            modelBuilder.Entity("AMS.Shared.AgentGameCommission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AgentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Commission")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("GameId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AgentGameCommissions");
-                });
-
             modelBuilder.Entity("AMS.Shared.Audit", b =>
                 {
                     b.Property<int>("AuditID")
@@ -282,6 +260,106 @@ namespace AMS.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "980f1b79-5d1c-437a-98b1-a3d2d4b4ca6c",
+                            Commission = 0m,
+                            Name = "MONDAY SPECIAL",
+                            Srl = 1
+                        },
+                        new
+                        {
+                            Id = "6a1ae0ce-6670-4fed-9753-d7b26e4def41",
+                            Commission = 0m,
+                            Name = "PIONEER",
+                            Srl = 2
+                        },
+                        new
+                        {
+                            Id = "6e37e316-9a89-4d2d-990e-04fd44cf4455",
+                            Commission = 0m,
+                            Name = "LUCKY TUESDAY",
+                            Srl = 3
+                        },
+                        new
+                        {
+                            Id = "e1c30a60-dbb9-41a5-93dc-632b840a0bfd",
+                            Commission = 0m,
+                            Name = "VAG EAST",
+                            Srl = 4
+                        },
+                        new
+                        {
+                            Id = "5bd46ef4-3843-4121-940f-93a276001172",
+                            Commission = 0m,
+                            Name = "MID-WEEK",
+                            Srl = 5
+                        },
+                        new
+                        {
+                            Id = "6058748d-6eca-4370-b241-44f01b20ea54",
+                            Commission = 0m,
+                            Name = "VAG WEST",
+                            Srl = 6
+                        },
+                        new
+                        {
+                            Id = "d685e889-5edd-469d-9237-4867d73f530f",
+                            Commission = 0m,
+                            Name = "FORTUNE THURSDAY",
+                            Srl = 7
+                        },
+                        new
+                        {
+                            Id = "7e2151eb-85e9-4ee5-ba8a-6a46b4498496",
+                            Commission = 0m,
+                            Name = "AFRICA",
+                            Srl = 8
+                        },
+                        new
+                        {
+                            Id = "e4c9cb37-eb9a-48c1-96f5-3aa22c07d364",
+                            Commission = 0m,
+                            Name = "FRIDAY BONANZA",
+                            Srl = 9
+                        },
+                        new
+                        {
+                            Id = "e89ee947-72d5-4f89-8775-01693e37f61e",
+                            Commission = 0m,
+                            Name = "OBIRI",
+                            Srl = 10
+                        },
+                        new
+                        {
+                            Id = "69808a35-1a81-47fb-a77a-259998dbcddd",
+                            Commission = 0m,
+                            Name = "NATIONAL",
+                            Srl = 11
+                        },
+                        new
+                        {
+                            Id = "d05bec01-26cb-457e-9afe-53869831ef4c",
+                            Commission = 0m,
+                            Name = "OLD SOLDIER",
+                            Srl = 12
+                        },
+                        new
+                        {
+                            Id = "aee0ec01-21b9-4188-bf2f-c030bdd04e37",
+                            Commission = 0m,
+                            Name = "ASEDA",
+                            Srl = 13
+                        },
+                        new
+                        {
+                            Id = "eeecca82-b14b-48c5-9588-6caa0c54fbee",
+                            Commission = 0m,
+                            Name = "SUNDAY SPECIAL",
+                            Srl = 14
+                        });
                 });
 
             modelBuilder.Entity("AMS.Shared.Location", b =>
