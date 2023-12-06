@@ -38,6 +38,8 @@ else
                           Label="Received By" Variant="Variant.Text" />
             <MudTextField T="string" @bind-Value="model.ReceivedFrom"
                           Label="Received From" Variant="Variant.Text" />
+            <MudTextField T="string" @bind-Value="model.ReceiverPhone" Label="Phone Number" Variant="Variant.Text"
+                      RequiredError="Phone is a required field" For="@(()=> model.ReceiverPhone)" />
             <ValidationSummary />
             <div style="margin-top:15px" class="mud-card-actions">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
@@ -47,7 +49,9 @@ else
 }
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    [Parameter] public PayoutDto model { get; set; } = new PayoutDto();
+    Payout model = new Payout();
+    [Parameter] public PayoutDto edit { get; set; } = new PayoutDto();
+
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
@@ -61,25 +65,36 @@ else
         //model.Type = "Payin";
         model.Amount = Math.Abs(model.Amount);
 
-         var response = await Http.PutAsJsonAsync("api/AccountTransaction/EditPayout", model);
+        var response = await Http.PutAsJsonAsync("/api/AccountTransaction/editpayout", model);
         if (response.IsSuccessStatusCode)
         {
-            model = new PayoutDto();
-            var result = await response.Content.ReadFromJsonAsync<Result<AccountTransactionDto>>();
+            model = new Payout();
+            var result = await response.Content.ReadFromJsonAsync<Result>();
             Snackbar.Add(result.Message, Severity.Success);
             accountEvents.OnAccountAdded(this);
-            await ModalInstance.CloseAsync(ModalResult.Ok(result.Value));
+            await ModalInstance.CloseAsync(ModalResult.Ok(result));
         }
         else
         {
-            model = new PayoutDto();
+            model = new Payout();
             Snackbar.Add("Save Transaction Failed", Severity.Error);
         }
     }
     protected override async Task OnParametersSetAsync()
     {
         await GetAgents();
-        //model = editPayout;
+        model.Id = edit.Id;
+        model.AgentId = edit.AgentId;
+        model.AreaOfOperations = edit.AreaOfOperations;
+        model.ChequeNo = edit.ChequeNo;
+        model.Description = edit.Description;
+        model.EntryDate = edit.EntryDate;
+        //model.GameId = edit.g
+        model.Amount = edit.Amount;
+        model.ReceivedBy = edit.ReceivedBy;
+        model.ReceivedFrom = edit.ReceivedFrom;
+        model.ReceiverPhone = edit.ReceiverPhone;
+        model.Type = edit.Type;
     }
     void OnDateChanged(DateTime? newdate)
     {

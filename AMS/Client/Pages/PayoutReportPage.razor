@@ -167,7 +167,7 @@
         {
             toEdit.Type = "Payout";
             var parameters = new ModalParameters();
-            parameters.Add(nameof(EditPayin.model), toEdit);
+            parameters.Add(nameof(EditPayin.edit), toEdit);
 
             var editModal = Modal.Show<EditPayin>("Edit Pay-Out", parameters);
             var result = await editModal.Result;
