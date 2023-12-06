@@ -119,9 +119,11 @@ namespace AMS.Server.Services
                                     WinsStaffId = t.WinsStaffId,
                                     SalesTreatedBy = t.SalesTreatedBy,
                                     Approved = t.Approved == null ? false : t.Approved,
+                                    Sheet = t.Sheet,
+                                    NumberOfSheets = t.NumberOfSheets,
                                     SalesApprovedBy = t.SalesApprovedBy,
-                                    WinsApprovedBy = t.WinsApprovedBy,
-                                    WinsTreatedBy = t.WinsApprovedBy,
+                                    //WinsApprovedBy = t.WinsApprovedBy,
+                                    //WinsTreatedBy = t.WinsApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
                                     AreaOfOperations = t.AreaOfOperations,
@@ -180,6 +182,7 @@ namespace AMS.Server.Services
                 preAmount = result.WinAmount;
                 result.WinAmount = agentTransaction.WinAmount;
                 result.Sheet = agentTransaction.Sheet;
+                result.NumberOfSheets = agentTransaction.NumberOfSheets;
                 result.Description = agentTransaction.Description;
                 result.AccountId = agentTransaction.AccountId;
                 result.AgentId = agentTransaction.AgentId;
@@ -188,8 +191,8 @@ namespace AMS.Server.Services
                 //result.GameId = agentTransaction.GameId;
                 result.AccountId = agentTransaction.AccountId;
                 result.WinsStaffId = _authService.GetStaffID();
-                result.WinsTreatedBy = agentTransaction.WinsTreatedBy;
-                result.WinsApprovedBy = agentTransaction.WinsApprovedBy;
+                //result.WinsTreatedBy = agentTransaction.WinsTreatedBy;
+                //result.WinsApprovedBy = agentTransaction.WinsApprovedBy;
                 result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
 
 

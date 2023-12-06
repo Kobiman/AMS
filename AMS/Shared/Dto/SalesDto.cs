@@ -28,6 +28,7 @@ namespace AMS.Shared.Dto
         public decimal DailySales { get; set; }
         public int NumberOfBooks { get; set; }
         public string? Sheet {  get; set; }
+        public int NumberOfSheets { get; set; }
         public string? ReceiptNumber { get; set; } = "";
         public decimal OutstandingBalance { get; set; }
         public string SalesStaffId { get; set; } = string.Empty;
@@ -35,8 +36,8 @@ namespace AMS.Shared.Dto
         public bool Approved { get; set; } = false;
         public string SalesTreatedBy { get; set; } = string.Empty;
         public string SalesApprovedBy { get; set; } = string.Empty;
-        public string WinsTreatedBy { get; set; } = string.Empty;
-        public string WinsApprovedBy { get; set; } = string.Empty;
+        //public string WinsTreatedBy { get; set; } = string.Empty;
+        //public string WinsApprovedBy { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public decimal GrossSales { get; set; }
         public decimal SalesCommission { get; set; }

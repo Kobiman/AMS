@@ -34,12 +34,13 @@ namespace AMS.Shared
         public bool Approved { get; set; } = false;
         public string SalesTreatedBy { get; set; } = string.Empty;
         public string SalesApprovedBy { get; set; } = string.Empty;
-        public string WinsTreatedBy { get; set; } = string.Empty;
-        public string WinsApprovedBy { get; set; } = string.Empty;
+        //public string WinsTreatedBy { get; set; } = string.Empty;
+        //public string WinsApprovedBy { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public int? LocationId { get; set; }
         public int NumberOfBooks { get; set; }
         public string? Sheet { get; set; }
+        public int NumberOfSheets { get; set; }
         public decimal GrossSales { get; set; }
         public decimal SalesCommission { get; set; }
     }

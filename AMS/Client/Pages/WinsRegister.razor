@@ -30,27 +30,30 @@
         <MudTextField T="string" Label="Area of Operations" Required="true" @bind-Value="model.AreaOfOperations"
                       RequiredError="Area of operations is required!" For="@(() => model.AreaOfOperations)" ReadOnly="true" />
 
-        <MudTextField T="int" Label="Number of Sheets" Required="true" @bind-Value="model.NumberOfBooks"
-                      RequiredError="Number of books is required!" For="@(() => model.NumberOfBooks)" ReadOnly="true" />
+        <MudTextField T="int" Label="Number of Sheets" Required="true" @bind-Value="model.NumberOfSheets"
+                      RequiredError="Number of books is required!" For="@(() => model.NumberOfSheets)"
+                      TextChanged="@(()=>GenerateSheets())" />
 
-        <MudGrid style="max-height:200px;overflow: auto;">
+        <MudGrid style="min-height:18px;max-height:200px;overflow: auto;">
             @foreach (var s in sheets)
             {
                 var sheetNo = $"Sheet {s.SheetNo}";
-                <MudItem xs="3">
+                <MudItem xs="4">
                   <MudNumericField HideSpinButtons="true" @bind-Value="s.Amount"
                                      Label="@sheetNo" Variant="Variant.Text"
                                      TextChanged="@(()=>CalculateWinsAmount())" />
+                </MudItem>
+                <MudItem xs="4">
+                    <MudTextField T="string" @bind-Value="s.TreatedBy" Label="Treated By" Variant="Variant.Text" />
+                </MudItem>
+                <MudItem xs="4">
+                    <MudTextField T="string" @bind-Value="s.ApprovedBy" Label="Approved By" Variant="Variant.Text" />
                 </MudItem>
             }
         </MudGrid>
 
         <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount"
                          Label="Wins Amount" Variant="Variant.Text" ReadOnly="true" />
-
-        <MudTextField T="string" @bind-Value="model.WinsTreatedBy" Label="Treated By" Variant="Variant.Text" />
-
-        <MudTextField T="string" @bind-Value="model.WinsApprovedBy" Label="Approved By" Variant="Variant.Text" />
 
 
 
@@ -69,7 +72,7 @@
 
     private IEnumerable<AccountDto> accounts { get; set; }
     private IEnumerable<Agent> agents = new List<Agent>();
-    private IList<Sheet> sheets = new List<Sheet>();
+    private IList<Sheet> sheets;
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
@@ -111,7 +114,13 @@
         await GetAgents();
         await GetGames();
         model.Description = "";
-        for (int i = 0; i < model.NumberOfBooks; i++)
+        GenerateSheets();
+    }
+
+    public void GenerateSheets()
+    {
+        sheets = new List<Sheet>();
+        for (int i = 0; i < model.NumberOfSheets; i++)
         {
             sheets.Add(new Sheet { SheetNo = (i + 1).ToString() });
         }

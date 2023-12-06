@@ -1,95 +1,70 @@
 ﻿@page "/WinsRegisterList"
+@using System.Text.Json
 @inject MudBlazor.ISnackbar Snackbar
 
 <MudText>WINS</MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@
 
 <div style="margin-top:10px">
-    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <MudDataGrid Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
 
             <MudSpacer />
-            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
             <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
-            @*<MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
-                {
-                    <MudSelectItem T="string" Value="@agent.AgentName">@agent.AgentName</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="string" Label="Select Game" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
-                       SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
-
-
-
-                <MudSelectItem Value="@("")">All</MudSelectItem>
-                @foreach (var game in games)
-                {
-                    <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
-                }
-            </MudSelect>*@
-
         </ToolBarContent>
-        <HeaderContent>
-            <MudTh>Entry Date</MudTh>
-            <MudTh>Draw Date</MudTh>
-            <MudTh>Agent</MudTh>
-            <MudTh>Game</MudTh>
-            <MudTh>Area of Operations</MudTh>
-            <MudTh>No. of Sheets</MudTh>
-            <MudTh>Win Amount</MudTh>
-            <MudTh>Treated By</MudTh>
-            <MudTh>Entered By</MudTh>
-            <MudTh>Description</MudTh>
-            @* <MudTh>Approve</MudTh> *@
-
-            <MudTh></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
-            <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
-            <MudTd DataLabel="Agent">@context.AgentName</MudTd>
-            <MudTd DataLabel="Game">@context.GameName</MudTd>
-            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
-            <MudTd DataLabel="No. of Books">@context.NumberOfBooks</MudTd>
-            <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
-            <MudTd DataLabel="Treated By">@context.WinsTreatedBy</MudTd> 
-            <MudTd DataLabel="Entered By">@context.WinsStaffId</MudTd>
-            <MudTd DataLabel="Description">@context.Description</MudTd>
-            @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
-            <MudTd DataLabel="">
-                @if (!isAdmin)
-                {
-                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
-                        var parameters = new ModalParameters();
-                        parameters.Add("model",@context);
-                        Modal.Show<WinsRegister>("Wins Register",parameters);
-                            })">Add Win Amount</MudButton>
-                }
-            </MudTd>
-
-
-
-        </RowTemplate>
-       @* <FooterContent>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>&nbsp</MudTd>
-            <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
-       
-            <MudTd>&nbsp</MudTd>
-        </FooterContent>*@
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
-    </MudTable>
+        <Columns>
+            <HierarchyColumn T="SalesDto" />
+            <PropertyColumn Property="x => x.EntryDate" />
+            <PropertyColumn Property="x => x.DrawDate" />
+            <PropertyColumn Property="x => x.AgentName" />
+            <PropertyColumn Property="x => x.GameName" />
+            <PropertyColumn Property="x => x.AreaOfOperations" />
+            <PropertyColumn Property="x => x.NumberOfSheets" />
+            <PropertyColumn Property="x => x.WinAmount" />
+            <PropertyColumn Property="x => x.WinsStaffId" Title="Nr" />
+            <PropertyColumn Property="x => x.Description">
+                <CellTemplate>
+                    @if (!isAdmin)
+                    {
+                        <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
+                            var parameters = new ModalParameters();
+                            parameters.Add("model",context.Item);
+                            Modal.Show<WinsRegister>("Wins Register",parameters);
+                            })">Add Win Amount
+                        </MudButton>
+                    }
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
+        <ChildRowContent>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText>Sheets</MudText>
+                    @{
+                        var sheets = string.IsNullOrWhiteSpace(context.Item.Sheet) ? new List<Sheet>() : JsonSerializer.Deserialize<IList<Sheet>>(context.Item.Sheet);
+                        <MudTable Items="@sheets" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+                            <HeaderContent>
+                                <MudTh>No.</MudTh>
+                                <MudTh>Amount</MudTh>
+                                <MudTh>TreatedBy</MudTh>
+                                <MudTh>ApprovedBy</MudTh>
+                            </HeaderContent>
+                            <RowTemplate Context="d">
+                                <MudTd>@d.SheetNo</MudTd>
+                                    <MudTd>@String.Format("{0:0,0.00}", d.Amount)</MudTd>
+                                    <MudTd>@d.TreatedBy</MudTd>
+                                    <MudTd>@d.ApprovedBy</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                    }
+                </MudItem>
+            </MudGrid>
+        </ChildRowContent>
+    </MudDataGrid>
 </div>
 
 @code {
@@ -161,7 +136,7 @@
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
             if (results != null)
             {
-                Elements = results.Where(x => x.Approved == false).ToList();
+                Elements = results;
             }
             TotalNum = Elements.Count;
         }
