@@ -2,7 +2,7 @@
 @implements IDisposable
 @attribute [Authorize]
 <MudText>EXPENSES</MudText><button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
-<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddExpenses>("Add Expenses"))">Add Expenses</MudButton> 
+<MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddExpenses>("Expenses Register"))">Add Expenses</MudButton> 
 <div style="margin-top:10px">
      <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<GetExpenseDto,bool>(FilterFunc1)" 
         @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
