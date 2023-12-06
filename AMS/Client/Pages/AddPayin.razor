@@ -36,6 +36,8 @@ else
                           Label="Received By" Variant="Variant.Text" />
             <MudTextField T="string" @bind-Value="model.ReceivedFrom"
                           Label="Received From" Variant="Variant.Text" />
+            <MudTextField T="string" @bind-Value="model.ReceiverPhone" Label="Payer Phone Number" Variant="Variant.Text"
+                      RequiredError="Payer Phone is a required field" For="@(()=> model.ReceiverPhone)" />
             <ValidationSummary />
             <div style="margin-top:15px" class="mud-card-actions">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>

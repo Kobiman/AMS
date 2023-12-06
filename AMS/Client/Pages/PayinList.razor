@@ -27,6 +27,7 @@
         @*<MudTh>Received By</MudTh>*@
         <MudTh>Received By</MudTh>
         <MudTh>Received From</MudTh>
+        <MudTh>Phone No.</MudTh>
         <MudTh>Description</MudTh>
         @if(isAdmin)
             {
@@ -44,6 +45,7 @@
         @*<MudTh DataLabel="Received By">09876</MudTh>*@
         <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
         <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
+        <MudTd DataLabel="Received From">@context.ReceiverPhone</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
         @if(isAdmin)
             {
@@ -138,7 +140,7 @@
         {
             toEdit.Type = "Payin";
             var parameters = new ModalParameters();
-            parameters.Add(nameof(EditPayin.model), toEdit);
+            parameters.Add(nameof(EditPayin.edit), toEdit);
             //parameters.Add("model", toEdit);
 
 
