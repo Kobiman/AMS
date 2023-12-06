@@ -1,0 +1,91 @@
+﻿@using System.Text.RegularExpressions
+@attribute [Authorize(Roles ="Admin")]
+
+@if(games == null)
+{
+    <div>Loading Data...</div>
+}
+else{
+<div style="width: 450px;">
+    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
+          <DataAnnotationsValidator />
+            <MudTextField T="string" Label="Agent" Required="true" @bind-Value="model.Agent" 
+            RequiredError="Agent is required!" For="@(() => model.Agent)" ReadOnly/>
+
+            <MudSelect T="string"  Label="Select Game"  @bind-Value="model.GameId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                 @foreach(var game in games)
+                 {
+                     <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
+                 }
+             </MudSelect>
+
+             <MudNumericField HideSpinButtons="true" @bind-Value="model.Commission"
+                        Label="Commission (%)" Variant="Variant.Text" />
+            
+            
+     <div style="margin-top:15px"  class="mud-card-actions">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+    </div>
+    </EditForm>
+</div>
+}
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    AgentGameCommissionDto model = new AgentGameCommissionDto();
+    bool success;
+
+    [Parameter] public string agentId { get; set; }
+    [Parameter] public string agentName{ get; set; }
+
+    private IEnumerable<Game> games { get; set; }
+
+    string[] errors = { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetGames();
+        model.AgentId = agentId;
+        model.Agent = agentName;
+    }
+
+    private async void OnValidSubmit(EditContext context)
+    {
+        var response = await Http.PostAsJsonAsync("api/Agent/AddCommission",model);
+
+        if (response.IsSuccessStatusCode)
+        {
+            model = new AgentGameCommissionDto();
+            var result = await response.Content.ReadFromJsonAsync<Result>();
+            if(result.IsSucessful)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Warning);
+            }
+            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+        }
+        else
+        {
+            model = new AgentGameCommissionDto();
+            await ModalInstance.CloseAsync();            
+            Snackbar.Add("Save Transaction Failed", Severity.Error); 
+        }
+        StateHasChanged();
+    }
+
+    private async Task GetGames()
+    {
+        var result = await Http.GetFromJsonAsync<IList<Game>?>("api/Game/GetGames");
+        if (result is not null)
+        {
+            games = result;
+        }
+        else
+        {
+            games = new List<Game>();
+        }
+    }
+}

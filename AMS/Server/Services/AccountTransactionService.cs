@@ -254,7 +254,7 @@ namespace AMS.Server.Services
             return result;
         }
 
-        public async Task<Result<AccountTransactionDto>> EditPayout(PayoutDto editPayoutDto)
+        public async Task<Result> EditPayout(Payout editPayoutDto)
         {
             var result = await appDbContext.Payouts.FirstOrDefaultAsync(x=> x.Id == editPayoutDto.Id);
             var absoluteAmount = Math.Abs(editPayoutDto.Amount);
@@ -264,8 +264,8 @@ namespace AMS.Server.Services
                 result.PayoutAmount = editPayoutDto.Type == "Payout" ? absoluteAmount : 0;
                 result.PayinAmount = editPayoutDto.Type == "Payin" ? absoluteAmount : 0;
                 result.Description = editPayoutDto.Description;
-                result.DestinationAccountId = editPayoutDto.DestinationAccountId;
-                result.SourceAccountId = editPayoutDto.SourceAccountId;
+                //result.DestinationAccountId = editPayoutDto.DestinationAccountId;
+                //result.SourceAccountId = editPayoutDto.SourceAccountId;
                 result.AgentId = editPayoutDto.AgentId;
                 result.StaffId = _authService.GetStaffID();
                 result.Type = editPayoutDto.Type;
@@ -274,12 +274,13 @@ namespace AMS.Server.Services
                 result.ApprovedBy = editPayoutDto.ApprovedBy;
                 result.ReceivedBy = editPayoutDto.ReceivedBy;
                 result.ReceivedFrom = editPayoutDto.ReceivedFrom;
+                result.ReceiverPhone = editPayoutDto.ReceiverPhone;
 
                 await appDbContext.SaveChangesAsync();
-                return new Result<AccountTransactionDto> { IsSucessful = true, Message = "Transaction Updated", Value = await GetAdministrativeTransactionById(result.Id) };
+                return new Result (true, "Update Successful");
             }
 
-            return new Result<AccountTransactionDto> { IsSucessful = false, Message = "Operation Failed", Value = new AccountTransactionDto() };
+            return new Result(false, "An error occured. Unable to update");
         }
 
         public async Task<Result<AccountTransactionDto>> ApprovePayout(string payoutId)
@@ -372,6 +373,7 @@ namespace AMS.Server.Services
                                     AreaOfOperations = p.AreaOfOperations,
                                     ReceivedBy = p.ReceivedBy,
                                     ReceivedFrom = p.ReceivedFrom,
+                                    ReceiverPhone = p.ReceiverPhone
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();

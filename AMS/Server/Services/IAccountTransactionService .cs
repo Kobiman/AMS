@@ -21,7 +21,7 @@ namespace AMS.Server.Services
         public Task<Result> AddAgentExpense(AddAgentExpenseDto addExpenseDto);
         public Task<IEnumerable<AgentExpenseDto>> AgentExpenses(DateRange period);
 
-        public Task<Result<AccountTransactionDto>> EditPayout(PayoutDto editPayoutDto);
+        public Task<Result> EditPayout(Payout editPayoutDto);
         public Task<Result<AccountTransactionDto>> ApprovePayout(string payoutId);
         public Task<IEnumerable<PayoutDto>> PayoutReport(DateRange period);
         public Task<IEnumerable<PayoutDto>> PayinReport(DateRange period);

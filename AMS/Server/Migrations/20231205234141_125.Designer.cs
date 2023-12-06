@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205234141_125")]
+    partial class _125
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,98 +288,98 @@ namespace AMS.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5cf6a21a-d24b-4e4c-96eb-e89048921934",
+                            Id = "f8a49624-d2c8-49e8-be6c-f5fdbcc91fdc",
                             Commission = 0m,
                             Name = "MONDAY SPECIAL",
                             Srl = 1
                         },
                         new
                         {
-                            Id = "310015b7-9d58-4d7d-b880-a39b13d6142b",
+                            Id = "21472e68-1794-4891-9093-5a71abd43704",
                             Commission = 0m,
                             Name = "PIONEER",
                             Srl = 2
                         },
                         new
                         {
-                            Id = "ce4ba0ce-46d2-4818-bd86-da66d1a84e1a",
+                            Id = "ddcfeb79-76f1-4b10-a8c2-127b5e67c24e",
                             Commission = 0m,
                             Name = "LUCKY TUESDAY",
                             Srl = 3
                         },
                         new
                         {
-                            Id = "4b21d758-2bbd-4903-ae3b-01c13623fa7b",
+                            Id = "86316f68-6f59-4a30-bb9e-5c4128e9a093",
                             Commission = 0m,
                             Name = "VAG EAST",
                             Srl = 4
                         },
                         new
                         {
-                            Id = "106ee7b5-2d0b-4576-b804-2c4f233c36e9",
+                            Id = "d9d8631e-7744-4ec5-81ee-86126623109c",
                             Commission = 0m,
                             Name = "MID-WEEK",
                             Srl = 5
                         },
                         new
                         {
-                            Id = "616b2c11-a0a2-4fe5-a5a8-866a30156b00",
+                            Id = "f81fa797-fbdd-43cb-b549-c5174197559e",
                             Commission = 0m,
                             Name = "VAG WEST",
                             Srl = 6
                         },
                         new
                         {
-                            Id = "39ffec0a-e242-4483-9f5d-08695570249b",
+                            Id = "d0dd7c73-3ee9-45ac-8b40-41013ba99e1d",
                             Commission = 0m,
                             Name = "FORTUNE THURSDAY",
                             Srl = 7
                         },
                         new
                         {
-                            Id = "58b6f50c-6b49-44f2-9012-7ea095852284",
+                            Id = "23836ba8-11cb-4539-85b3-134d5a3ef21a",
                             Commission = 0m,
                             Name = "AFRICA",
                             Srl = 8
                         },
                         new
                         {
-                            Id = "3598acf2-591a-4a4a-8dd0-cfd0a504723d",
+                            Id = "79b10969-6fb3-4adc-a454-9bc6b89b6780",
                             Commission = 0m,
                             Name = "FRIDAY BONANZA",
                             Srl = 9
                         },
                         new
                         {
-                            Id = "95c8f482-1f8e-4d8d-a6f6-2ddeff0c89e4",
+                            Id = "0410ebc1-fcb7-4f26-8485-24f9b77cb4f0",
                             Commission = 0m,
                             Name = "OBIRI",
                             Srl = 10
                         },
                         new
                         {
-                            Id = "cdc7816e-9fdb-4e7f-aaa3-b9d43fd748eb",
+                            Id = "f910f66c-fa9c-42e3-84de-b125a5cb4b22",
                             Commission = 0m,
                             Name = "NATIONAL",
                             Srl = 11
                         },
                         new
                         {
-                            Id = "76135e28-52f0-43fb-9c49-7527a90ec311",
+                            Id = "4e014f10-5644-4002-a694-ce063b569fce",
                             Commission = 0m,
                             Name = "OLD SOLDIER",
                             Srl = 12
                         },
                         new
                         {
-                            Id = "06545619-bef9-4be8-828d-121fcda94000",
+                            Id = "d8687acb-8280-4c90-9e70-d2fddf6908c6",
                             Commission = 0m,
                             Name = "ASEDA",
                             Srl = 13
                         },
                         new
                         {
-                            Id = "93b577a9-3402-4b2d-a574-f8ef3f4f37a6",
+                            Id = "b6010ebc-5f4f-43ed-9590-ea1d1c1e1d33",
                             Commission = 0m,
                             Name = "SUNDAY SPECIAL",
                             Srl = 14
@@ -531,9 +533,6 @@ namespace AMS.Server.Migrations
                     b.Property<int>("NumberOfBooks")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberOfSheets")
-                        .HasColumnType("int");
-
                     b.Property<string>("ReceiptNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -558,7 +557,15 @@ namespace AMS.Server.Migrations
                     b.Property<decimal>("WinAmount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("WinsApprovedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WinsStaffId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WinsTreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

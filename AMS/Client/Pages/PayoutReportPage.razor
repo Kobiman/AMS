@@ -36,7 +36,8 @@
         <MudTh>Received By</MudTh>
         <MudTh>Received From</MudTh>
         <MudTh>Received's Phone</MudTh>
-        <MudTh>Description</MudTh>
+        @if(isAdmin){<MudTh>Action</MudTh>}
+        
 
     </HeaderContent>
     <RowTemplate>
@@ -50,6 +51,12 @@
         <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
         <MudTd DataLabel="Receiver Phone">@context.ReceiverPhone</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
+        @if (isAdmin)
+            {
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Text" OnClick="@(()=>Edit(@context.Id))" Color="Color.Info" Size="Size.Small">Edit</MudButton>
+                </MudTd>
+            }
 
 
     </RowTemplate>
@@ -160,7 +167,7 @@
         {
             toEdit.Type = "Payout";
             var parameters = new ModalParameters();
-            parameters.Add(nameof(EditPayin.editPayout), toEdit);
+            parameters.Add(nameof(EditPayin.edit), toEdit);
 
             var editModal = Modal.Show<EditPayin>("Edit Pay-Out", parameters);
             var result = await editModal.Result;

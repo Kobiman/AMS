@@ -14,14 +14,12 @@
     <HeaderContent>
         <MudTh>Date</MudTh>
         <MudTh>Account Name</MudTh>
-        <MudTh>Agent Name</MudTh>
         <MudTh>Amount</MudTh>
         <MudTh>Description</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="CreatedOn">@context.Date.ToShortDateString()</MudTd>
         <MudTd DataLabel="Balance">@context.AccountName</MudTd>
-        <MudTd DataLabel="Balance">@context.AgentName</MudTd>
         <MudTd DataLabel="Name">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
         <MudTd DataLabel="Type">@context.Description</MudTd>
     </RowTemplate>

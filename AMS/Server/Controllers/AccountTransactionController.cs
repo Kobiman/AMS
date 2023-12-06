@@ -117,21 +117,21 @@ namespace AMS.Server.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<ActionResult<AccountTransactionDto>> DeleteTransaction(string Id)
-        {
-            try
-            {
-                var TransactionToDelete = await accTransactionService.GetTransaction(Id);
-                if (TransactionToDelete == null)
-                    return NotFound();
-                return await accTransactionService.DeleteAdministrativeTransaction(Id);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error Deleting Transaction");
-            }
-        }
+        //[HttpDelete("{Id}")]
+        //public async Task<ActionResult<AccountTransactionDto>> DeleteTransaction(string Id)
+        //{
+        //    try
+        //    {
+        //        var TransactionToDelete = await accTransactionService.GetTransaction(Id);
+        //        if (TransactionToDelete == null)
+        //            return NotFound();
+        //        return await accTransactionService.DeleteAdministrativeTransaction(Id);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, "Error Deleting Transaction");
+        //    }
+        //}
 
         //PAY OUT
         [HttpPost("Payout")]
@@ -184,22 +184,6 @@ namespace AMS.Server.Controllers
             }
 
         }
-        [HttpPut("EditPayout")]
-        public async Task<ActionResult<Result<AccountTransactionDto>>> EditPayout([FromBody]  PayoutDto editPayout)
-        {
-            try
-            {
-                if (editPayout == null)
-                    return BadRequest();
-                var result = await accTransactionService.EditPayout(editPayout);
-
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
-            }
-        }
 
         [HttpPut("ApprovePayout")]
         public async Task<ActionResult<Result<AccountTransactionDto>>> ApprovePayout([FromBody] Payout editPayout)
@@ -209,6 +193,22 @@ namespace AMS.Server.Controllers
                 if (editPayout == null)
                     return BadRequest();
                 var result = await accTransactionService.ApprovePayout(editPayout.Id);
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+        }
+        [HttpPut("editpayout")]
+        public async Task<ActionResult<Result>> EditPayout([FromBody] Payout model)
+        {
+            try
+            {
+                if (model == null)
+                    return BadRequest();
+                var result = await accTransactionService.EditPayout(model);
 
                 return Ok(result);
             }
