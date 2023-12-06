@@ -4,6 +4,7 @@ using AMS.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMS.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231206160843_34")]
+    partial class _34
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -282,106 +284,6 @@ namespace AMS.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "922f6620-1f84-4abf-b7c9-9651adf905a1",
-                            Commission = 0m,
-                            Name = "MONDAY SPECIAL",
-                            Srl = 1
-                        },
-                        new
-                        {
-                            Id = "21cb5d47-3015-49ac-987a-b49d7122f08b",
-                            Commission = 0m,
-                            Name = "PIONEER",
-                            Srl = 2
-                        },
-                        new
-                        {
-                            Id = "b088ec21-a5d9-43f6-a3fb-3e29ca44ebc4",
-                            Commission = 0m,
-                            Name = "LUCKY TUESDAY",
-                            Srl = 3
-                        },
-                        new
-                        {
-                            Id = "83f26d92-1431-4f60-bf18-bb2e7f010e8d",
-                            Commission = 0m,
-                            Name = "VAG EAST",
-                            Srl = 4
-                        },
-                        new
-                        {
-                            Id = "487f9e3c-91a5-4ea9-ab48-4887b55fb40b",
-                            Commission = 0m,
-                            Name = "MID-WEEK",
-                            Srl = 5
-                        },
-                        new
-                        {
-                            Id = "5e64d84b-a016-4bdd-b2c7-fca9c26bac0d",
-                            Commission = 0m,
-                            Name = "VAG WEST",
-                            Srl = 6
-                        },
-                        new
-                        {
-                            Id = "6ca9945b-918e-4d3d-8448-55bbe4281b21",
-                            Commission = 0m,
-                            Name = "FORTUNE THURSDAY",
-                            Srl = 7
-                        },
-                        new
-                        {
-                            Id = "8cb029d1-74d4-4308-b0c3-13406508f736",
-                            Commission = 0m,
-                            Name = "AFRICA",
-                            Srl = 8
-                        },
-                        new
-                        {
-                            Id = "e04b762b-d674-4287-a8c6-d49ff703af06",
-                            Commission = 0m,
-                            Name = "FRIDAY BONANZA",
-                            Srl = 9
-                        },
-                        new
-                        {
-                            Id = "70485801-8011-48cf-9f51-44f0edcdfdc6",
-                            Commission = 0m,
-                            Name = "OBIRI",
-                            Srl = 10
-                        },
-                        new
-                        {
-                            Id = "b4764c70-df91-4049-b3bc-6a1a7edaeae8",
-                            Commission = 0m,
-                            Name = "NATIONAL",
-                            Srl = 11
-                        },
-                        new
-                        {
-                            Id = "d83b7665-61a3-4ee1-9133-59d86bbbdd2a",
-                            Commission = 0m,
-                            Name = "OLD SOLDIER",
-                            Srl = 12
-                        },
-                        new
-                        {
-                            Id = "62c09607-2c76-4910-a952-146307eb5971",
-                            Commission = 0m,
-                            Name = "ASEDA",
-                            Srl = 13
-                        },
-                        new
-                        {
-                            Id = "b1db3c92-707a-404a-b621-c549c639ea16",
-                            Commission = 0m,
-                            Name = "SUNDAY SPECIAL",
-                            Srl = 14
-                        });
                 });
 
             modelBuilder.Entity("AMS.Shared.Location", b =>
