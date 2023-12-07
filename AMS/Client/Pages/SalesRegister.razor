@@ -20,7 +20,8 @@ else
             }
         </MudSelect>
 
-            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
+                        SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId,model.GameId))">
             @foreach (var agent in agents)
             {
                 <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
@@ -28,7 +29,7 @@ else
         </MudSelect>
 
         <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
-                       SelectedValuesChanged="@(()=>SetSalesCommission(model.GameId))">
+                       SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId,model.GameId))">
             @foreach (var game in games)
             {
                 <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
@@ -101,10 +102,17 @@ else
 
     }
 
-    private void SetSalesCommission(string gameId)
+    private async Task SetSalesCommission(string? agentId,string? gameId)
     {
-        var game = games.FirstOrDefault(x => x.Id == gameId);
-        model.SalesCommission = game?.Commission ?? 0;
+        if (string.IsNullOrEmpty(agentId) || string.IsNullOrEmpty(gameId))
+            model.SalesCommission = 0;
+        else
+        {
+            var response = await Http.GetFromJsonAsync<decimal?>($"api/Agent/GetSalesCommission/{agentId}/{gameId}");
+            model.SalesCommission = response ?? 0;
+        }
+        //var game = games.FirstOrDefault(x => x.Id == gameId);
+        //model.SalesCommission = game?.Commission ?? 0;
     }
 
     private void CalculateNetSales(decimal grossSales, decimal salesCommission)

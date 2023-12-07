@@ -6,7 +6,7 @@ namespace AMS.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;
@@ -23,7 +23,7 @@ namespace AMS.Server.Controllers
         }
 
         [HttpGet("{locId}")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
 
         public async Task<Location> GetLocationById(int locId)
         {

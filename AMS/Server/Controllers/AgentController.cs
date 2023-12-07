@@ -110,5 +110,11 @@ namespace AMS.Server.Controllers
                 return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("GetSalesCommission/{agentId}/{gameId}")]
+        public async Task<ActionResult<decimal?>> GetSalesCommission(string agentId, string gameId)
+        {
+            var result = await _agentService.GetSalesCommission(agentId,gameId);
+            return Ok(result);            
+        }
     }
 }

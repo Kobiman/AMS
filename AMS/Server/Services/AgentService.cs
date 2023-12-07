@@ -202,6 +202,15 @@ namespace AMS.Server.Services
             return new Result(false, "Record not found");
 
         }
+        public async Task<decimal?> GetSalesCommission(string agentId, string gameId)
+        {
+            var result = await _context.AgentGameCommissions.Where(x => x.AgentId == agentId && x.GameId == gameId).FirstOrDefaultAsync();
+            if(result != null)
+            {
+                return result.Commission;
+            }
+            return 0;
+        }
 
 
     }

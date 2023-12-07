@@ -18,5 +18,6 @@ namespace AMS.Server.Services
         Task<IEnumerable<AgentGameCommissionDto>> GetAgentGameCommissions(string id);
         Task<Result> AddCommission(AgentGameCommissionDto commission);
         Task<Result> EditCommission(AgentGameCommissionDto commission);
+        Task<decimal?> GetSalesCommission(string agentId, string gameId);
     }
 }
