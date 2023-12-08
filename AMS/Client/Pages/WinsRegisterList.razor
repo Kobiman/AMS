@@ -18,14 +18,14 @@
         </ToolBarContent>
         <Columns>
             <HierarchyColumn T="SalesDto" />
-            <PropertyColumn Property="x => x.EntryDate" />
-            <PropertyColumn Property="x => x.DrawDate" />
-            <PropertyColumn Property="x => x.AgentName" />
-            <PropertyColumn Property="x => x.GameName" />
-            <PropertyColumn Property="x => x.AreaOfOperations" />
-            <PropertyColumn Property="x => x.NumberOfSheets" />
-            <PropertyColumn Property="x => x.WinAmount" />
-            <PropertyColumn Property="x => x.WinsStaffId" Title="Nr" />
+            <PropertyColumn Property="x => x.EntryDate" Title="Entry Date"/>
+            <PropertyColumn Property="x => x.DrawDate" Title="Draw Date"/>
+            <PropertyColumn Property="x => x.AgentName" Title="Agent Name"/>
+            <PropertyColumn Property="x => x.GameName" Title="Game Name"/>
+            <PropertyColumn Property="x => x.AreaOfOperations" Title="Area of Operation"/>
+            <PropertyColumn Property="x => x.NumberOfSheets" Title="Number Of Sheets"/>
+            <PropertyColumn Property="x => x.WinAmount" Title="Win Amount"/>
+            <PropertyColumn Property="x => x.WinsStaffId" Title="" />
             <PropertyColumn Property="x => x.Description">
                 <CellTemplate>
                     @if (!isAdmin)
