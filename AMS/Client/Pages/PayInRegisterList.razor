@@ -53,7 +53,7 @@
             @*<MudTh>Sales</MudTh>*@
             <MudTh>Win Amount</MudTh>
             <MudTh>Treated By</MudTh>
-            <MudTh>Description</MudTh>
+            @*<MudTh>Description</MudTh>*@
             @* <MudTh>Approve</MudTh> *@
 
             <MudTh></MudTh>
@@ -68,7 +68,7 @@
             @*<MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>*@
             <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
             <MudTd DataLabel="Treated By">@context.SalesTreatedBy</MudTd>
-            <MudTd DataLabel="Description">@context.Description</MudTd>
+            @*<MudTd DataLabel="Description">@context.Description</MudTd>*@
             @* <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" /> *@
             <MudTd DataLabel="">
                 @if (!isAdmin)
