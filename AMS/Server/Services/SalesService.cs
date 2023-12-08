@@ -128,6 +128,7 @@ namespace AMS.Server.Services
                                     NumberOfBooks = t.NumberOfBooks,
                                     AreaOfOperations = t.AreaOfOperations,
                                     SalesCommission = t.SalesCommission,
+                                    SalesCommissionValue = ((t.SalesCommission /100)*t.GrossSales),
                                     GrossSales = t.GrossSales,
                                 }).OrderBy<SalesDto, DateTime?>(x => x.DrawDate)
                                 .ToListAsync();

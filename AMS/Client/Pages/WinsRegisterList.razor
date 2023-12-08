@@ -83,31 +83,31 @@
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
-    DateTime? start = DateTime.Today.AddMonths(-12);
+    DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
     private List<SalesDto>? Elements { get; set; }
     private bool isAdmin = false;
     public int TotalNum { get; set; }
 
-    private async void OnValidSubmit(EditContext context)
-    {
-        //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-        var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
-        if (response.IsSuccessStatusCode)
-        {
-            model = new SalesDto();
-            //var result = await response.Content.ReadFromJsonAsync<Result>();
-            var result = await response.Content.ReadFromJsonAsync<SalesDto>();
-            Snackbar.Add("Transaction Approved", Severity.Success);
-            await ModalInstance.CloseAsync(ModalResult.Ok(result));
-        }
-        else
-        {
-            model = new SalesDto();
-            Snackbar.Add("Transaction Failed", Severity.Error);
-        }
+    //private async void OnValidSubmit(EditContext context)
+    //{
+    //    //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
+    //    var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
+    //    if (response.IsSuccessStatusCode)
+    //    {
+    //        model = new SalesDto();
+    //        //var result = await response.Content.ReadFromJsonAsync<Result>();
+    //        var result = await response.Content.ReadFromJsonAsync<SalesDto>();
+    //        Snackbar.Add("Transaction Approved", Severity.Success);
+    //        await ModalInstance.CloseAsync(ModalResult.Ok(result));
+    //    }
+    //    else
+    //    {
+    //        model = new SalesDto();
+    //        Snackbar.Add("Transaction Failed", Severity.Error);
+    //    }
 
-    }
+    //}
 
     protected override async Task OnInitializedAsync()
     {
@@ -133,11 +133,15 @@
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
+            //var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            //if (results != null)
+            //{
+            //    //Elements = results;
+            //    Elements = results.Where(x => x.WinAmount == 0.0M).ToList();
+            //}
+            //TotalNum = Elements.Count;
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
-            if (results != null)
-            {
-                Elements = results;
-            }
+            Elements = results.Where(x => x.WinAmount == 0.0M).ToList();
             TotalNum = Elements.Count;
         }
     }
@@ -148,7 +152,8 @@
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            Elements = results.Where(x => x.WinAmount == 0.0M).ToList();
             TotalNum = Elements.Count;
         }
     }

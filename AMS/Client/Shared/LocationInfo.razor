@@ -30,8 +30,18 @@
             string strLoc = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality)?.Value;
             if(!string.IsNullOrWhiteSpace(strLoc))
             {
+                Location? result = null;
                 int locId = Convert.ToInt16(strLoc);
-                var result = await Http.GetFromJsonAsync<Location>($"api/Location/{locId}");
+                try
+                {
+                    result = await Http.GetFromJsonAsync<Location>($"api/Location/{locId}");
+                }
+                catch (Exception)
+                {
+
+                    Console.WriteLine("");
+                }
+                
                 if(result != null)
                 {
                     location = result;

@@ -48,7 +48,7 @@ else
         <MudNumericField HideSpinButtons="true" @bind-Value="model.GrossSales"
                              Label="Gross Sales" Variant="Variant.Text" TextChanged="@(()=>CalculateNetSales(model.GrossSales,model.SalesCommission))" />
         <MudNumericField HideSpinButtons="true" @bind-Value="model.SalesCommission"
-                             Label="Sales Commission" Variant="Variant.Text" ReadOnly=true/>
+                             Label="Sales Commission (%)" Variant="Variant.Text" ReadOnly=true/>
         <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
                              Label="Net Sales" Variant="Variant.Text" ReadOnly=true />
         <MudTextField T="string" @bind-Value="model.SalesTreatedBy"
