@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin, Payinregister")]
 
 <MudText>PAY-IN REPORT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>

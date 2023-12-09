@@ -1,5 +1,6 @@
 ﻿@page "/PayInRegisterList"
 @inject MudBlazor.ISnackbar Snackbar
+@attribute [Authorize(Roles = "Admin, Payinregister")]
 
 @*
     This list contains sales records where the sales amount is higher than the 

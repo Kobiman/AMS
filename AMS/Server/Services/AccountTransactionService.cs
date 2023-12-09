@@ -231,6 +231,25 @@ namespace AMS.Server.Services
 
             return new Result(false, "Error Occured While Saving!");
         }
+
+        public async Task<Result> EditAgentExpense(AgentExpenseDto editExpenseDto)
+        {
+            var expense = appDbContext.AgentExpenses.FirstOrDefault(x => x.Id == editExpenseDto.Id);
+            if(expense != null)
+            {
+                expense.EntryDate = editExpenseDto.EntryDate.Value;
+                expense.Date = editExpenseDto.Date.Value;
+                expense.Description = editExpenseDto.Description;
+                expense.Amount = editExpenseDto.Amount;
+            }
+
+            if (await appDbContext.SaveChangesAsync() > 0)
+            {
+                return new Result(true, "Saved Successfully");
+            }
+
+            return new Result(false, "Error Occured While Saving!");
+        }
         public async Task<IEnumerable<AgentExpenseDto>> AgentExpenses(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);

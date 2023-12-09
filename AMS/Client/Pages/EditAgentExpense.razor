@@ -8,7 +8,7 @@
                        RequiredError="Entry date is required!" For="@(() => model.EntryDate)" />
 
 
-        <MudTextField T="string" Label="Agent" Required="true" @bind-Value="AgentName" ReadOnly="true" />
+        <MudTextField T="string" Label="Agent" Required="true" @bind-Value="model.Agent" ReadOnly="true" />
 
         <MudDatePicker Editable="true" @bind-Date="model.Date" Placeholder="Expense Date"
                     RequiredError="Entry date is required!" For="@(() => model.Date)" />
@@ -29,25 +29,17 @@
 
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    AddAgentExpenseDto model = new AddAgentExpenseDto();
+    [Parameter] public AgentExpenseDto model{ get; set; } = new AgentExpenseDto();
 
-
-    [Parameter] public string? SalesId { get; set; }
-    [Parameter] public string? AgentId { get; set; }
-    [Parameter] public string? AgentName { get; set; }
-
-    //private IEnumerable<AccountDto> accounts { get; set; }
-    //private IEnumerable<Agent> agents = new List<Agent>();
-    //private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
 
     private async void OnValidSubmit(EditContext context)
     {
-        var response = await Http.PostAsJsonAsync("api/AccountTransaction/AddAgentExpense", model);
+        var response = await Http.PutAsJsonAsync("api/AccountTransaction/EditAgentExpense", model);
         if (response.IsSuccessStatusCode)
         {
-            model = new AddAgentExpenseDto();
+            model = new AgentExpenseDto();
             var result = await response.Content.ReadFromJsonAsync<Result>();
             await ModalInstance.CloseAsync();
             Snackbar.Add(result.Message, Severity.Success);
@@ -56,16 +48,10 @@
         }
         else
         {
-            model = new AddAgentExpenseDto();
+            model = new AgentExpenseDto();
             await ModalInstance.CloseAsync();
             Snackbar.Add("Save Transaction Failed", Severity.Error);
             StateHasChanged();
         }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        model.AgentId = AgentId;
-        model.SalesId = SalesId;
     }
 }

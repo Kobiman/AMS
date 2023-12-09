@@ -1,6 +1,7 @@
 ﻿@page "/WinsRegisterList"
 @using System.Text.Json
 @inject MudBlazor.ISnackbar Snackbar
+@attribute [Authorize(Roles = "Admin, Winsregister")]
 
 <MudText>WINS</MudText>
 @*<button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;*@

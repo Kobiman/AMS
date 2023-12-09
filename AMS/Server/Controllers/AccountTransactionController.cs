@@ -171,6 +171,23 @@ namespace AMS.Server.Controllers
             }
 
         }
+        [HttpPut("EditAgentExpense")]
+        public async Task<ActionResult<Result>> EditAgentExpense([FromBody] AgentExpenseDto editExpenseDto)
+        {
+            try
+            {
+                if (editExpenseDto == null)
+                    return BadRequest();
+                var result = await accTransactionService.EditAgentExpense(editExpenseDto);
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+
+        }
         [HttpPost("AgentExpensesReport")]
         public async Task<IActionResult> AgentExpenses(DateRange period)
         {
