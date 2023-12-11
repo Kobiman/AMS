@@ -22,5 +22,6 @@ namespace AMS.Shared.Dto
         public List<SalesDetails> Details { get; set; } = new List<SalesDetails>();
         public List<PayinPayout> Payins { get; set; } = new List<PayinPayout>();
         public List<PayinPayout> Payouts { get; set; } = new List<PayinPayout>();
+        public decimal ExpenseAmount { get; set; }
     }
 }

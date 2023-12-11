@@ -19,5 +19,6 @@ namespace AMS.Shared.Dto
         decimal OpeningBalance,
         decimal EndBalance,
         decimal PayinAmount,
-        decimal PayoutAmount);
+        decimal PayoutAmount,
+        decimal ExpenseAmount);
 }
