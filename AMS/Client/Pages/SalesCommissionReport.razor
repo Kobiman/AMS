@@ -37,7 +37,7 @@
             <MudTh>Treated By</MudTh>
             <MudTh>Entered By</MudTh>
             @*<MudTh>Approved By</MudTh>*@
-            <MudTh>Description</MudTh>
+            @*<MudTh>Description</MudTh>*@
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy")</MudTd>
@@ -51,7 +51,7 @@
             <MudTd DataLabel="Treated By">@context.SalesTreatedBy</MudTd>
             <MudTd DataLabel="Entered By">@context.SalesStaffId</MudTd>
             @*<MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>*@
-            <MudTd DataLabel="Description">@context.Description</MudTd>
+            @*<MudTd DataLabel="Description">@context.Description</MudTd>*@
         </RowTemplate>
         <FooterContent>
             <MudTd>&nbsp</MudTd>
