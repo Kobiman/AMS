@@ -1,27 +1,29 @@
-﻿@page "/Sales"
+﻿@page "/NetSalesReport"
+
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
-@attribute [Authorize(Roles ="Admin, Saleregister")]
+@attribute [Authorize(Roles = "Admin, Sales")]
 
-<MudText>SALES</MudText>
+<MudText>NET SALES</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-@if (!isAdmin)
-{
-    <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
-}
-    <div style="margin-top:10px">
+@*
+    @if (!isAdmin)
+    {
+        <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Sales</MudButton>
+    }*@
+<div style="margin-top:10px">
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<SalesDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
         <ToolBarContent>
 
             <MudSpacer />
-            @* <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))"  IconSize="Size.Medium" Class="mt-0"></MudTextField> 
             <MudSpacer />
             <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
             <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
             <MudSpacer />
-            <MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
+           @* <MudSelect T="string" Label="Select Agent" @bind-Value="searchString1" AnchorOrigin="Origin.BottomCenter"
                        SelectedValuesChanged="@(()=>CalculateSummuries(@searchString1))" Variant="Variant.Outlined">
                 <MudSelectItem Value="@("")">All</MudSelectItem>
                 @foreach (var agent in Elements.DistinctBy(x => x.AgentName))
@@ -39,86 +41,62 @@
                 {
                     <MudSelectItem T="string" Value="@game.Name">@game.Name</MudSelectItem>
                 }
-            </MudSelect>
+            </MudSelect>*@
 
         </ToolBarContent>
-    <HeaderContent>
-        <MudTh>Entry Date</MudTh>
-        <MudTh>Draw Date</MudTh>
-        <MudTh>Agent</MudTh>
-        <MudTh>Game</MudTh>
-        <MudTh>Sales</MudTh>
-        <MudTh>Wins</MudTh>
-        <MudTh>Description</MudTh>
-        <MudTh>Staff ID</MudTh>
-        <MudTh></MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="EntryDate">@context.EntryDate</MudTd>
-        <MudTd DataLabel="DrawDate">@context.DrawDate</MudTd>
-        <MudTd DataLabel="Agent">@context.AgentName</MudTd>
-        <MudTd DataLabel="Game">@context.GameName</MudTd>
-        <MudTd DataLabel="Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
-        <MudTd DataLabel="Description">@context.Description</MudTd>
-        <MudTd DataLabel="Description">@context.SalesStaffId</MudTd>
-        <MudTd DataLabel="">
-            @if (context.Approved == false)
-                {
-                    @if (isAdmin)
-                    {
-                        <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
-                    }
-                    else
-                    {
-                        <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
-                    }
-                }
-        </MudTd>
-        <MudTd DataLabel="">
-                @if (!isAdmin)
-                {
-                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
-                        var parameters = new ModalParameters();
-                        parameters.Add("SalesId",@context.Id);
-                        parameters.Add("AgentId",@context.AgentId);
-                        parameters.Add("AgentName",context.AgentName);
-                        Modal.Show<AddPayin>("Cash Pay-In",parameters);
-                            })">Payin</MudButton>
-                    <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Tertiary" @onclick="@(() => {
-                        var parameters = new ModalParameters();
-                        parameters.Add("SalesId",@context.Id);
-                        parameters.Add("AgentId",@context.AgentId);
-                        parameters.Add("AgentName",context.AgentName);
-                        Modal.Show<AddPayout>("Cash Pay-Out",parameters);
-                            })">Payout</MudButton>
-                }
-        </MudTd>
-    </RowTemplate>
-    <FooterContent>
-          <MudTd>&nbsp</MudTd>
-          <MudTd>&nbsp</MudTd>
-          <MudTd>&nbsp</MudTd>
-          <MudTd>&nbsp</MudTd>
-          <MudTd>@String.Format("{0:0,0.00}",DailySales)</MudTd>
-          <MudTd>@String.Format("{0:0,0.00}",Wins)</MudTd>
-          <MudTd>&nbsp</MudTd>
-    </FooterContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-  </MudTable>
+        <HeaderContent>
+            <MudTh>Entry Date</MudTh>
+            <MudTh>Draw Date</MudTh>
+            <MudTh>Agent</MudTh>
+            <MudTh>Game</MudTh>
+            <MudTh>Area of Operations</MudTh>
+            <MudTh>Number of Books</MudTh>
+            <MudTh>Net Sales</MudTh>
+            <MudTh>Treated By</MudTh>
+            <MudTh>Entered By</MudTh>
+            @*<MudTh>Approved By</MudTh>*@
+            <MudTh>Description</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy")</MudTd>
+            <MudTd DataLabel="DrawDate">@context.DrawDate.Value.ToString("dd-MMM-yyyy")</MudTd>
+            <MudTd DataLabel="Agent">@context.AgentName</MudTd>
+            <MudTd DataLabel="Game">@context.GameName</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+            <MudTd DataLabel="Number of Books">@context.NumberOfBooks</MudTd>
+            <MudTd DataLabel="Net Sales">@String.Format("{0:0,0.00}", context.DailySales)</MudTd>
+            <MudTd DataLabel="Treated By">@context.SalesTreatedBy</MudTd>
+            <MudTd DataLabel="Entered By">@context.SalesStaffId</MudTd>
+            @*<MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>*@
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+        </RowTemplate>
+        <FooterContent>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>@String.Format("{0:0,0.00}", DailySales)</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+            <MudTd>&nbsp</MudTd>
+        </FooterContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 </div>
 
 
 @*<MudCard Outlined="true">
-    <MudCardContent>
-        <MudText Typo="Typo.h6">Summary</MudText>
-        <MudSpacer />
-        <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
-        <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
-    </MudCardContent>
-</MudCard>*@
+        <MudCardContent>
+            <MudText Typo="Typo.h6">Summary</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.body2" >Total Transactions: @TotalNum</MudText>
+            <MudText Typo="Typo.body2" >Total Amount:   GH₵ @TotalBalance</MudText>
+        </MudCardContent>
+    </MudCard>*@
 
 @code {
     private bool dense = false;
@@ -192,18 +170,18 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
         {
-            DailySales = Elements.Sum(x=>x.DailySales);
-            Wins = Elements.Sum(x=>x.WinAmount);  
+            DailySales = Elements.Sum(x => x.DailySales);
+            Wins = Elements.Sum(x => x.WinAmount);
         }
-        if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
+        if (Elements.Select(x => x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
-            DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.DailySales);
-            Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
+            DailySales = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            Wins = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
         }
-        if (Elements.Select(x=>x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
+        if (Elements.Select(x => x.AgentName.ToUpper()).Contains(searchString.ToUpper()))
         {
-            DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.DailySales);
-            Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.WinAmount);
+            DailySales = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.DailySales);
+            Wins = Elements.Where(x => x.AgentName.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.WinAmount);
         }
     }
 
@@ -223,14 +201,14 @@
     async Task EditTransaction(string TransactionId)
     {
         SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
-        if(transaction != null)
+        if (transaction != null)
         {
             var parameters = new ModalParameters();
             parameters.Add(nameof(EditAgentsTransaction.Transaction), transaction);
 
             var transactionModal = Modal.Show<EditAgentsTransaction>("Edit Sales", parameters);
             var result = await transactionModal.Result;
-            if(result.Cancelled)
+            if (result.Cancelled)
             {
                 Console.WriteLine("Modal was cancelled");
             }
@@ -238,21 +216,21 @@
             {
                 accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
                 await GetSalesRecords();
-                         
+
             }
         }
     }
     async Task ApproveTransaction(string TransactionId)
     {
         SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
-        if(transaction != null)
+        if (transaction != null)
         {
             var parameters = new ModalParameters();
             parameters.Add(nameof(ApproveSales.Transaction), transaction);
 
             var transactionModal = Modal.Show<ApproveSales>("Approve Sales Transaction", parameters);
             var result = await transactionModal.Result;
-            if(result.Cancelled)
+            if (result.Cancelled)
             {
                 Console.WriteLine("Modal was cancelled");
             }
@@ -260,7 +238,7 @@
             {
                 accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
                 await GetSalesRecords();
-                         
+
             }
         }
     }
@@ -268,14 +246,14 @@
     async Task DeleteTransaction(string Id)
     {
         SalesDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
-        if(transaction != null)
+        if (transaction != null)
         {
             var transactionModal = Modal.Show<ConfirmDelete>("Confirm Delete");
             var result = await transactionModal.Result;
-            if(result.Cancelled == false)
+            if (result.Cancelled == false)
             {
                 var response = await Http.DeleteAsync($"/api/Sales/{Id}");
-                if(response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     Snackbar.Add("Deletion Was Successful", Severity.Info);
                     Elements.Remove(transaction);
@@ -283,7 +261,7 @@
                 }
                 else
                 {
-                    Snackbar.Add("Deletion Failed", Severity.Error);   
+                    Snackbar.Add("Deletion Failed", Severity.Error);
                 }
             }
         }
@@ -293,7 +271,7 @@
     {
         var transactionModal = Modal.Show<AddSales>("Add Sales/Wins");
         var result = await transactionModal.Result;
-        if(result.Cancelled)
+        if (result.Cancelled)
         {
             Console.WriteLine("Modal was cancelled");
         }
@@ -334,3 +312,5 @@
         accountEvents.AccountAdded -= async (source, e) => await ReloadAccounts(source, e);
     }
 }
+
+

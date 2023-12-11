@@ -1,4 +1,4 @@
-﻿@page "/WinsRegisterList"
+﻿@page "/Wins_Report"
 @using System.Text.Json
 @inject MudBlazor.ISnackbar Snackbar
 @attribute [Authorize(Roles = "Admin, Winsregister")]
@@ -23,11 +23,11 @@
             <PropertyColumn Property="x => x.DrawDate" Title="Draw Date"/>
             <PropertyColumn Property="x => x.AgentName" Title="Agent Name"/>
             <PropertyColumn Property="x => x.GameName" Title="Game Name"/>
-            <PropertyColumn Property="x => x.AreaOfOperations" Title="Area of Operation"/>
+            <PropertyColumn Property="x => x.AreaOfOperations" Title="Area Of Operation"/>
             <PropertyColumn Property="x => x.NumberOfSheets" Title="Number Of Sheets"/>
             <PropertyColumn Property="x => x.WinAmount" Title="Win Amount"/>
-            <PropertyColumn Property="x => x.WinsStaffId" Title="" />
-            <PropertyColumn Property="x => x.Description">
+            <PropertyColumn Property="x => x.WinsStaffId" Title="Entered By" />
+            @*<PropertyColumn Property="x => x.Description">
                 <CellTemplate>
                     @if (!isAdmin)
                     {
@@ -39,7 +39,7 @@
                         </MudButton>
                     }
                 </CellTemplate>
-            </PropertyColumn>
+            </PropertyColumn>*@
         </Columns>
         <ChildRowContent>
             <MudGrid>
@@ -51,8 +51,8 @@
                             <HeaderContent>
                                 <MudTh>No.</MudTh>
                                 <MudTh>Amount</MudTh>
-                                <MudTh>TreatedBy</MudTh>
-                                <MudTh>ApprovedBy</MudTh>
+                                <MudTh>Treated By</MudTh>
+                                <MudTh>Approved By</MudTh>
                             </HeaderContent>
                             <RowTemplate Context="d">
                                 <MudTd>@d.SheetNo</MudTd>
@@ -65,6 +65,9 @@
                 </MudItem>
             </MudGrid>
         </ChildRowContent>
+        <PagerContent>
+            <MudDataGridPager T="SalesDto" />
+        </PagerContent>
     </MudDataGrid>
 </div>
 
@@ -89,26 +92,27 @@
     private List<SalesDto>? Elements { get; set; }
     private bool isAdmin = false;
     public int TotalNum { get; set; }
+    public decimal Wins { get; set; }
 
-    //private async void OnValidSubmit(EditContext context)
-    //{
-    //    //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
-    //    var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        model = new SalesDto();
-    //        //var result = await response.Content.ReadFromJsonAsync<Result>();
-    //        var result = await response.Content.ReadFromJsonAsync<SalesDto>();
-    //        Snackbar.Add("Transaction Approved", Severity.Success);
-    //        await ModalInstance.CloseAsync(ModalResult.Ok(result));
-    //    }
-    //    else
-    //    {
-    //        model = new SalesDto();
-    //        Snackbar.Add("Transaction Failed", Severity.Error);
-    //    }
+    private async void OnValidSubmit(EditContext context)
+    {
+        //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
+        var response = await Http.PostAsJsonAsync("api/Sales/ApproveTransaction", model);
+        if (response.IsSuccessStatusCode)
+        {
+            model = new SalesDto();
+            //var result = await response.Content.ReadFromJsonAsync<Result>();
+            var result = await response.Content.ReadFromJsonAsync<SalesDto>();
+            Snackbar.Add("Transaction Approved", Severity.Success);
+            await ModalInstance.CloseAsync(ModalResult.Ok(result));
+        }
+        else
+        {
+            model = new SalesDto();
+            Snackbar.Add("Transaction Failed", Severity.Error);
+        }
 
-    //}
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -134,15 +138,15 @@
         var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            //var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
             //if (results != null)
             //{
-            //    //Elements = results;
-            //    Elements = results.Where(x => x.WinAmount == 0.0M).ToList();
+            //    Elements = results;
             //}
             //TotalNum = Elements.Count;
-            var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
-            Elements = results.Where(x => x.WinAmount == 0.0M).ToList();
+            Elements = results.Where(x => x.WinAmount > 0.0M).ToList();
+            //  Winstotal = Elements.Sum(x => x.WinAmount);
+            //Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
         }
     }
@@ -154,7 +158,7 @@
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
-            Elements = results.Where(x => x.WinAmount == 0.0M).ToList();
+            Elements = results.Where(x => x.WinAmount > 0.0M).ToList();
             TotalNum = Elements.Count;
         }
     }

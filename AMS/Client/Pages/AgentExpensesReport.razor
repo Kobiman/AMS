@@ -20,18 +20,27 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Enter Date</MudTh>
-        <MudTh>Date</MudTh>
+        <MudTh>Expense Date</MudTh>
         <MudTh>Agent</MudTh>
         <MudTh>Amount</MudTh> 
         <MudTh>Description</MudTh>
-
-    </HeaderContent>
+        @if (isAdmin)
+            {
+                <MudTd>Action</MudTd>
+            }
+        </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate.Value.ToString("dd-MMM-yyyy")</MudTd>
-        <MudTd DataLabel="Date">@context.Date.Value.ToString("dd-MMM-yyyy")</MudTd>
+        <MudTd DataLabel="Expense Date">@context.Date.Value.ToString("dd-MMM-yyyy")</MudTd>
         <MudTd DataLabel="Agent">@context.Agent</MudTd>
         <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.Amount)</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
+        @if(isAdmin)
+            {
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" OnClick="@(()=>Edit(@context.Id))">Edit</MudButton>
+                </MudTd>
+            }
 
 
     </RowTemplate>
@@ -119,28 +128,27 @@
         }
     }
 
-    //private async Task Edit(string id)
-    //{
-    //    var toEdit = Elements.FirstOrDefault(x => x.Id == id);
-    //    if (toEdit != null)
-    //    {
-    //        toEdit.Type = "Payin";
-    //        var parameters = new ModalParameters();
-    //        parameters.Add(nameof(EditPayin.editPayout), toEdit);
+    private async Task Edit(string id)
+    {
+        var toEdit = Elements.FirstOrDefault(x => x.Id == id);
+        if (toEdit != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(EditAgentExpense.model), toEdit);
 
-    //        var editModal = Modal.Show<EditPayin>("Edit Pay-In", parameters);
-    //        var result = await editModal.Result;
-    //        if (result.Cancelled)
-    //        {
-    //            Console.WriteLine("Modal was cancelled");
-    //        }
-    //        else
-    //        {
-    //            accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
-    //            await GetRecords();
-    //        }
-    //    }
-    //}
+            var editModal = Modal.Show<EditAgentExpense>("Edit Agent Expense", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetRecords();
+            }
+        }
+    }
 
     private async Task GetRole()
     {

@@ -1,7 +1,7 @@
 ﻿@page "/SalesRegister"
 
 
-@attribute [Authorize(Roles = "Admin, Sales")]
+@attribute [Authorize(Roles = "Admin, Saleregister")]
 @if(accounts == null)
 {
     <div>loading...</div>
@@ -14,13 +14,14 @@ else
         <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date" />
         <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date" />
         <MudSelect T="string" Label="Select Account" @bind-Value="model.AccountId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-            @foreach (var account in accounts)
+            @foreach (var account in accounts.Where(n => n.AccountName == "DAILY SALES"))
             {
                 <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
             }
         </MudSelect>
 
-            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+            <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
+                        SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId,model.GameId))">
             @foreach (var agent in agents)
             {
                 <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
@@ -28,7 +29,7 @@ else
         </MudSelect>
 
         <MudSelect T="string" Label="Select Game" @bind-Value="model.GameId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
-                       SelectedValuesChanged="@(()=>SetSalesCommission(model.GameId))">
+                       SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId,model.GameId))">
             @foreach (var game in games)
             {
                 <MudSelectItem T="string" Value="@game.Id">@game.Name</MudSelectItem>
@@ -47,7 +48,7 @@ else
         <MudNumericField HideSpinButtons="true" @bind-Value="model.GrossSales"
                              Label="Gross Sales" Variant="Variant.Text" TextChanged="@(()=>CalculateNetSales(model.GrossSales,model.SalesCommission))" />
         <MudNumericField HideSpinButtons="true" @bind-Value="model.SalesCommission"
-                             Label="Sales Commission" Variant="Variant.Text" ReadOnly=true/>
+                             Label="Sales Commission (%)" Variant="Variant.Text" ReadOnly=true/>
         <MudNumericField HideSpinButtons="true" @bind-Value="model.DailySales"
                              Label="Net Sales" Variant="Variant.Text" ReadOnly=true />
         <MudTextField T="string" @bind-Value="model.SalesTreatedBy"
@@ -101,10 +102,17 @@ else
 
     }
 
-    private void SetSalesCommission(string gameId)
+    private async Task SetSalesCommission(string? agentId,string? gameId)
     {
-        var game = games.FirstOrDefault(x => x.Id == gameId);
-        model.SalesCommission = game?.Commission ?? 0;
+        if (string.IsNullOrEmpty(agentId) || string.IsNullOrEmpty(gameId))
+            model.SalesCommission = 0;
+        else
+        {
+            var response = await Http.GetFromJsonAsync<decimal?>($"api/Agent/GetSalesCommission/{agentId}/{gameId}");
+            model.SalesCommission = response ?? 0;
+        }
+        //var game = games.FirstOrDefault(x => x.Id == gameId);
+        //model.SalesCommission = game?.Commission ?? 0;
     }
 
     private void CalculateNetSales(decimal grossSales, decimal salesCommission)

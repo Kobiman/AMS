@@ -7,7 +7,7 @@
           <DataAnnotationsValidator />
            <MudSelect T="string" Label="Select Account"  @bind-Value="model.AccountId"  AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
                  RequiredError="Account is required!" For="@(() => model.AccountId)">
-                    @foreach(var account in accounts)
+                    @foreach(var account in accounts.Where(n => n.AccountName != "WINS EXPENSES"))
                     {
                         <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
                     }

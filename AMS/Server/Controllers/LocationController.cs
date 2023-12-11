@@ -25,9 +25,18 @@ namespace AMS.Server.Controllers
         [HttpGet("{locId}")]
         [AllowAnonymous]
 
-        public async Task<Location> GetLocationById(int locId)
+        public async Task<ActionResult<Location>> GetLocationById(int locId)
         {
-            return await _locationService.GetLocationById(locId);
+            try
+            {
+                return Ok( await _locationService.GetLocationById(locId));
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
+            }
+            
         }
 
         [HttpPost]

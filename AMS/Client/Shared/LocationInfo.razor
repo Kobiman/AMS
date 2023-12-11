@@ -4,14 +4,14 @@
 @if(location != null)
 {
     <div class="">
-        <AuthorizeView>
-            <Authorized>
+        @*<AuthorizeView>
+            <Authorized>*@
                 <h4>
                     Location: @location?.LocationName
                 </h4>
-            </Authorized>
+            @*</Authorized>
            
-        </AuthorizeView>
+        </AuthorizeView>*@
         
     </div>
 }
@@ -30,8 +30,18 @@
             string strLoc = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality)?.Value;
             if(!string.IsNullOrWhiteSpace(strLoc))
             {
+                Location? result = null;
                 int locId = Convert.ToInt16(strLoc);
-                var result = await Http.GetFromJsonAsync<Location>($"api/Location/{locId}");
+                try
+                {
+                    result = await Http.GetFromJsonAsync<Location>($"api/Location/{locId}");
+                }
+                catch (Exception)
+                {
+
+                    Console.WriteLine("");
+                }
+                
                 if(result != null)
                 {
                     location = result;

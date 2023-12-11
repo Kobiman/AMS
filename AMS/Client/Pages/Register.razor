@@ -28,10 +28,12 @@
 
          <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
                 Variant="Variant.Outlined">
-              <MudSelectItem T="string" Value="@("Account")">Account</MudSelectItem>
-              <MudSelectItem T="string" Value="@("Sales")">Sales</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Saleregister")">Sale Register</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Winsregister")">Wins Register</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Payinregister")">Payin Register</MudSelectItem>
+              <MudSelectItem T="string" Value="@("Payoutregister")">Payout Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
-              <MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
+              @*<MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>*@
           </MudSelect>
 
           

@@ -41,5 +41,6 @@ namespace AMS.Shared.Dto
         public string AreaOfOperations { get; set; } = string.Empty;
         public decimal GrossSales { get; set; }
         public decimal SalesCommission { get; set; }
+        public decimal SalesCommissionValue { get; set; }
     }
 }

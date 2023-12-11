@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin, Payoutregister")]
 
 <MudText>PAY-OUT REPORT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
@@ -35,8 +35,8 @@
         <MudTh>Amount</MudTh>
         <MudTh>Received By</MudTh>
         <MudTh>Received From</MudTh>
-        <MudTh>Received's Phone</MudTh>
-        @if(isAdmin){<MudTh>Action</MudTh>}
+        <MudTh>Receiver's Contact</MudTh>
+        @if(isAdmin){<MudTh>Description</MudTh>}
         
 
     </HeaderContent>

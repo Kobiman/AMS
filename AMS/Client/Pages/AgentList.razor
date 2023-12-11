@@ -43,7 +43,11 @@
             <MudTd DataLabel="">
             <MudButton Variant="Variant.Text" Color="Color.Info" @onclick="@(()=>SendSms(@context.AgentId))">SMS</MudButton>
             <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>{navigationManager.NavigateTo($"/AgentGameCommission/{@context.AgentId}");})">Commissions</MudButton>
-                @*@if (context.Approved == false)
+             @if (isAdmin)
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>Edit(@context.AgentId))">Edit</MudButton>
+            }
+            @*@if (context.Approved == false)
                 {
                     @if (isAdmin)
                     {

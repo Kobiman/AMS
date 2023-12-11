@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin, Payinregister")]
 
 <MudText>PAY-IN REPORT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
@@ -50,7 +50,7 @@
         @if(isAdmin)
             {
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Text" OnClick="@(()=>Edit(@context.Id))" Color="Color.Info" Size="Size.Small">Edit</MudButton>
+                    <MudButton Variant="Variant.Text" OnClick="@(()=>Edit(@context.Id))" Color="Color.Info" Size="Size.Small" >Edit</MudButton>
                 </MudTd>
             }
 
