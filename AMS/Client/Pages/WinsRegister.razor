@@ -8,7 +8,7 @@
 <div style="width: 450px;">
     <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
         <DataAnnotationsValidator />
-        <MudDatePicker Editable="false" @bind-Date="model.EntryDate" Placeholder="Entry Date" ReadOnly="true" />
+        <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date" ReadOnly="false" />
         <MudDatePicker Editable="false" @bind-Date="model.DrawDate" Placeholder="Draw Date" ReadOnly="true" />
 
         @* <MudTextField T="string" Label="Account" Required="true" @bind-Value="model.AccountName"
