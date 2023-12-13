@@ -54,6 +54,29 @@ namespace AMS.Server.Services
                 }
                 );
 
+            var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+
+            var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
+            await appDbContext.AccountTransactions.AddAsync(
+                new AccountTransaction
+                {
+                    Amount = Increase.Amount,
+                    Credit = Increase.Credit,
+                    Debit = Increase.Debit,
+                    Description = sales.Description,
+                    AccountId = cachAccount?.AccountId
+                });
+
+            await appDbContext.AccountTransactions.AddAsync(
+                new AccountTransaction
+                {
+                    AccountId = sales.AccountId,
+                    Amount = sales.DailySales,
+                    Credit = sales.DailySales,
+                    Description = sales.Description
+                }
+                );
+
             if (await appDbContext.SaveChangesAsync() > 0)
             {
                 return await GetTransactionById(result.Entity.Id); 
