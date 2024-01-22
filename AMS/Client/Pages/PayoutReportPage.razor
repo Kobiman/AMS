@@ -133,9 +133,9 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Agent.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.DestinationAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
@@ -146,13 +146,13 @@
         {
            TotalAmount = Elements.Sum(x => x.Amount);   
         }
-        if (Elements.Select(x=>x.SourceAccount.ToUpper()).Contains(searchString.ToUpper()))
+        if (Elements.Select(x=>x.Agent.ToUpper()).Contains(searchString.ToUpper()))
         {
-            TotalAmount = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+            TotalAmount = Elements.Where(x => x.Agent.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Amount);
         }
-        if (Elements.Select(x=>x.DestinationAccount.ToUpper()).Contains(searchString.ToUpper()))
+        if (Elements.Select(x=>x.Description.ToUpper()).Contains(searchString.ToUpper()))
         {
-            TotalAmount = Elements.Where(x => x.SourceAccount.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x=>x.Amount);
+            TotalAmount = Elements.Where(x => x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)).Sum(x => x.Amount);
         }
     }
 
