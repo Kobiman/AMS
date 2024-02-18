@@ -203,7 +203,17 @@ namespace AMS.Server.Services
             await appDbContext.SaveChangesAsync();
             if (agent != null)
             {
-                string msg = $"Hello {agent.Name}, an amount of GHC {addPayoutDto.Amount} has been received as payin as at {addPayoutDto.EntryDate.Value.ToShortDateString}";
+                string msg = "";
+                // msg = $"Hello {agent.Name}, an amount of GHC {addPayoutDto.Amount} has been received as payin as at {addPayoutDto.EntryDate.Value.ToShortDateString()}";
+                if(addPayoutDto.Type=="Payin")
+                {
+                    msg = $"Hello {agent.Name}, a PAY-IN  cash of GHC {addPayoutDto.Amount} has been received on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
+                }
+                else
+                {
+                    msg = $"Hello {agent.Name}, a PAY-OUT cash of GHC {addPayoutDto.Amount} has been paid on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
+                }
+                    
                 phoneno = agent.Phone;
                 if(!string.IsNullOrEmpty(phoneno))
                     await _notificationService.SendSMS(msg, phoneno);
