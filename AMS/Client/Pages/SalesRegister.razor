@@ -14,7 +14,7 @@ else
         <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date" />
         <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date" />
         <MudSelect T="string" Label="Select Account" @bind-Value="model.AccountId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-            @foreach (var account in accounts.Where(n => n.AccountName == "DAILY SALES"))
+            @foreach (var account in accounts)
             {
                 <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
             }
