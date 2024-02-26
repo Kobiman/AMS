@@ -37,7 +37,7 @@ namespace AMS.Server.Services
                     AccountId = sales.AccountId,
                     DailySales = sales.DailySales, 
                     Description = sales.Description,
-                    WinAmount = sales.WinAmount, 
+                    //WinAmount = sales.WinAmount, 
                     GameId = sales.GameId,
                     ReceiptNumber = sales.ReceiptNumber,
                     EntryDate = sales.EntryDate,
@@ -48,7 +48,7 @@ namespace AMS.Server.Services
                     SalesStaffId = _authService.GetStaffID(),
                     SalesTreatedBy = sales.SalesTreatedBy,
                     SalesApprovedBy = sales.SalesApprovedBy,
-                    WinsStaffId = string.Empty,
+                    //WinsStaffId = string.Empty,
                     GrossSales = sales.GrossSales,
                     SalesCommission = sales.SalesCommission,
                 }
@@ -79,7 +79,7 @@ namespace AMS.Server.Services
 
             if (await appDbContext.SaveChangesAsync() > 0)
             {
-                return await GetTransactionById(result.Entity.Id); 
+                return await GetTransactionById(result.Entity.SalesId); 
             }
                 
             return null;
@@ -87,7 +87,7 @@ namespace AMS.Server.Services
 
         public async Task<SalesDto> DeleteAgentsTransaction(string accountTransactionId)
         {
-            var result = await appDbContext.Sales.FirstOrDefaultAsync(i => i.Id == accountTransactionId);
+            var result = await appDbContext.Sales.FirstOrDefaultAsync(i => i.SalesId == accountTransactionId);
             if (result != null)
             {
                 appDbContext.Sales.Remove(result);
@@ -102,7 +102,7 @@ namespace AMS.Server.Services
                 );
                 await appDbContext.SaveChangesAsync();
                 //await UpdateAccount(-result.PayInAmount, result.AccountId);
-                return await GetTransactionById(result.Id);
+                return await GetTransactionById(result.SalesId);
             }
             return null;
         }
@@ -114,7 +114,7 @@ namespace AMS.Server.Services
             var users = await appDbContext.Users.ToDictionaryAsync(x => x.Id, x => x.Email);
 
             var result = await (from t in appDbContext.Sales
-                                    //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                join w in appDbContext.Wins on t.SalesId equals w.SalesId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
@@ -125,35 +125,31 @@ namespace AMS.Server.Services
 
                                 select new SalesDto
                                 {
-                                    //AccountId = t.AccountId,
-                                    //AccountName = a.AccountName,
                                     AgentId = t.AgentId,
                                     AccountId = t.AccountId,
                                     AgentName = x == null ? string.Empty : x.Name,
-                                    Id = t.Id,
-                                    WinAmount = t.WinAmount,
+                                    Id = t.SalesId,
+                                    WinAmount = w.WinAmount,
                                     DailySales = t.DailySales,
-                                    OutstandingBalance = t.DailySales - t.WinAmount,
+                                    OutstandingBalance = t.DailySales - w.WinAmount,
                                     Description = t.Description,
                                     EntryDate = t.EntryDate,
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     SalesStaffId = t.SalesStaffId,
-                                    WinsStaffId = t.WinsStaffId,
+                                    WinsStaffId = w.StaffId,
                                     SalesTreatedBy = t.SalesTreatedBy,
                                     Approved = t.Approved == null ? false : t.Approved,
-                                    Sheet = t.Sheet,
-                                    NumberOfSheets = t.NumberOfSheets,
+                                    Sheet = w.Sheet,
+                                    NumberOfSheets = w.NumberOfSheets,
                                     SalesApprovedBy = t.SalesApprovedBy,
-                                    //WinsApprovedBy = t.WinsApprovedBy,
-                                    //WinsTreatedBy = t.WinsApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
                                     AreaOfOperations = t.AreaOfOperations,
                                     SalesCommission = t.SalesCommission,
                                     SalesCommissionValue = ((t.SalesCommission /100)*t.GrossSales),
                                     GrossSales = t.GrossSales,
-                                }).OrderBy<SalesDto, DateTime?>(x => x.DrawDate)
+                                }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
                                 .ToListAsync();
             return result;
         }
@@ -162,7 +158,7 @@ namespace AMS.Server.Services
         {
             var bfAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
             var result = await(from t in appDbContext.Sales
-                                   //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                               join w in appDbContext.Wins on t.SalesId equals w.SalesId
                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                from x in gj.DefaultIfEmpty()
                                join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
@@ -172,15 +168,13 @@ namespace AMS.Server.Services
 
                                select new SalesDto
                                {
-                                   //AccountId = t.AccountId,
-                                   //AccountName = a.AccountName,
                                    AgentId = t.AgentId,
                                    AccountId = t.AccountId,
                                    AgentName = x == null ? string.Empty : x.Name,
-                                   Id = t.Id,
-                                   WinAmount = t.WinAmount,
+                                   Id = t.SalesId,
+                                   WinAmount = w.WinAmount,
                                    DailySales = t.DailySales,
-                                   OutstandingBalance = t.DailySales - t.WinAmount,
+                                   OutstandingBalance = t.DailySales - w.WinAmount,
                                    Description = t.Description,
                                    EntryDate = t.EntryDate,
                                    DrawDate = t.DrawDate,
@@ -196,38 +190,30 @@ namespace AMS.Server.Services
         }
 
 
-        public async Task<SalesDto> UpdateAgentsTrasaction(Sales agentTransaction)
+        public async Task<SalesDto> UpdateAgentsTrasaction(Wins wins)
         {
-            string preAccountId;
-            decimal preAmount;
-            var result = await appDbContext.Sales.FirstOrDefaultAsync(i => i.Id == agentTransaction.Id);
-            if (result != null)
-            {
-                preAmount = result.WinAmount;
-                result.WinAmount = agentTransaction.WinAmount;
-                result.Sheet = agentTransaction.Sheet;
-                result.NumberOfSheets = agentTransaction.NumberOfSheets;
-                result.Description = agentTransaction.Description;
-                result.AccountId = agentTransaction.AccountId;
-                result.AgentId = agentTransaction.AgentId;
-                result.DailySales = agentTransaction.DailySales;
-                result.EntryDate = DateTime.Today;
-                //result.GameId = agentTransaction.GameId;
-                result.AccountId = agentTransaction.AccountId;
-                result.WinsStaffId = _authService.GetStaffID();
+                //result.WinAmount = wins.WinAmount;
+                //result.Sheet = wins.Sheet;
+                //result.NumberOfSheets = wins.NumberOfSheets;
+                //result.Description = wins.Description;
+                //result.AccountId = wins.AccountId;
+                //result.AgentId = wins.AgentId;
+                //result.DailySales = wins.DailySales;
+                //result.EntryDate = DateTime.Today;
+                ////result.GameId = agentTransaction.GameId;
+                //result.AccountId = wins.AccountId;
+                //result.WinsStaffId = _authService.GetStaffID();
                 //result.WinsTreatedBy = agentTransaction.WinsTreatedBy;
                 //result.WinsApprovedBy = agentTransaction.WinsApprovedBy;
-                result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
+                //result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
 
 
                 await appDbContext.SaveChangesAsync();
-                return await GetTransactionById(result.Id);
-            }
-            return null;
+                return await GetTransactionById(wins.SalesId);
         }
         public async Task<SalesDto> ApproveSales(string SalesId)
         {
-            var sales = await appDbContext.Sales.FirstOrDefaultAsync(x => x.Id == SalesId);
+            var sales = await appDbContext.Sales.FirstOrDefaultAsync(x => x.SalesId == SalesId);
             if(sales != null)
             {
                 sales.Approved = true;
@@ -292,12 +278,12 @@ namespace AMS.Server.Services
         public async Task<SalesDto> GetTransactionById(string transactionID)
         {
             var result = await (from t in appDbContext.Sales
-                                //join a in appDbContext.Accounts on t.AccountId equals a.AccountId
+                                join w in appDbContext.Wins on t.SalesId equals w.SalesId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                 from gme in _gme.DefaultIfEmpty()
-                                where t.Id == transactionID 
+                                where t.SalesId == transactionID 
 
                                 select new SalesDto
                                 {
@@ -305,10 +291,10 @@ namespace AMS.Server.Services
                                     //AccountName = a.AccountName,
                                     AgentId = t.AgentId,
                                     AgentName = (x == null? String.Empty : x.Name),
-                                    Id = t.Id,
-                                    WinAmount = t.WinAmount,
+                                    Id = t.SalesId,
+                                    WinAmount = w.WinAmount,
                                     DailySales = t.DailySales,
-                                    OutstandingBalance = t.DailySales - t.WinAmount,
+                                    OutstandingBalance = t.DailySales - w.WinAmount,
                                     Description = t.Description,
                                     SalesStaffId = t.SalesStaffId,
                                     EntryDate = t.EntryDate,
@@ -326,7 +312,7 @@ namespace AMS.Server.Services
 
         public async Task<Sales> GetTransaction(string transactionID)
         {
-            return await appDbContext.Sales.FirstOrDefaultAsync(t => t.Id == transactionID);
+            return await appDbContext.Sales.FirstOrDefaultAsync(t => t.SalesId == transactionID);
         }
 
         public async Task<IEnumerable<SalesDto>> GetTransactionsCashInCashOut(string inOut, DateRange period)

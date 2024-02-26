@@ -60,7 +60,7 @@ namespace AMS.Server.Extensions
             // SalesDetails s1 = list.FirstOrDefault(x=>x.Description == "balance b/f") with { OpeningBalance = list[0].DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, EndBalance = list[0].DailySales };
             //sales.Add(s1);
 
-            var s1 = _list.FirstOrDefault(x => x.Description == "balance b/f");
+            var s1 = _list.FirstOrDefault(x => x.Description.Equals("balance b/f",StringComparison.OrdinalIgnoreCase));
             if (s1 != null)
             {
                 sales.Add(s1 with { OpeningBalance = s1.DailySales, DailySales = 0, WinAmount = 0, PayinAmount = 0, PayoutAmount = 0, ExpenseAmount = 0, EndBalance = s1.DailySales });

@@ -11,14 +11,14 @@ namespace AMS.Shared
     {
         public Sales()
         {
-            Id = Guid.NewGuid().ToString();
+            SalesId = Guid.NewGuid().ToString();
             EntryDate = DateTime.Now;
         }
 
         
-        public string? Id { get; set; }
-        [Required]
-        public decimal WinAmount { get; set; }
+        public string? SalesId { get; set; }
+        //[Required]
+        //public decimal WinAmount { get; set; }
         [Required]
         public string? Description { get; set; }
         [Required]
@@ -30,18 +30,33 @@ namespace AMS.Shared
         public decimal DailySales { get; set; }
         public string? ReceiptNumber { get; set; }
         public string SalesStaffId { get; set; }
-        public string WinsStaffId { get; set; }
+        //public string WinsStaffId { get; set; }
         public bool Approved { get; set; } = false;
         public string SalesTreatedBy { get; set; } = string.Empty;
         public string SalesApprovedBy { get; set; } = string.Empty;
-        //public string WinsTreatedBy { get; set; } = string.Empty;
-        //public string WinsApprovedBy { get; set; } = string.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public int? LocationId { get; set; }
         public int NumberOfBooks { get; set; }
-        public string? Sheet { get; set; }
-        public int NumberOfSheets { get; set; }
+        //public int NumberOfSheets { get; set; }
         public decimal GrossSales { get; set; }
         public decimal SalesCommission { get; set; }
+    }
+
+    public class Wins
+    {
+        public string? Id { get; set; }
+        public string? SalesId { get; set; }
+        public DateTime? EntryDate { get; set; }
+        public DateTime? DrawDate { get; set; }
+        [Required]
+        public decimal WinAmount { get; set; }
+        public string? Sheet { get; set; }
+        [Required]
+        public string? AgentId { get; set; }
+        [Required]
+        public string? Description { get; set; }
+        public int NumberOfSheets { get; set; }
+        public string? StaffId { get; set; }
+        public bool Approved { get; set; } = false;
     }
 }

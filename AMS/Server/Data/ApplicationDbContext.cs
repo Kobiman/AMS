@@ -39,6 +39,7 @@ namespace AMS.Server.Data
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<Debtors> Debtors { get; set; }       
         public DbSet<Sales> Sales { get; set; }
+        public DbSet<Wins> Wins { get; set; }
 
         public DbSet<Payout> Payouts { get; set; }
 

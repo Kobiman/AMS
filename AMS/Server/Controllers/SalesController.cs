@@ -93,14 +93,14 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPost("EditTransaction")]
-        public async Task<ActionResult<SalesDto>> EditTransaction(Sales accountTransaction)
+        public async Task<ActionResult<SalesDto>> EditTransaction(Wins wins)
         {
             try
             {
-                var TransactionToEdit = await accTransactionService.GetTransaction(accountTransaction.Id);
+                var TransactionToEdit = await accTransactionService.GetTransaction(wins.SalesId);
                 if (TransactionToEdit == null)
                     return NotFound();
-                return await accTransactionService.UpdateAgentsTrasaction(accountTransaction);
+                return await accTransactionService.UpdateAgentsTrasaction(wins);
             }
             catch (Exception)
             {
@@ -113,7 +113,7 @@ namespace AMS.Server.Controllers
         {
             try
             {
-                return await accTransactionService.ApproveSales(accountTransaction.Id);
+                return await accTransactionService.ApproveSales(accountTransaction.SalesId);
             }
             catch (Exception)
             {

@@ -13,7 +13,7 @@ namespace AMS.Shared
         {
             AgentId = Guid.NewGuid().ToString();
             CreatedDate = DateTime.Now;
-            Transactions = new List<Sales>();
+            Sales = new List<Sales>();
             Approved = false;
         }
         public string? AgentId { get; set; }
@@ -36,6 +36,7 @@ namespace AMS.Shared
         public bool Approved { get; set; } = false;
         public string ApprovedBy { get; set; } = String.Empty;
         public int LocationId { get; set; }
-        public IList<Sales> Transactions { get; set; }
+        public IList<Sales> Sales { get; set; }
+        public IList<Wins> Wins { get; set; }
     }
 }

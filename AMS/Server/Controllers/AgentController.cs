@@ -1,8 +1,11 @@
 ﻿using AMS.Server.Services;
 using AMS.Shared;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace AMS.Server.Controllers
 {
@@ -52,6 +55,11 @@ namespace AMS.Server.Controllers
         [HttpPost("GetAgentReports")]
         public async Task<IActionResult> GetAgentReport(DateRange period)
         {
+            //var access_token = await HttpContext.GetTokenAsync("access_token");
+            //var handler = new JwtSecurityTokenHandler();
+            //var token = handler.ReadJwtToken(access_token);
+            //var role = GetRole(token);
+            //var locationId = GetLocationId(token);
             var result = await _agentService.GetAgentReport(period);
             if (result is not null) return Ok(result);
             return BadRequest(result);
@@ -115,6 +123,16 @@ namespace AMS.Server.Controllers
         {
             var result = await _agentService.GetSalesCommission(agentId,gameId);
             return Ok(result);            
+        }
+
+        static string? GetLocationId(JwtSecurityToken token)
+        {
+            return token?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Locality)?.Value;
+        }
+
+        static string? GetRole(JwtSecurityToken token)
+        {
+            return token?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
         }
     }
 }

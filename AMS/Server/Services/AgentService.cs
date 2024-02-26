@@ -35,8 +35,9 @@ namespace AMS.Server.Services
 
         public async Task<IEnumerable<AgentDto>> GetAgents()
         {
-            //var results =  await _context.Agents.Include(x=> x.Transactions).Where(x=>x.Approved).ToListAsync();
-            var results = await _context.Agents.Include(x => x.Transactions).ToListAsync();
+           var results = await _context.Agents.Include(x => x.Sales)
+                                               .Include(x=>x.Wins)
+                                               .ToListAsync();
             return results.Select(x => new AgentDto
             {
                 AgentId = x.AgentId,
@@ -48,9 +49,9 @@ namespace AMS.Server.Services
                 Region = x.Region,
                 Approved = x.Approved,
                 Commision = x.Commission,
-                Sales = x.Transactions.Sum(x => x.DailySales),
-                AmountPaid = x.Transactions.Sum(x => x.WinAmount),
-                OutstandingBalance = x.Transactions.Sum(x => x.DailySales) - x.Transactions.Sum(x => x.WinAmount)
+                Sales = x.Sales.Sum(x => x.DailySales),
+                AmountPaid = x.Wins.Sum(x => x.WinAmount),
+                OutstandingBalance = x.Sales.Sum(x => x.DailySales) - x.Wins.Sum(x => x.WinAmount)
             }).OrderBy(x=>x.Name);
         }
         public async Task<Agent> GetAgent(string id)
@@ -63,37 +64,24 @@ namespace AMS.Server.Services
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
-            //var bfAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
 
-            var sales = await _context.Sales.Where(x => x.DrawDate >= startDate.Date && x.DrawDate <= endDate.Date).OrderBy(x=>x.DrawDate).Select(x => new
-            {
-                x.AccountId,
-                x.AgentId,
-                x.DailySales,
-                x.Description,
-                x.EntryDate,
-                x.DrawDate,
-                x.WinAmount,
-                x.GameId,
-                x.ReceiptNumber,
-                x.Id
-            })
-            .Select(x => new SalesDto2
-            (
-                x.AccountId,
-                x.AgentId,
-                x.DailySales,
-                x.Description,
-                x.EntryDate,
-                x.DrawDate,
-                x.WinAmount,
-                x.GameId,
-                x.ReceiptNumber,
-                x.Id
-            ))
-            .ToListAsync();
+            var sales = await (from t in _context.Sales
+                                                 join w in _context.Wins on t.SalesId equals w.SalesId
+                                                 select new SalesDto2
+                                                 (
+                                                     t.AccountId,
+                                                     t.AgentId,
+                                                     t.DailySales,
+                                                     t.Description,
+                                                     t.EntryDate,
+                                                     t.DrawDate,
+                                                     w.WinAmount,
+                                                     t.GameId,
+                                                     t.ReceiptNumber,
+                                                     t.SalesId
+                                                 )).ToListAsync();
 
-            var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).Select(x => new
+            var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Select(x => new
             {
                 x.AgentId,
                 x.GameId,
@@ -116,9 +104,9 @@ namespace AMS.Server.Services
                 x.EntryDate
             )).ToListAsync();
 
-            var expenses = await _context.AgentExpenses.Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date).ToListAsync();
+            var expenses = await _context.AgentExpenses.ToListAsync();
 
-            return sales.GetAgentReport(agents, payout_payin, expenses);
+            return sales.GetAgentReport(agents, payout_payin, expenses).Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date);
         }
 
         public async Task<Result<Agent>> EditAgent(Agent agent)
