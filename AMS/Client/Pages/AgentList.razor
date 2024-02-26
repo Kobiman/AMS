@@ -41,12 +41,20 @@
             @*<MudTd DataLabel="Commission">@context.Commision</MudTd>*@
             <MudTd DataLabel="Paid In">@context.AmountPaid</MudTd>
             <MudTd DataLabel="">
-            <MudButton Variant="Variant.Text" Color="Color.Info" @onclick="@(()=>SendSms(@context.AgentId))">SMS</MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>{navigationManager.NavigateTo($"/AgentGameCommission/{@context.AgentId}");})">Commissions</MudButton>
-             @if (isAdmin)
-            {
-                <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>Edit(@context.AgentId))">Edit</MudButton>
-            }
+                @if (isAdmin)
+                {
+                    @*  <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>Edit(@context.AgentId))">Edit</MudButton> *@
+                    <MudFab @onclick="@(()=>Edit(@context.AgentId))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" Class="ma-1" />
+                    if (context.Approved == false)
+                    {
+                        <MudFab @onclick="@(()=>Approve(@context.AgentId))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" IconSize="Size.Small" Class="ma-1" />
+                    }
+                }
+            @* <MudButton Variant="Variant.Text" Color="Color.Info" @onclick="@(()=>SendSms(@context.AgentId))">SMS</MudButton> *@
+                <MudFab @onclick="@(()=>SendSms(@context.AgentId))" Icon="@Icons.Material.Filled.Message" Size="Size.Small" IconSize="Size.Small" Class="ma-1" />
+             <MudFab @onclick="@(()=>{navigationManager.NavigateTo($"/AgentGameCommission/{@context.AgentId}");})" Icon="@Icons.Material.Filled.AttachMoney" Size="Size.Small" IconSize="Size.Small" />
+            @* <MudButton Variant="Variant.Text" Color="Color.Info" Size="Size.Small" @onclick="@(()=>{navigationManager.NavigateTo($"/AgentGameCommission/{@context.AgentId}");})">Commissions</MudButton> *@
+            
             @*@if (context.Approved == false)
                 {
                     @if (isAdmin)
