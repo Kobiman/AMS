@@ -14,6 +14,7 @@ namespace AMS.Shared
             AgentId = Guid.NewGuid().ToString();
             CreatedDate = DateTime.Now;
             Sales = new List<Sales>();
+            Wins = new List<Wins>();
             Approved = false;
         }
         public string? AgentId { get; set; }
