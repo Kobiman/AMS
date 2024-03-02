@@ -13,7 +13,7 @@ namespace AMS.Shared.Dto
         public string? AccountId { get; set; }
         public string? AccountName { get; set; }
         public string AgentName { get; set; } = "";
-        public string? Id { get; set; }
+        public string? SalesId { get; set; }
         [Required]
         public decimal WinAmount { get; set; }
         [Required]

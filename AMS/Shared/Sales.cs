@@ -44,6 +44,11 @@ namespace AMS.Shared
 
     public class Wins
     {
+        public Wins()
+        {
+            Id = Guid.NewGuid().ToString();
+            EntryDate = DateTime.Now;
+        }
         public string? Id { get; set; }
         public string? SalesId { get; set; }
         public DateTime? EntryDate { get; set; }

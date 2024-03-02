@@ -82,7 +82,7 @@ else{
         await GetAgents();
         await GetGames();
         model = new SalesDto();
-        model.Id = Transaction.Id;
+        model.SalesId = Transaction.SalesId;
         model.AccountId = Transaction.AccountId;
         model.EntryDate = Transaction.EntryDate;
         model.AgentId = Transaction.AgentId;

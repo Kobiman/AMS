@@ -77,7 +77,7 @@
                 {
                     <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
                         var parameters = new ModalParameters();
-                        parameters.Add("SalesId",@context.Id);
+                        parameters.Add("SalesId",@context.SalesId);
                         parameters.Add("AgentId",@context.AgentId);
                         parameters.Add("AgentName",context.AgentName);
                         parameters.Add("AreaOfOperations",context.AreaOfOperations);

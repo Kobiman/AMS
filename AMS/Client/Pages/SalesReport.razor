@@ -129,7 +129,7 @@
     }
     private async Task GetSalesRecords()
     {
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", new AMS.Shared.DateRange());
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", new AMS.Shared.DateRange());
         if (response.IsSuccessStatusCode)
         {
             Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
@@ -202,7 +202,7 @@
 
     async Task EditTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if (transaction != null)
         {
             var parameters = new ModalParameters();
@@ -224,7 +224,7 @@
     }
     async Task ApproveTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if (transaction != null)
         {
             var parameters = new ModalParameters();
@@ -247,7 +247,7 @@
 
     async Task DeleteTransaction(string Id)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == Id);
         if (transaction != null)
         {
             var transactionModal = Modal.Show<ConfirmDelete>("Confirm Delete");
@@ -290,7 +290,7 @@
     async Task PeriodChanged()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             Elements = await response.Content.ReadFromJsonAsync<List<SalesDto>>();

@@ -61,7 +61,7 @@
             <MudTd DataLabel="WinAmount">@String.Format("{0:0,0.00}", context.WinAmount)</MudTd>
             <MudTd DataLabel="Treated By">@context.SalesTreatedBy</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
-            <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+            <MudFab @onclick="@(()=>ApproveTransaction(@context.SalesId))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
             @*<MudTd DataLabel="">
             @if (!isAdmin)
             {
@@ -232,7 +232,7 @@
 
     async Task ApproveTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if (transaction != null)
         {
             var parameters = new ModalParameters();

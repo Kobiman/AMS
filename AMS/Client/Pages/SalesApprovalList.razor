@@ -188,7 +188,7 @@
 
     async Task EditTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if (transaction != null)
         {
             var parameters = new ModalParameters();
@@ -210,7 +210,7 @@
     }
     async Task ApproveTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if (transaction != null)
         {
             var parameters = new ModalParameters();
@@ -233,7 +233,7 @@
 
     async Task DeleteTransaction(string Id)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == Id);
         if (transaction != null)
         {
             var transactionModal = Modal.Show<ConfirmDelete>("Confirm Delete");

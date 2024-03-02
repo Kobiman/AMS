@@ -71,7 +71,7 @@
     [Parameter] public SalesDto model { get; set; } = new SalesDto();
 
     private IEnumerable<AccountDto> accounts { get; set; }
-    private IEnumerable<Agent> agents = new List<Agent>();
+    private IEnumerable<AgentDto> agents = new List<AgentDto>();
     private IList<Sheet> sheets;
     private IEnumerable<Game>? games { get; set; }
     bool success;
@@ -82,7 +82,7 @@
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
         //model.TransactionType = "Agent";
         model.Sheet = JsonSerializer.Serialize(sheets);
-        var response = await Http.PostAsJsonAsync("api/Sales/EditTransaction", model);
+        var response = await Http.PostAsJsonAsync("api/Sales/AddWins", model);
 
         if (response.IsSuccessStatusCode)
         {
@@ -128,7 +128,7 @@
 
     private async Task GetAgents()
     {
-        var r = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetAgents");
+        var r = await Http.GetFromJsonAsync<List<AgentDto>>("api/Agent/GetAgents");
         var result = r.Where(x => x.Approved);
         if (result is not null)
         {
@@ -136,7 +136,7 @@
         }
         else
         {
-            agents = new List<Agent>();
+            agents = new List<AgentDto>();
         }
     }
     private async Task GetGames()

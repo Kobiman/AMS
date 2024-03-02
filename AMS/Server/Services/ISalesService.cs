@@ -7,9 +7,10 @@ namespace AMS.Server.Services
     {
         //public Task<Shared.IResult> AddAccountTransaction(AccountTransaction agentsTransaction);
         public Task<SalesDto> AddSales(SalesDto agentsTransaction);
-        public Task<IEnumerable<SalesDto>> GetAgentsTransaction(DateRange period);
+        public Task<IEnumerable<SalesDto>> GetSalesReport(DateRange period);
+        public Task<IEnumerable<SalesDto>> GetWinsReport(DateRange period);
         public Task<IEnumerable<SalesDto>> GetTransactionsCashInCashOut(string inOut, DateRange period);
-        public Task<SalesDto> UpdateAgentsTrasaction(Wins wins);  
+        public Task<SalesDto> AddWins(Wins wins);  
         public Task<SalesDto> ApproveSales(string SalesId);  
         public Task<SalesDto> DeleteAgentsTransaction(string agentsTransactionId);
         public Task <IEnumerable<Sales>> GetTransactionsByAccountId(string accountId);          

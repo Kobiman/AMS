@@ -17,12 +17,25 @@ namespace AMS.Server.Controllers
             accTransactionService = _accTransationService;
         }
 
-        [HttpPost("GetTransactions")]
+        [HttpPost("GetSalesReport")]
         public async Task<IActionResult> GetAgentsTransactions(DateRange period)
         {
             try
             {
-                return Ok(await accTransactionService.GetAgentsTransaction(period));
+                return Ok(await accTransactionService.GetSalesReport(period));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
+            }
+        }
+
+        [HttpPost("GetWinsReport")]
+        public async Task<IActionResult> GetWinsReport(DateRange period)
+        {
+            try
+            {
+                return Ok(await accTransactionService.GetWinsReport(period));
             }
             catch (Exception ex)
             {
@@ -80,7 +93,7 @@ namespace AMS.Server.Controllers
                     return BadRequest();
                 var result = await accTransactionService.AddSales(accountTransaction);
 
-                return CreatedAtAction(nameof(GetAccountTransaction),new { id = result.Id },result);
+                return CreatedAtAction(nameof(GetAccountTransaction),new { id = result.SalesId },result);
                 //if (result.IsSucessful) 
                 //    return Ok(result);
                 //return BadRequest(result);
@@ -100,7 +113,20 @@ namespace AMS.Server.Controllers
                 var TransactionToEdit = await accTransactionService.GetTransaction(wins.SalesId);
                 if (TransactionToEdit == null)
                     return NotFound();
-                return await accTransactionService.UpdateAgentsTrasaction(wins);
+                return await accTransactionService.AddWins(wins);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+            }
+        }
+
+        [HttpPost("AddWins")]
+        public async Task<ActionResult<SalesDto>> AddWins(Wins wins)
+        {
+            try
+            {
+                return await accTransactionService.AddWins(wins);
             }
             catch (Exception)
             {

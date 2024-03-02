@@ -82,7 +82,7 @@
     private string searchString1;
     private SalesDto selectedItem1 = null;
     private IEnumerable<AccountDto> accounts { get; set; }
-    private IEnumerable<Agent> agents { get; set; } = new List<Agent>();
+    private IEnumerable<AgentDto> agents { get; set; } = new List<AgentDto>();
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
@@ -133,7 +133,7 @@
     private async Task GetSalesRecords()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             //var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
@@ -152,7 +152,7 @@
     async Task PeriodChanged()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
@@ -175,14 +175,14 @@
     }
     private async Task GetAgents()
     {
-        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
+        var result = await Http.GetFromJsonAsync<List<AgentDto>>("api/Agent/GetApprovedAgents");
         if (result is not null)
         {
             agents = result;
         }
         else
         {
-            agents = new List<Agent>();
+            agents = new List<AgentDto>();
         }
     }
     private async Task GetGames()

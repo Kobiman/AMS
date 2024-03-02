@@ -67,11 +67,11 @@
                 {
                     @if (isAdmin)
                     {
-                        <MudFab @onclick="@(()=>ApproveTransaction(@context.Id))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
+                        <MudFab @onclick="@(()=>ApproveTransaction(@context.SalesId))" Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" />
                     }
                     else
                     {
-                        <MudFab @onclick="@(()=>EditTransaction(@context.Id))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                        <MudFab @onclick="@(()=>EditTransaction(@context.SalesId))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
                     }
                 }
         </MudTd>
@@ -80,14 +80,14 @@
                 {
                     <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Info" @onclick="@(() => {
                         var parameters = new ModalParameters();
-                        parameters.Add("SalesId",@context.Id);
+                        parameters.Add("SalesId",@context.SalesId);
                         parameters.Add("AgentId",@context.AgentId);
                         parameters.Add("AgentName",context.AgentName);
                         Modal.Show<AddPayin>("Cash Pay-In",parameters);
                             })">Payin</MudButton>
                     <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Tertiary" @onclick="@(() => {
                         var parameters = new ModalParameters();
-                        parameters.Add("SalesId",@context.Id);
+                        parameters.Add("SalesId",@context.SalesId);
                         parameters.Add("AgentId",@context.AgentId);
                         parameters.Add("AgentName",context.AgentName);
                         Modal.Show<AddPayout>("Cash Pay-Out",parameters);
@@ -222,7 +222,7 @@
 
     async Task EditTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if(transaction != null)
         {
             var parameters = new ModalParameters();
@@ -244,7 +244,7 @@
     }
     async Task ApproveTransaction(string TransactionId)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == TransactionId);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == TransactionId);
         if(transaction != null)
         {
             var parameters = new ModalParameters();
@@ -267,7 +267,7 @@
 
     async Task DeleteTransaction(string Id)
     {
-        SalesDto transaction = Elements.FirstOrDefault(x => x.Id == Id);
+        SalesDto transaction = Elements.FirstOrDefault(x => x.SalesId == Id);
         if(transaction != null)
         {
             var transactionModal = Modal.Show<ConfirmDelete>("Confirm Delete");
