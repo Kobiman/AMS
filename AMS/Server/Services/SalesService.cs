@@ -326,7 +326,7 @@ namespace AMS.Server.Services
         public async Task<SalesDto> GetTransactionById(string transactionID)
         {
             var result = await (from t in appDbContext.Sales
-                                join w in appDbContext.Wins on t.SalesId equals w.SalesId
+                                //join w in appDbContext.Wins on t.SalesId equals w.SalesId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
@@ -340,9 +340,9 @@ namespace AMS.Server.Services
                                     AgentId = t.AgentId,
                                     AgentName = (x == null? String.Empty : x.Name),
                                     SalesId = t.SalesId,
-                                    WinAmount = w.WinAmount,
+                                    //WinAmount = w.WinAmount,
                                     DailySales = t.DailySales,
-                                    OutstandingBalance = t.DailySales - w.WinAmount,
+                                    //OutstandingBalance = t.DailySales - w.WinAmount,
                                     Description = t.Description,
                                     SalesStaffId = t.SalesStaffId,
                                     EntryDate = t.EntryDate,
