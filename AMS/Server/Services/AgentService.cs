@@ -106,7 +106,7 @@ namespace AMS.Server.Services
 
             var expenses = await _context.AgentExpenses.ToListAsync();
 
-            return sales.GetAgentReport(agents, payout_payin, expenses).Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date);
+            return sales.GetAgentReport(agents, payout_payin, expenses);//.Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date)
         }
 
         public async Task<Result<Agent>> EditAgent(Agent agent)
