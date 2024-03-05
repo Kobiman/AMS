@@ -59,7 +59,7 @@ else
     [Parameter] public string? AgentName { get; set; }
 
     private IEnumerable<AccountDto> accounts { get; set; }
-    private IEnumerable<Agent> agents = new List<Agent>();
+    private IEnumerable<AgentDto> agents = new List<AgentDto>();
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
@@ -106,14 +106,14 @@ else
     }
     private async Task GetAgents()
     {
-        var result = await Http.GetFromJsonAsync<List<Agent>>("api/Agent/GetApprovedAgents");
+        var result = await Http.GetFromJsonAsync<List<AgentDto>>("api/Agent/GetApprovedAgents");
         if (result is not null)
         {
             agents = result;
         }
         else
         {
-            agents = new List<Agent>();
+            agents = new List<AgentDto>();
         }
     }
     private async Task GetGames()

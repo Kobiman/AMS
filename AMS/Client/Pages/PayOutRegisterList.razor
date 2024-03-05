@@ -154,7 +154,7 @@
     private async Task GetSalesRecords()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
@@ -170,7 +170,7 @@
     async Task PeriodChanged()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetTransactions", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();

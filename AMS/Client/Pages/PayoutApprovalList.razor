@@ -94,7 +94,7 @@
     private async Task GetPayoutReport()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayoutReport", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/GetSalesReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
