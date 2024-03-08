@@ -209,7 +209,7 @@ namespace AMS.Server.Services
         public IEnumerable<SalesDto2> Join(List<SalesDto2> sales, List<WinsDto> wins)
         {
             foreach (var (s, w) in from s in sales
-                                   let w = wins.FirstOrDefault(x => x.SalesId == s.Id)
+                                   let w = wins.Where(x => x.SalesId == s.Id)
                                    select (s, w))
             {
                 if (w != null)
@@ -222,7 +222,7 @@ namespace AMS.Server.Services
                       s.Description,
                       s.EntryDate,
                       s.DrawDate,
-                      w.WinAmount,
+                      w.Sum(x=>x.WinAmount),
                       s.GameId,
                       s.ReceiptNumber,
                       s.Id
