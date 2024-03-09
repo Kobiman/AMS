@@ -122,7 +122,7 @@ namespace AMS.Server.Services
                                 from gme in _gme.DefaultIfEmpty()
                                 where
                                 t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
-                                && t.Description.Equals("balance b/f",StringComparison.OrdinalIgnoreCase)
+                                && t.Description == "balance b/f"
 
                                 select new SalesDto
                                 {
