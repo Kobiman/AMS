@@ -65,8 +65,8 @@ namespace AMS.Server.Services
             period.GetDates(out DateTime startDate, out DateTime endDate);
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
 
-            var sales = await (from t in _context.Sales
-                                                 join w in _context.Wins on t.SalesId equals w.SalesId
+            List<SalesDto2> _sales = await (from t in _context.Sales
+                                                 //join w in _context.Wins on t.SalesId equals w.SalesId
                                                  select new SalesDto2
                                                  (
                                                      t.AccountId,
@@ -75,11 +75,15 @@ namespace AMS.Server.Services
                                                      t.Description,
                                                      t.EntryDate,
                                                      t.DrawDate,
-                                                     w.WinAmount,
+                                                     0,
                                                      t.GameId,
                                                      t.ReceiptNumber,
                                                      t.SalesId
                                                  )).ToListAsync();
+
+            List<WinsDto> wins = await (from w in _context.Wins select new WinsDto(w.WinAmount, w.SalesId)).ToListAsync();
+
+            var sales = Join(_sales, wins).ToList();
 
             var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Select(x => new
             {
@@ -200,6 +204,45 @@ namespace AMS.Server.Services
                 return result.Commission;
             }
             return 0;
+        }
+
+        public IEnumerable<SalesDto2> Join(List<SalesDto2> sales, List<WinsDto> wins)
+        {
+            foreach (var (s, w) in from s in sales
+                                   let w = wins.Where(x => x.SalesId == s.Id)
+                                   select (s, w))
+            {
+                if (w != null)
+                {
+                    yield return new SalesDto2
+                    (
+                      s.AccountId,
+                      s.AgentId,
+                      s.DailySales,
+                      s.Description,
+                      s.EntryDate,
+                      s.DrawDate,
+                      w.Sum(x=>x.WinAmount),
+                      s.GameId,
+                      s.ReceiptNumber,
+                      s.Id
+                    );
+                }
+                else
+                    yield return new SalesDto2
+                    (
+                      s.AccountId,
+                      s.AgentId,
+                      s.DailySales,
+                      s.Description,
+                      s.EntryDate,
+                      s.DrawDate,
+                      0,
+                      s.GameId,
+                      s.ReceiptNumber,
+                      s.Id
+                    );
+            }
         }
 
 
