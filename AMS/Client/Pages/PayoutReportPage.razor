@@ -1,8 +1,11 @@
 ﻿@page "/PayoutReport"
+
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin, Payoutregister")]
+
+@inject IJSRuntime JS
 
 <MudText>PAY-OUT REPORT</MudText>
 <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
@@ -55,6 +58,8 @@
             {
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Text" OnClick="@(()=>Edit(@context.Id))" Color="Color.Info" Size="Size.Small">Edit</MudButton>
+                    <MudSpacer />
+                    <MudButton Variant="Variant.Text" OnClick="@(()=>Print(@context.Id))" Color="Color.Info" Size="Size.Small">Print</MudButton>
                 </MudTd>
             }
 
@@ -75,7 +80,7 @@
   </MudTable>
 </div>
 
-@code {
+    @code {
 
     private bool dense = false;
     private bool hover = true;
@@ -144,7 +149,7 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
         {
-           TotalAmount = Elements.Sum(x => x.Amount);   
+            TotalAmount = Elements.Sum(x => x.Amount);   
         }
         if (Elements.Select(x=>x.Agent.ToUpper()).Contains(searchString.ToUpper()))
         {
@@ -170,6 +175,29 @@
             parameters.Add(nameof(EditPayin.edit), toEdit);
 
             var editModal = Modal.Show<EditPayin>("Edit Pay-Out", parameters);
+            var result = await editModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+            }
+            else
+            {
+                accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
+                await GetPayoutReport();
+            }
+        }
+    }
+    private async Task Print(string id)
+    {
+        var toPrint = Elements.FirstOrDefault(x => x.Id == id);
+        if (toPrint != null)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(PrintPayout._payout), toPrint);
+            //await JS.InvokeAsync<object>("open", new object[] { "/PrintPayout", "_blank" });
+            //await JS.InvokeAsync<object>("open", "/PrintPayout", "_blank" );
+
+            var editModal = Modal.Show<PrintPayout>("", parameters);
             var result = await editModal.Result;
             if (result.Cancelled)
             {
