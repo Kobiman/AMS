@@ -154,7 +154,7 @@
     private async Task GetSalesRecords()
     {
         var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
-        var response = await Http.PostAsJsonAsync($"/api/Sales/GetSalesReport", dateRange);
+        var response = await Http.PostAsJsonAsync($"/api/Sales/GetWinsReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();

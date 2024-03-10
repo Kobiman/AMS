@@ -1,0 +1,69 @@
+﻿@page "/PrintPayout"
+@layout _BlankLayout
+@inject IJSRuntime JS
+@if(_payout == null)
+{
+    <div>loading...</div>
+}
+else
+{
+    <div class="container" id="PrintDiv">
+        @*  <div width="150px" max-width="150px"> *@
+        <h3>Payout Receipt</h3>
+
+        <table class="table">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Agent</td>
+                    <td>@_payout.Agent</td>
+                </tr>
+                <tr>
+                    <td>Amount</td>
+                    <td>GHC @String.Format("{0:0,0.00}", _payout.Amount)</td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>@_payout.Description</td>
+                </tr>
+                <tr>
+                    <td>Received By</td>
+                    <td>@_payout.ReceivedBy</td>
+                </tr>
+                <tr>
+                    <td>Received From</td>
+                    <td>@_payout.ReceivedFrom</td>
+                </tr>
+                <tr>
+                    <td>Receiver's Phone No</td>
+                    <td>@_payout.ReceiverPhone</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+
+    
+   
+@* </div> *@
+
+<div class="container mt-5">
+    <div class="col-4">
+        <button class="btn btn-primary" @onclick="PrintReceipt">Print</button>
+    </div>
+</div>
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public PayoutDto? _payout { get; set; }
+
+
+    async Task PrintReceipt()
+    {
+        await JS.InvokeVoidAsync("printDiv");
+    }
+
+}
