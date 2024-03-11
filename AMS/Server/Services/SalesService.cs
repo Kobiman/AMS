@@ -142,7 +142,7 @@ namespace AMS.Server.Services
                                     SalesTreatedBy = t.SalesTreatedBy,
                                     Approved = t.Approved == null ? false : t.Approved,
                                     //Sheet = w.Sheet,
-                                    NumberOfSheets = t.NumberOfBooks,
+                                    //NumberOfSheets = t.NumberOfBooks,
                                     SalesApprovedBy = t.SalesApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
