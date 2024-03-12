@@ -120,7 +120,7 @@ namespace AMS.Server.Services
             agent.LocationId = Convert.ToInt16(_authService.GetLocationID());
             //_context.Agents.Update(agent);
             toEdit.Name = agent.Name;
-            toEdit.Commission = agent.Commission;
+            toEdit.HouseNo = agent.HouseNo;
             toEdit.Region = agent.Region;
             toEdit.Phone = agent.Phone;
             toEdit.Email = agent.Email;
