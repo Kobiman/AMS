@@ -46,7 +46,8 @@ namespace AMS.Server.Controllers
         [HttpGet("GetApprovedAgents")]
         public async Task<IActionResult> GetApprovedAgents()
         {
-            var list = await _agentService.GetAgents();
+            //var list = await _agentService.GetAgents();
+            var list = await _agentService.GetAgentsList();
             var result = list.Where(x => x.Approved);
             if (result is not null) return Ok(result);
             return BadRequest(result);

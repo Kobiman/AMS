@@ -90,7 +90,7 @@ else
         model.Description = edit.Description;
         model.EntryDate = edit.EntryDate;
         //model.GameId = edit.g
-        model.Amount = edit.Amount;
+        model.Amount = Math.Abs(edit.Amount);
         model.ReceivedBy = edit.ReceivedBy;
         model.ReceivedFrom = edit.ReceivedFrom;
         model.ReceiverPhone = edit.ReceiverPhone;

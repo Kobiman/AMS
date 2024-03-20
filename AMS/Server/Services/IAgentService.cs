@@ -9,6 +9,7 @@ namespace AMS.Server.Services
         Task<IResult> AddAgent(Agent agent);
         Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period);
         Task<IEnumerable<AgentDto>> GetAgents();
+        Task<IEnumerable<Agent>> GetAgentsList();
         Task<Agent> GetAgent(string id);
 
         Task<Result<Agent>> EditAgent(Agent agent);

@@ -10,9 +10,10 @@ namespace AMS.Shared.Dto
     {
         public int Id { get; set; }
         public string Email { get; set; }
-        public string StaffId { get; set; } = String.Empty;
+        public string StaffId { get; set; } = string.Empty;
 
         public int LocationId { get; set; }
-        public string Role { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public List<string> Roles { get; set; } = new List<string>();
     }
 }

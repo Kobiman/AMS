@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.IdentityModel.Tokens;
 //using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
@@ -42,8 +43,11 @@ namespace AMS.Server.Services
             }
             else
             {
+                var userroles = await _dbContext.UserRoles.Where(x => x.UserId == user.Id)
+                    .Select(x => x.Role)
+                    .ToListAsync();
                 response.IsSucessful = true;
-                response.Value = CreateToken(user);
+                response.Value = CreateToken(user,userroles);
                 response.Message = "Login Successful";
             }
             return response;
@@ -93,17 +97,21 @@ namespace AMS.Server.Services
                 return computedHash.SequenceEqual(passwordHash);
             }
         }
-        private string CreateToken(User user)
+        private string CreateToken(User user, List<string> roles)
         {
             List<Claim> claims = new List<Claim>
-            {
+            {                
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role),
+                //new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.SerialNumber, user.StaffId),
                 new Claim(ClaimTypes.Locality, user.LocationId.ToString())
             };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+            }
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
@@ -136,7 +144,8 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<UserDto>> GetUsers()
         {
             var users =  _dbContext.Users.ToList();
-            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role,StaffId = x.StaffId,LocationId= Convert.ToInt32(x.LocationId) });
+            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role,StaffId = x.StaffId,LocationId= Convert.ToInt32(x.LocationId) 
+            ,Roles = _dbContext.UserRoles.Where(i => i.UserId == x.Id).Select(p => p.Role).ToList()});
         }
 
         public async Task<Result<int>> DeleteUser(int userId)
@@ -152,13 +161,23 @@ namespace AMS.Server.Services
 
         }
 
-        public async Task<Result<UserDto>> EditUserRole(int userId, string role,int locationId)
+        public async Task<Result<UserDto>> EditUserRole(int userId, List<string> roles,int locationId)
         {
             UserDto userDto = null;
+            List<UserRoles> userRoles = new List<UserRoles>();
             var user = await _dbContext.Users.FindAsync(userId);
             if (user != null)
             {
-                user.Role = role;
+                //user.Role = role;
+                if(roles.Count() > 0)
+                {
+                    userRoles = _dbContext.UserRoles.Where(x => x.UserId == userId).ToList();
+                    _dbContext.UserRoles.RemoveRange(userRoles);
+                    foreach (var role in roles)
+                    {
+                        await _dbContext.AddAsync(new UserRoles { UserId = userId, Role = role });
+                    }
+                }
                 user.LocationId = locationId;
                 await _dbContext.SaveChangesAsync();
                 userDto = new UserDto { Id= user.Id,Email=user.Email,Role=user.Role,LocationId=Convert.ToInt16(user.LocationId)};

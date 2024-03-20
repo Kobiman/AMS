@@ -17,15 +17,33 @@
                  }
         </MudSelect>
 
-            <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
+
+           @*  <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
                 Variant="Variant.Outlined">
               <MudSelectItem T="string" Value="@("Saleregister")">Sale Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Winsregister")">Wins Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Payinregister")">Payin Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Payoutregister")">Payout Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
-              @*<MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>*@
-            </MudSelect>
+              @*<MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
+            </MudSelect> *@
+            <div>
+                <MudText Typo="Typo.h6">Roles</MudText>
+                @* <MudCheckBox T="bool" @bind-Value="Saleregister" Label="Sales Register" Color="Color.Primary"></MudCheckBox>
+                <MudCheckBox T="bool" @bind-Value="Winsregister" Label="Wins Register" Color="Color.Primary"></MudCheckBox>
+                <MudCheckBox T="bool" @bind-Value="Payoutregister" Label="Payout Register" Color="Color.Primary"></MudCheckBox>
+                <MudCheckBox T="bool" @bind-Value="Payinregister" Label="Payin Register" Color="Color.Primary"></MudCheckBox>
+                <MudCheckBox T="bool" @bind-Value="Admin" Label="Admin" Color="Color.Primary"></MudCheckBox> *@
+                <div class="form-check">
+                <div><label><input type="checkbox" class="form-check-input" @bind-value="@Saleregister" /> &nbsp; Sales Register</label></div>
+                <div><label><input type="checkbox" class="form-check-input" @bind-value="@Winsregister" /> &nbsp; Wins Register</label></div>
+                <div><label><input type="checkbox" class="form-check-input" @bind-value="@Payoutregister" /> &nbsp; Payout Register</label></div>
+                <div><label><input type="checkbox" class="form-check-input" @bind-value="@Payinregister" /> &nbsp; Payin Register</label></div>
+                <div><label><input type="checkbox" class="form-check-input" @bind-value="@Admin" /> &nbsp; Admin</label></div>
+                </div>
+            </div>
+            
+
 
 
             <ValidationSummary />
@@ -40,12 +58,30 @@
     [Parameter] public UserDto User { get; set; }
     private IList<Location> locations = new List<Location>();
     UserDto model = new UserDto();
+    private List<string> Userroles = new List<string>();
+
+    //
+    private bool Saleregister { get; set; }
+    private bool Winsregister { get; set; }
+    private bool Payinregister { get; set; }
+    private bool Payoutregister { get; set; }
+    private bool Admin { get; set; }
+
+
 
     bool success;
     string[] errors = { };
 
     private async void OnValidSubmit(EditContext context)
     {
+        if (Saleregister) { Userroles.Add("Saleregister"); }
+        if (Winsregister) { Userroles.Add("Winsregister"); }
+        if (Payinregister) { Userroles.Add("Payinregister"); }
+        if (Payoutregister) { Userroles.Add("Payoutregister"); }
+        if (Admin) { Userroles.Add("Admin"); }
+
+        model.Roles = Userroles;
+
         var response = await Http.PutAsJsonAsync("api/Auth", model);
         if(response.IsSuccessStatusCode)
         {
@@ -67,9 +103,31 @@
         model = new UserDto();
         model.Id = User.Id;
         model.Email = User.Email;
-        model.Role = User.Role;
+        //model.Role = User.Role;
         model.StaffId = User.StaffId;
         model.LocationId = User.LocationId;
+        model.Roles = User.Roles;
+        if (model.Roles.Contains("Saleregister"))
+        {
+            Saleregister = true;
+        }
+        if (model.Roles.Contains("Winsregister"))
+        {
+            Winsregister = true;
+        }
+        if (model.Roles.Contains("Payinregister"))
+        {
+            Payinregister = true;
+        }
+        if (model.Roles.Contains("Payoutregister"))
+        {
+            Payoutregister = true;
+        }
+        if (model.Roles.Contains("Admin"))
+        {
+            Admin = true;
+        }
+        StateHasChanged();
     }
     private async Task LoadLocations()
     {

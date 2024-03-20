@@ -54,6 +54,11 @@ namespace AMS.Server.Services
                 OutstandingBalance = x.Sales.Sum(x => x.DailySales) - x.Wins.Sum(x => x.WinAmount)
             }).OrderBy(x=>x.Name);
         }
+
+        public async Task<IEnumerable<Agent>> GetAgentsList()
+        {
+            return await _context.Agents.ToListAsync();
+        }
         public async Task<Agent> GetAgent(string id)
         {
             var results = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == id);

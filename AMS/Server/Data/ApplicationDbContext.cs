@@ -52,6 +52,7 @@ namespace AMS.Server.Data
         public DbSet<AgentExpense> AgentExpenses { get; set; }
 
         public DbSet<AgentGameCommission> AgentGameCommissions { get; set; }
+        public DbSet<UserRoles> UserRoles { get; set; }
 
     }
 }
