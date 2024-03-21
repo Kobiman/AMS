@@ -109,7 +109,7 @@
         if(user != null)
         {
             var parameters = new ModalParameters();
-            parameters.Add(nameof(EditUserRole.User), user);
+            parameters.Add(nameof(EditUserRole.model), user);
 
             var userModal = Modal.Show<EditUserRole>("Edit User", parameters);
             var result = await userModal.Result;
