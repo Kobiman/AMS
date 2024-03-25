@@ -15,8 +15,7 @@ namespace AMS.Shared
         public string Password { get; set; } = string.Empty;
         [Compare("Password",ErrorMessage ="The passwords do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
-        [Required]
-        public string Role { get; set; }
+        //public string Role { get; set; } = string.Empty;
         public int? LocationId { get; set; } = null;
 
         [Required]

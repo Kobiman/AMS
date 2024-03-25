@@ -46,7 +46,8 @@ namespace AMS.Server.Controllers
         [HttpGet("GetApprovedAgents")]
         public async Task<IActionResult> GetApprovedAgents()
         {
-            var list = await _agentService.GetAgents();
+            //var list = await _agentService.GetAgents();
+            var list = await _agentService.GetAgentsList();
             var result = list.Where(x => x.Approved);
             if (result is not null) return Ok(result);
             return BadRequest(result);
@@ -66,14 +67,23 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPut("EditAgent")]
-        public async Task<ActionResult<Result<AgentDto>>> EditAgent(AgentDto agentDto)
+        public async Task<ActionResult<Result<Agent>>> EditAgent(AgentDto agentDto)
         {
-            var agent = _mapper.Map<Agent>(agentDto);
+            //var agent = _mapper.Map<Agent>(agentDto);
+            Agent agent = new Agent()
+            {
+                AgentId = agentDto.AgentId,
+                Name = agentDto.Name,
+                Email = agentDto.Email,
+                Phone = agentDto.Phone,
+                HouseNo = agentDto.HouseNo,
+                Region = agentDto.Region
+            };
             var result = await _agentService.EditAgent(agent);
-            var resultDto = _mapper.Map<AgentDto>(result.Value);
+     
             if (result != null)
-                return Ok(resultDto);
-            return BadRequest(resultDto);
+                return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpDelete]

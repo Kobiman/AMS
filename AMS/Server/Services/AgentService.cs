@@ -54,6 +54,11 @@ namespace AMS.Server.Services
                 OutstandingBalance = x.Sales.Sum(x => x.DailySales) - x.Wins.Sum(x => x.WinAmount)
             }).OrderBy(x=>x.Name);
         }
+
+        public async Task<IEnumerable<Agent>> GetAgentsList()
+        {
+            return await _context.Agents.ToListAsync();
+        }
         public async Task<Agent> GetAgent(string id)
         {
             var results = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == id);
@@ -115,9 +120,16 @@ namespace AMS.Server.Services
 
         public async Task<Result<Agent>> EditAgent(Agent agent)
         {
+            var toEdit = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == agent.AgentId);
             agent.StaffId = _authService.GetStaffID();
             agent.LocationId = Convert.ToInt16(_authService.GetLocationID());
-            _context.Agents.UpdateRange(agent);
+            //_context.Agents.Update(agent);
+            toEdit.Name = agent.Name;
+            toEdit.HouseNo = agent.HouseNo;
+            toEdit.Region = agent.Region;
+            toEdit.Phone = agent.Phone;
+            toEdit.Email = agent.Email;
+
             var result = await _context.SaveChangesAsync();
             if (result > 0)
                 return new Result<Agent>(true, agent, "Record Updated");

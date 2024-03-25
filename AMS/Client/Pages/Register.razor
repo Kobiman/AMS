@@ -1,6 +1,6 @@
 ﻿@using System.Text.RegularExpressions
 @page "/Register"
-@attribute [Authorize(Roles ="Admin")]
+@*@attribute [Authorize(Roles ="Admin")]*@
 
 <PageTitle>Register</PageTitle>
 <h3>Register</h3>
@@ -26,15 +26,15 @@
         <MudTextField T="string" Label="Confirm Password" Required="true" @bind-Value="model.ConfirmPassword" 
         RequiredError="Confirm Password is a required field" For="@(() => model.ConfirmPassword)" InputType="InputType.Password"/>
 
-         <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
+         @* <MudSelect T="string" Label="Select Role"  @bind-Value="model.Role"  AnchorOrigin="Origin.BottomCenter"
                 Variant="Variant.Outlined">
               <MudSelectItem T="string" Value="@("Saleregister")">Sale Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Winsregister")">Wins Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Payinregister")">Payin Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Payoutregister")">Payout Register</MudSelectItem>
               <MudSelectItem T="string" Value="@("Admin")">Admin</MudSelectItem>
-              @*<MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>*@
-          </MudSelect>
+              @*<MudSelectItem T="string" Value="@("Agent")">Agent</MudSelectItem>
+          </MudSelect> *@
 
           
             

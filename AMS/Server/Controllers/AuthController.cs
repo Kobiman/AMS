@@ -23,7 +23,7 @@ namespace AMS.Server.Controllers
         {
             try
             {
-                var response = await _authService.Register(new User { Email = user.Email,Role=user.Role,StaffId=user.StaffId,LocationId=user.LocationId }, user.Password);
+                var response = await _authService.Register(new User { Email = user.Email,StaffId=user.StaffId,LocationId=user.LocationId }, user.Password);
                 if (response.IsSucessful)
                 {
                     return Ok(response);
@@ -77,11 +77,11 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Result<UserDto>>> EditUser(UserDto user)
+        public async Task<IActionResult> EditUser(UserDto user)
         {
             try
             {
-                return await _authService.EditUserRole(user.Id, user.Role,user.LocationId);
+                return Ok(await _authService.EditUserRole(user.Id, user.Roles,user.LocationId));
             }
             catch (Exception)
             {
