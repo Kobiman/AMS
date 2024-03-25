@@ -1,5 +1,5 @@
 ﻿@page "/SalesRegister"
-
+@* @page "/SalesRegister/{id}" *@
 
 @attribute [Authorize(Roles = "Admin, Saleregister")]
 @if(accounts == null)
@@ -79,8 +79,19 @@ else
     bool success;
     string[] errors = { };
 
+    // [Parameter]
+    // public string? Id { get; set; }
+
     private async void OnValidSubmit(EditContext context)
     {
+        // if (!string.IsNullOrWhiteSpace(Id))
+        // {
+        //     var result = await Http.GetFromJsonAsync<Result<SalesDto>>($"api/Sales/GetSalesReport/{Id}");
+        //     if (result is not null && result.IsSucessful)
+        //     {
+
+        //     }
+        // }
         //HttpResponseMessage response = await Http.PostAsJsonAsync<AccountTransaction>("api/AccountTransaction", model);
         //model.TransactionType = "Agent";
         var response = await Http.PostAsJsonAsync("api/Sales/AddTransaction", model);

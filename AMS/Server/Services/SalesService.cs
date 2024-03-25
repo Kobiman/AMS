@@ -20,16 +20,6 @@ namespace AMS.Server.Services
         private readonly ApplicationDbContext appDbContext;
         private readonly IAuthService _authService;
 
-        //public async Task<Shared.IResult> AddAccountTransaction(AccountTransaction accountTransaction)
-        //{
-        //    accountTransaction.Debit = accountTransaction.Amount < 0 ? accountTransaction.Amount : 0;
-        //    accountTransaction.Credit = accountTransaction.Amount > 0 ? accountTransaction.Amount : 0;
-        //    appDbContext.AgentsTransactions.Add(accountTransaction);
-        //    var result = await appDbContext.SaveChangesAsync();
-        //    if (result > 0)
-        //        return new Result(true, "Transaction saved successfully.");
-        //    return new Result(false, "Operation failled.");
-        //}
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
             var result = await appDbContext.Sales.AddAsync(
@@ -85,6 +75,11 @@ namespace AMS.Server.Services
                 
             return null;
         }
+
+        //public Task UpdateSales(SalesDto sales)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<SalesDto> DeleteAgentsTransaction(string accountTransactionId)
         {

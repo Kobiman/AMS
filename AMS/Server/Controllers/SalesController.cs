@@ -105,6 +105,23 @@ namespace AMS.Server.Controllers
             
         }
 
+        //[HttpPost("UpdateSales")]
+        //public async Task<ActionResult> UpdateSales([FromBody] SalesDto sales)
+        //{
+        //    try
+        //    {
+        //        if (sales == null)
+        //            return BadRequest();
+        //        var result = await accTransactionService.UpdateSales(sales);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, "Error Adding Transaction");
+        //    }
+
+        //}
+
         [HttpPost("EditTransaction")]
         public async Task<ActionResult<SalesDto>> EditTransaction(Wins wins)
         {
