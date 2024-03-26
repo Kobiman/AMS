@@ -1,6 +1,6 @@
 ﻿@page "/Games"
 @implements IDisposable
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 
 <MudGrid>
     <MudItem xs="6">

@@ -1,5 +1,5 @@
 ﻿@page "/Locations"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 
 <MudText Typo="Typo.h6">Locations</MudText>
 <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="ShowModal">Add Location</MudButton> 
