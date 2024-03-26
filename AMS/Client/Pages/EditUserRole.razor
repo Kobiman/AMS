@@ -1,57 +1,77 @@
 ﻿@page "/EditUserRole"
 @inject MudBlazor.ISnackbar Snackbar
 @attribute [Authorize(Roles = "Admin")]
+@if(locations == null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <div style="width: 450px;">
+        <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
 
+            <MudTextField T="string" Required="true" @bind-Value="model.Email"
+                          RequiredError="Description is required!" For="@(() => model.Email)" ReadOnly="true" Variant="Variant.Filled" />
 
-<div style="width: 450px;">
-    <EditForm  @bind-IsValid="@success" @bind-Errors="@errors" Model="model" OnValidSubmit="OnValidSubmit">
-          <DataAnnotationsValidator />
+            <MudSelect T="int" Label="Select Location" @bind-Value="model.LocationId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+                @foreach (var loc in locations)
+                {
+                    <MudSelectItem T="int" Value="@loc.Id">@loc.LocationName (@loc.LocationABV)</MudSelectItem>
+                }
+            </MudSelect>
 
-             <MudTextField T="string" Required="true" @bind-Value="model.Email" 
-            RequiredError="Description is required!" For="@(() => model.Email)" ReadOnly="true" Variant="Variant.Filled"/>
-
-        <MudSelect T="int" Label="Select Location" @bind-Value="model.LocationId"   AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
-                 @foreach(var loc in locations)
-                 {
-                     <MudSelectItem T="int" Value="@loc.Id">@loc.LocationName (@loc.LocationABV)</MudSelectItem>
-                 }
-        </MudSelect>
-
-        <div class="row">
-            <div class="col-6">
-                <MudText Typo="Typo.h6">Select New Roles</MudText>
-                @* <MudCheckBox T="bool" @bind-Value="Saleregister" Label="Sales Register" Color="Color.Primary"></MudCheckBox>
+            <div class="row">
+                <div class="col-6">
+                    <MudText Typo="Typo.h6">Select New Roles</MudText>
+                    @* <MudCheckBox T="bool" @bind-Value="Saleregister" Label="Sales Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Winsregister" Label="Wins Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Payoutregister" Label="Payout Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Payinregister" Label="Payin Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Admin" Label="Admin" Color="Color.Primary"></MudCheckBox> *@
-                <div class="form-check">
-                    <div><label><input type="checkbox" class="form-check-input" @bind-value="@Saleregister" /> &nbsp; Sales Register</label></div>
-                    <div><label><input type="checkbox" class="form-check-input" @bind-value="@Winsregister" /> &nbsp; Wins Register</label></div>
-                    <div><label><input type="checkbox" class="form-check-input" @bind-value="@Payoutregister" /> &nbsp; Payout Register</label></div>
-                    <div><label><input type="checkbox" class="form-check-input" @bind-value="@Payinregister" /> &nbsp; Payin Register</label></div>
-                    <div><label><input type="checkbox" class="form-check-input" @bind-value="@Admin" /> &nbsp; Admin</label></div>
+                    <div class="form-check">
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Saleregister" /> &nbsp; Sales Register</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Salereport" /> &nbsp; Sales Report</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Winsregister" /> &nbsp; Wins Register</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Winsreport" /> &nbsp; Wins Report</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Payoutregister" /> &nbsp; Payout Register</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Payoutreport" /> &nbsp; Payout Report</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Payinregister" /> &nbsp; Payin Register</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Payinreport" /> &nbsp; Payin Report</label></div>
+                        <div><label><input type="checkbox" class="form-check-input" @bind-value="Admin" /> &nbsp; Admin</label></div>
+                    </div>
+                </div>
+                <div class="col-6">
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>Current Roles</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        @foreach (var role in model.Roles)
+                        {
+                            <tr><td>@role</td></tr>
+                        }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="col-6">
-                <MudText Typo="Typo.h6">Current Roles</MudText>
-                @foreach(var role in model.Roles)
-                {
-                    <div>@role</div>
-                }
-            </div>
-        </div>
-            
-            
+
+
 
 
 
             <ValidationSummary />
-     <div style="margin-top:15px"  class="mud-card-actions">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+            <div style="margin-top:15px" class="mud-card-actions">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+            </div>
+        </EditForm>
     </div>
-    </EditForm>
-</div>
+}
+
 
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
@@ -62,9 +82,13 @@
 
     //
     private bool Saleregister { get; set; }
+    private bool Salereport { get; set; }
     private bool Winsregister { get; set; }
+    private bool Winsreport { get; set; }
     private bool Payinregister { get; set; }
+    private bool Payinreport { get; set; }
     private bool Payoutregister { get; set; }
+    private bool Payoutreport { get; set; }
     private bool Admin { get; set; }
 
 
@@ -76,9 +100,13 @@
     {
         model.Roles = new List<string>();
         if (Saleregister) { Userroles.Add("Saleregister"); }
+        if (Salereport) { Userroles.Add("Salereport"); }
         if (Winsregister) { Userroles.Add("Winsregister"); }
+        if (Winsreport) { Userroles.Add("Winsreport"); }
         if (Payinregister) { Userroles.Add("Payinregister"); }
+        if (Payinreport) { Userroles.Add("Payinreport"); }
         if (Payoutregister) { Userroles.Add("Payoutregister"); }
+        if (Payoutreport) { Userroles.Add("Payoutreport"); }
         if (Admin) { Userroles.Add("Admin"); }
 
         model.Roles = Userroles;
@@ -96,31 +124,6 @@
             model = new UserDto();
             Snackbar.Add("Update Failed", Severity.Error);   
         }
-    }
-
-    protected override void OnParametersSet()
-    {
-        // if (model.Roles.Contains("Saleregister"))
-        // {
-        //     Saleregister = true;
-        // }
-        // if (model.Roles.Contains("Winsregister"))
-        // {
-        //     Winsregister = true;
-        // }
-        // if (model.Roles.Contains("Payinregister"))
-        // {
-        //     Payinregister = true;
-        // }
-        // if (model.Roles.Contains("Payoutregister"))
-        // {
-        //     Payoutregister = true;
-        // }
-        // if (model.Roles.Contains("Admin"))
-        // {
-        //     Admin = true;
-        // }
-        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
