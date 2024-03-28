@@ -1,4 +1,5 @@
 ﻿@page "/EditAgentsTransaction"
+@attribute [Authorize(Roles = "Admin")]
 @inject MudBlazor.ISnackbar Snackbar
 
 @if(accounts == null)
