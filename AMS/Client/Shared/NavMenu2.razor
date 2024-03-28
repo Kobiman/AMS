@@ -5,101 +5,105 @@
 <MudPaper Width="250px" Class="py-3" Square="true">
     <MudNavMenu>
         <MudText Typo="Typo.h6" Class="px-4">AMS</MudText>
-        <AuthorizeView>
-            <Authorized>
-                <MudDivider Class="my-2" />
-                <MudNavLink Href="/home" Icon="@Icons.Filled.Business">Home</MudNavLink>
-                @*         <AuthorizeView>
-        <Authorized>*@
-                <MudNavGroup Title="Accounts" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/accounts" Icon="@Icons.Filled.AlignVerticalBottom">Chart of Accounts</MudNavLink>
-                    <MudNavLink Href="/TrailBalance" Icon="@Icons.Filled.AlignVerticalBottom">Trial Balance</MudNavLink>
-                    <MudNavLink Href="/IncomeStatement" Icon="@Icons.Filled.AssuredWorkload">Income Statement</MudNavLink>
-                    <MudNavLink Href="/BalanceSheet" Icon="@Icons.Filled.ChecklistRtl">Balance Sheet</MudNavLink>
-                    <MudNavLink Href="/Wins_Report" Icon="@Icons.Filled.ChecklistRtl">Wins Report</MudNavLink>
-                    <MudNavLink Href="/AgentReport" Icon="@Icons.Filled.ChecklistRtl">Agent Report</MudNavLink>
-                    <MudNavLink Href="/OpenSales-Wins-Shortage" Icon="@Icons.Filled.ChecklistRtl">Opening Win. Bal/Sales Short.</MudNavLink>
-                </MudNavGroup>
-                <MudNavLink Href="/AccountTransactions" Icon="@Icons.Filled.AutoStories">Journal</MudNavLink>
 
-                <MudNavGroup Title="Sales" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/SalesRegister" Icon="@Icons.Filled.AlignVerticalBottom">Sales Register</MudNavLink>
-                    @*<MudNavLink Href="/SalesApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Sales</MudNavLink>*@
-                    <MudNavLink Href="/SalesReport" Icon="@Icons.Filled.AssuredWorkload">Sales Report</MudNavLink>
-                    <MudNavLink Href="/GrossSalesReport" Icon="@Icons.Filled.AssuredWorkload">Gross Sales Report</MudNavLink>
-                    <MudNavLink Href="/NetSalesReport" Icon="@Icons.Filled.AssuredWorkload">Net Sales Report</MudNavLink>
-                    <MudNavLink Href="/SalesCommissionReport" Icon="@Icons.Filled.AssuredWorkload">Sales Commission Report</MudNavLink>
-
-                </MudNavGroup>
-                <MudNavGroup Title="Wins" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/WinsRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Wins Register</MudNavLink>
-
-                    <MudNavLink Href="/Wins_Report" Icon="@Icons.Filled.AssuredWorkload">Wins Report</MudNavLink>
-
-                </MudNavGroup>
-                @*<MudNavGroup Title="Approval" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-            <MudNavLink Href="/ApproveSalesWinsList" Icon="@Icons.Filled.AlignVerticalBottom">Approval</MudNavLink>
-
-
-        </MudNavGroup>*@
-                <MudNavGroup Title="Pay In" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/PayInRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Pay-In Register</MudNavLink>
-                    @*<MudNavLink Href="/PayInApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Pay-In</MudNavLink>*@
-                    <MudNavLink Href="/PayinReport" Icon="@Icons.Filled.AssuredWorkload">Pay-In Report</MudNavLink>
-
-                </MudNavGroup>
-                <MudNavGroup Title="Pay Out" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/PayOutRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Pay-Out Register</MudNavLink>
-                    @*<MudNavLink Href="/PayoutApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Pay-Out</MudNavLink>*@
-                    <MudNavLink Href="/PayoutReport" Icon="@Icons.Filled.AssuredWorkload">Pay-Out Report</MudNavLink>
-
-                </MudNavGroup>
-                <MudNavGroup Title="Agent Expenses" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/AgentExpensesList" Icon="@Icons.Filled.AlignVerticalBottom">Add Expense</MudNavLink>
-                    <MudNavLink Href="/AgentExpensesReport" Icon="@Icons.Filled.AssuredWorkload">Expenses Report</MudNavLink>
-
-                </MudNavGroup>
-
-                <MudNavLink Href="/TransferReport" Icon="@Icons.Filled.CompareArrows">Transfer Report</MudNavLink>
-
-
-                <MudNavLink Href="/Expenses" Icon="@Icons.Filled.Money">Expenses Register</MudNavLink>
-
-
-                @*<MudNavLink Href="/CashIn">Transactions (Cash-In)</MudNavLink>
-        <MudNavLink Href="/CashOut">Transactions (Cash-Out)</MudNavLink>*@
-
-                <MudNavGroup Title="System Setup" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
-                    <MudNavLink Href="/AddAccount" Icon="@Icons.Filled.AlignVerticalBottom">Add Accounts</MudNavLink>
-                    <MudNavLink Href="/AddAccountTransaction" Icon="@Icons.Filled.AlignVerticalBottom">Add Account Transaction</MudNavLink>
-                    <MudNavLink Href="/Games" Icon="@Icons.Filled.Apps">Add Games</MudNavLink>
-                    <MudNavLink Href="/Agents" Icon="@Icons.Filled.AssignmentInd">Add Agents</MudNavLink>
-                    <MudNavLink Href="/Locations" Icon="@Icons.Filled.CompassCalibration">Add Location</MudNavLink>
-                    @*<MudNavLink Href="/Register" Icon="@Icons.Filled.AssignmentInd">Manage Users</MudNavLink>*@
-                </MudNavGroup>
-                <MudNavLink Href="/SendBulkSMS" Icon="@Icons.Material.Filled.SendToMobile">Bulk SMS</MudNavLink>
-            </Authorized>
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/home" Icon="@Icons.Filled.Business">Home</MudNavLink>
+        <AuthorizeView Roles="Admin">
+            <MudNavGroup Title="Accounts" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/accounts" Icon="@Icons.Filled.AlignVerticalBottom">Chart of Accounts</MudNavLink>
+                <MudNavLink Href="/TrailBalance" Icon="@Icons.Filled.AlignVerticalBottom">Trial Balance</MudNavLink>
+                <MudNavLink Href="/IncomeStatement" Icon="@Icons.Filled.AssuredWorkload">Income Statement</MudNavLink>
+                <MudNavLink Href="/BalanceSheet" Icon="@Icons.Filled.ChecklistRtl">Balance Sheet</MudNavLink>
+                <MudNavLink Href="/Wins_Report" Icon="@Icons.Filled.ChecklistRtl">Wins Report</MudNavLink>
+                <MudNavLink Href="/AgentReport" Icon="@Icons.Filled.ChecklistRtl">Agent Report</MudNavLink>
+                <MudNavLink Href="/OpenSales-Wins-Shortage" Icon="@Icons.Filled.ChecklistRtl">Opening Win. Bal/Sales Short.</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Href="/AccountTransactions" Icon="@Icons.Filled.AutoStories">Journal</MudNavLink>
         </AuthorizeView>
 
-        @*<MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Secondary Text</MudText>*@
+        <AuthorizeView Roles="Admin, Saleregister, Salereport">
+            <MudNavGroup Title="Sales" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/SalesRegister" Icon="@Icons.Filled.AlignVerticalBottom">Sales Register</MudNavLink>
+                @*<MudNavLink Href="/SalesApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Sales</MudNavLink>*@
+                <MudNavLink Href="/SalesReport" Icon="@Icons.Filled.AssuredWorkload">Sales Report</MudNavLink>
+                <MudNavLink Href="/GrossSalesReport" Icon="@Icons.Filled.AssuredWorkload">Gross Sales Report</MudNavLink>
+                <MudNavLink Href="/NetSalesReport" Icon="@Icons.Filled.AssuredWorkload">Net Sales Report</MudNavLink>
+                <MudNavLink Href="/SalesCommissionReport" Icon="@Icons.Filled.AssuredWorkload">Sales Commission Report</MudNavLink>
 
-        @*          </Authorized>
-        </AuthorizeView>*@
+            </MudNavGroup>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin, Winsregister, Winreport">
+            <MudNavGroup Title="Wins" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/WinsRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Wins Register</MudNavLink>
+                <MudNavLink Href="/Wins_Report" Icon="@Icons.Filled.AssuredWorkload">Wins Report</MudNavLink>
+            </MudNavGroup>
+        </AuthorizeView>
+
+        @*<MudNavGroup Title="Approval" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+        <MudNavLink Href="/ApproveSalesWinsList" Icon="@Icons.Filled.AlignVerticalBottom">Approval</MudNavLink>*@
+
+
+        <AuthorizeView Roles="Admin, Payinregister, Payinreport">
+            <MudNavGroup Title="Pay In" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/PayInRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Pay-In Register</MudNavLink>
+                @*<MudNavLink Href="/PayInApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Pay-In</MudNavLink>*@
+                <MudNavLink Href="/PayinReport" Icon="@Icons.Filled.AssuredWorkload">Pay-In Report</MudNavLink>
+            </MudNavGroup>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Admin, Payoutsregister, Payoutreport">
+            <MudNavGroup Title="Pay Out" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/PayOutRegisterList" Icon="@Icons.Filled.AlignVerticalBottom">Pay-Out Register</MudNavLink>
+                @*<MudNavLink Href="/PayoutApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Pay-Out</MudNavLink>*@
+                <MudNavLink Href="/PayoutReport" Icon="@Icons.Filled.AssuredWorkload">Pay-Out Report</MudNavLink>
+            </MudNavGroup>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin">
+            <MudNavGroup Title="Agent Expenses" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/AgentExpensesList" Icon="@Icons.Filled.AlignVerticalBottom">Add Expense</MudNavLink>
+                <MudNavLink Href="/AgentExpensesReport" Icon="@Icons.Filled.AssuredWorkload">Expenses Report</MudNavLink>
+            </MudNavGroup>
+        </AuthorizeView>
+
+        <MudNavLink Href="/TransferReport" Icon="@Icons.Filled.CompareArrows">Transfer Report</MudNavLink>
+
+
+        <MudNavLink Href="/Expenses" Icon="@Icons.Filled.Money">Expenses Register</MudNavLink>
+
+        <AuthorizeView Roles="Admin">
+            <MudNavGroup Title="System Setup" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
+                <MudNavLink Href="/AddAccount" Icon="@Icons.Filled.AlignVerticalBottom">Add Accounts</MudNavLink>
+                <MudNavLink Href="/AddAccountTransaction" Icon="@Icons.Filled.AlignVerticalBottom">Add Account Transaction</MudNavLink>
+                <MudNavLink Href="/Games" Icon="@Icons.Filled.Apps">Add Games</MudNavLink>
+                <MudNavLink Href="/Agents" Icon="@Icons.Filled.AssignmentInd">Add Agents</MudNavLink>
+                <MudNavLink Href="/Locations" Icon="@Icons.Filled.CompassCalibration">Add Location</MudNavLink>
+                @*<MudNavLink Href="/Register" Icon="@Icons.Filled.AssignmentInd">Manage Users</MudNavLink>*@
+            </MudNavGroup>
+        </AuthorizeView>
+
+        <MudNavLink Href="/SendBulkSMS" Icon="@Icons.Material.Filled.SendToMobile">Bulk SMS</MudNavLink>
 
 
         <MudNavGroup Title="Users" Icon="@Icons.Filled.AssignmentInd" Color="Color.Primary" Expanded="false">
             <AuthorizeView>
                 <Authorized>
                     <MudNavLink Href="/Profile" Icon="@Icons.Filled.SupervisedUserCircle">Profile</MudNavLink>
-                    <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
-                    <MudNavLink Href="/ManageUsers" Icon="@Icons.Filled.Groups">Manage Users</MudNavLink>
+
+                </Authorized>
+            </AuthorizeView>
+            <AuthorizeView Roles="Admin">
+                <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
+                <MudNavLink Href="/ManageUsers" Icon="@Icons.Filled.Groups">Manage Users</MudNavLink>
+            </AuthorizeView>
+            <AuthorizeView>
+                <Authorized>
                     <MudButton Variant="Variant.Text" DisableElevation="true" Color="Color.Primary" @onclick="Logout">Logout</MudButton>
                 </Authorized>
                 <NotAuthorized>
-                    <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
                     <MudNavLink Href="/Login" Icon="@Icons.Filled.Login">Login</MudNavLink>
                 </NotAuthorized>
             </AuthorizeView>
+
         </MudNavGroup>
 
     </MudNavMenu>
