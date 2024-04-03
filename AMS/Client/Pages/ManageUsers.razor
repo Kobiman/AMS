@@ -75,8 +75,7 @@
             return true;
         if (element.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Role.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
+        
         return false;
     }
     async Task DeleteUser(int Id)
@@ -109,7 +108,7 @@
         if(user != null)
         {
             var parameters = new ModalParameters();
-            parameters.Add(nameof(EditUserRole.model), user);
+            parameters.Add(nameof(EditUserRole.userDto), user);
 
             var userModal = Modal.Show<EditUserRole>("Edit User", parameters);
             var result = await userModal.Result;
@@ -123,7 +122,6 @@
                 var originalUser = Elements.FirstOrDefault(t => t.Id == updatedUser.Id);
                 if(originalUser != null)
                 {
-                    originalUser.Role = updatedUser.Role;
                     StateHasChanged();
                 }         
             }

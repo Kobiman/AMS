@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using AMS.Shared.Dto;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 namespace AMS.Server.Controllers
 {
@@ -77,15 +78,30 @@ namespace AMS.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditUser(UserDto user)
+        public async Task<IActionResult> EditUser(EditUserDto user)
         {
             try
             {
-                return Ok(await _authService.EditUserRole(user.Id, user.Roles,user.LocationId));
+                return Ok(await _authService.EditUserRole(user.Id,user.Roles,user.LocationId));
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Updating User");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetUserPageAccess/{Id}")]
+        public async Task<IActionResult> GetUserPageAccess(int Id)
+        {
+            try
+            {
+                return Ok(await _authService.GetUserPageAccess(Id));
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
             }
         }
 

@@ -28,6 +28,7 @@ namespace AMS.Server.Services
 
         public async Task<Result<string>> Login(string email, string password)
         {
+            var userrolesNames = new List<string>();
             //throw new NotImplementedException();
             var response = new Result<string>();
             var user = _dbContext.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
@@ -43,11 +44,22 @@ namespace AMS.Server.Services
             }
             else
             {
-                var userroles = await _dbContext.UserRoles.Where(x => x.UserId == user.Id)
-                    .Select(x => x.Role)
-                    .ToListAsync();
+                var userroles =  _dbContext.UserRoles.Where(x => x.UserId == user.Id);
+                if (userroles.Any() )
+                {
+                    foreach ( var role in userroles )
+                    {
+                        var val = _dbContext.Pages_Roles.FirstOrDefault(x => x.Id == role.RoleId);
+                        if (val != null)
+                            userrolesNames.Add(val.Name);
+                    }
+                }
+
+                //var userroles = await (from u in _dbContext.UserRoles.Where(x => x.UserId == user.Id)
+                //                       join r in _dbContext.Pages_Roles on u.RoleId equals r.Id 
+                //                       select new  { r.Name}).ToListAsync();
                 response.IsSucessful = true;
-                response.Value = CreateToken(user,userroles);
+                response.Value = CreateToken(user, userrolesNames);
                 response.Message = "Login Successful";
             }
             return response;
@@ -144,8 +156,8 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<UserDto>> GetUsers()
         {
             var users =  _dbContext.Users.ToList();
-            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, Role = x.Role,StaffId = x.StaffId,LocationId= Convert.ToInt32(x.LocationId) 
-            ,Roles = _dbContext.UserRoles.Where(i => i.UserId == x.Id).Select(p => p.Role).ToList()});
+            return users.Select(x => new UserDto { Id = x.Id, Email = x.Email, StaffId = x.StaffId,
+                LocationId = Convert.ToInt32(x.LocationId) });
         }
 
         public async Task<Result<int>> DeleteUser(int userId)
@@ -160,32 +172,72 @@ namespace AMS.Server.Services
             return new Result<int> { IsSucessful = false, Message = "Operation Failed!", Value = userId };
 
         }
-
-        public async Task<Result<UserDto>> EditUserRole(int userId, List<string> roles,int locationId)
+        
+        public async Task<Result<UserDto>> EditUserRole(int userId, List<UserPageAccessDto> editUserDto,int locationId)
         {
             UserDto userDto = null;
             List<UserRoles> userRoles = new List<UserRoles>();
             var user = await _dbContext.Users.FindAsync(userId);
             if (user != null)
             {
-                //user.Role = role;
-                if(roles.Count() > 0)
+                for(int i = 0; i < editUserDto.Count; i++)
                 {
-                    userRoles = _dbContext.UserRoles.Where(x => x.UserId == userId).ToList();
-                    _dbContext.UserRoles.RemoveRange(userRoles);
-                    foreach (var role in roles)
+                    if(!await UserRoleExists(userId, editUserDto[i].RoleId) && editUserDto[i].IsSelected)
                     {
-                        await _dbContext.AddAsync(new UserRoles { UserId = userId, Role = role });
+                        var usrRole = new UserRoles { RoleId = editUserDto[i].RoleId, UserId=userId };
+                        await _dbContext.UserRoles.AddAsync(usrRole);
+                    }
+                    else if(await UserRoleExists(userId, editUserDto[i].RoleId) && !editUserDto[i].IsSelected)
+                    {
+                        var usrRole = await _dbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.RoleId == editUserDto[i].RoleId);
+                        if(usrRole != null)
+                        {
+                            _dbContext.UserRoles.Remove(usrRole);
+                        }
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
+
                 user.LocationId = locationId;
                 await _dbContext.SaveChangesAsync();
-                userDto = new UserDto { Id= user.Id,Email=user.Email,Role=user.Role,LocationId=Convert.ToInt16(user.LocationId)};
+                userDto = new UserDto { Id= user.Id,Email=user.Email,LocationId=Convert.ToInt16(user.LocationId)};
                 return new Result<UserDto> { IsSucessful = true, Message = "User Deleted Successfully", Value = userDto };
             }
             return new Result<UserDto> { IsSucessful = false, Message = "Operation Failed!", Value = userDto };
         }
 
+        public async Task<IEnumerable<UserPageAccessDto>> GetUserPageAccess(int userId)
+        {
+            var userPageAccess = new List<UserPageAccessDto>();
+            var roles = await _dbContext.Pages_Roles.ToListAsync();
+            foreach (var role in roles) 
+            {
+                var userspages = new UserPageAccessDto();
+                userspages.PageValueName = role.Name;
+                userspages.PageDisplayName = role.DisplayName;
+                userspages.RoleId = role.Id;
+                if(_dbContext.UserRoles.Any(x => x.UserId == userId && x.RoleId == role.Id))
+                {
+                    userspages.IsSelected = true;
+                }
+                userPageAccess.Add(userspages);
+            }
+            return userPageAccess;
+        }
+        private async Task<bool> UserRoleExists(int userId, int roleId)
+        {
+            if (await _dbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.RoleId == roleId) == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
         //public async Task<UserInfo> GetUserInfo()
         //{
         //    UserInfo userInfo = new UserInfo();

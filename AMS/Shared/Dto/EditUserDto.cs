@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AMS.Shared.Dto
 {
-    public class UserDto
+    public class EditUserDto
     {
         public int Id { get; set; }
         public string Email { get; set; }
         public string StaffId { get; set; } = string.Empty;
 
         public int LocationId { get; set; }
-        //public string Role { get; set; } = string.Empty;
-        //public List<string> Roles { get; set; } = new List<string>();
+        public string Role { get; set; } = string.Empty;
+        public List<UserPageAccessDto> Roles { get; set; } = new List<UserPageAccessDto>();
     }
 }
