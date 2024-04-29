@@ -31,7 +31,7 @@ namespace AMS.Server.Services
             var userrolesNames = new List<string>();
             //throw new NotImplementedException();
             var response = new Result<string>();
-            var user = _dbContext.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
             if (user == null)
             {
                 response.IsSucessful = false;
@@ -44,14 +44,15 @@ namespace AMS.Server.Services
             }
             else
             {
-                var userroles =  _dbContext.UserRoles.Where(x => x.UserId == user.Id);
+                var userroles = await  _dbContext.UserRoles.Where(x => x.UserId == user.Id).ToListAsync();
                 if (userroles.Any() )
                 {
                     foreach ( var role in userroles )
                     {
-                        var val = _dbContext.Pages_Roles.FirstOrDefault(x => x.Id == role.RoleId);
+
+                        var val = await _dbContext.Pages_Roles.FirstOrDefaultAsync(x => x.Id == role.RoleId);
                         if (val != null)
-                            userrolesNames.Add(val.Name);
+                            userrolesNames.Add(val.Name);  
                     }
                 }
 
