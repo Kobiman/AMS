@@ -23,21 +23,21 @@ else
 
             <div class="row">
                 <MudText Typo="Typo.h6">Assign Pages/Roles</MudText>
-                <div class="col-6">
+              
                     
                     @* <MudCheckBox T="bool" @bind-Value="Saleregister" Label="Sales Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Winsregister" Label="Wins Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Payoutregister" Label="Payout Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Payinregister" Label="Payin Register" Color="Color.Primary"></MudCheckBox>
                 <MudCheckBox T="bool" @bind-Value="Admin" Label="Admin" Color="Color.Primary"></MudCheckBox> *@
-                    <div class="form-check">
+                    <div class="row">
                         @foreach(var role in model.Roles)
                         {
-                            <div><label><input type="checkbox" checked="@role.IsSelected" class="form-check-input" @bind-value="@role.IsSelected" /> &nbsp; @role.PageDisplayName</label></div>
+                            <div class="col-6"><label><input type="checkbox" checked="@role.IsSelected" class="form-check-input" @bind-value="@role.IsSelected" /> &nbsp; @role.PageDisplayName</label></div>
                         }
 
                     </div>
-                </div>
+                
             </div>
 
 
