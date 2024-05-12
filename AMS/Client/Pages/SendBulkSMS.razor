@@ -1,6 +1,6 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @page "/SendBulkSMS"
-@attribute [Authorize(Roles ="Admin")]
+@attribute [Authorize(Roles = "Admin, Bulksms")]
 
 <EditForm @bind-IsValid="@success" @bind-Errors="@errors" Model="@model" OnValidSubmit="OnValidSubmit">
 <DataAnnotationsValidator/>

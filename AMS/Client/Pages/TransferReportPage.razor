@@ -1,6 +1,6 @@
 ﻿@implements IDisposable
 @page "/TransferReport"
-@attribute [Authorize(Roles = "Admin, Account")]
+@attribute [Authorize(Roles = "Admin, Transferreport")]
 <MudText>TRANSFER REPORT</MudText><button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>
     <MudButton Variant="Variant.Filled" Height="200px" Color="Color.Primary" @onclick="@(() => Modal.Show<AddAdminTransaction>("Transfer"))">Transfer</MudButton>
     <div style="margin-top:10px">
