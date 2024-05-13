@@ -8,7 +8,7 @@
 
         <MudDivider Class="my-2" />
         <MudNavLink Href="/home" Icon="@Icons.Filled.Business">Home</MudNavLink>
-        <AuthorizeView Roles="Admin">
+        <AuthorizeView Roles="Admin, ChartOfAccount, IncomeStatement, BalanceSheet, TrialBalance, CashFlow">
             <MudNavGroup Title="Accounts" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
                 <MudNavLink Href="/accounts" Icon="@Icons.Filled.AlignVerticalBottom">Chart of Accounts</MudNavLink>
                 <MudNavLink Href="/TrailBalance" Icon="@Icons.Filled.AlignVerticalBottom">Trial Balance</MudNavLink>
@@ -18,10 +18,14 @@
                 <MudNavLink Href="/AgentReport" Icon="@Icons.Filled.ChecklistRtl">Agent Report</MudNavLink>
                 <MudNavLink Href="/OpenSales-Wins-Shortage" Icon="@Icons.Filled.ChecklistRtl">Opening Win. Bal/Sales Short.</MudNavLink>
             </MudNavGroup>
+            
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Admin, Journal">
             <MudNavLink Href="/AccountTransactions" Icon="@Icons.Filled.AutoStories">Journal</MudNavLink>
         </AuthorizeView>
 
-        <AuthorizeView Roles="Admin, Salesregister, Salesreport">
+        <AuthorizeView Roles="Admin, Salesregister, Salesreport, NetSalesreport, Salescommissionreport ">
             <MudNavGroup Title="Sales" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
                 <MudNavLink Href="/SalesRegister" Icon="@Icons.Filled.AlignVerticalBottom">Sales Register</MudNavLink>
                 @*<MudNavLink Href="/SalesApprovalList" Icon="@Icons.Filled.AlignVerticalBottom">Approve Sales</MudNavLink>*@
@@ -58,19 +62,22 @@
                 <MudNavLink Href="/PayoutReport" Icon="@Icons.Filled.AssuredWorkload">Pay-Out Report</MudNavLink>
             </MudNavGroup>
         </AuthorizeView>
-        <AuthorizeView Roles="Admin">
+        <AuthorizeView Roles="Admin, Addexpense, Expensesreport">
             <MudNavGroup Title="Agent Expenses" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
                 <MudNavLink Href="/AgentExpensesList" Icon="@Icons.Filled.AlignVerticalBottom">Add Expense</MudNavLink>
                 <MudNavLink Href="/AgentExpensesReport" Icon="@Icons.Filled.AssuredWorkload">Expenses Report</MudNavLink>
             </MudNavGroup>
         </AuthorizeView>
+        <AuthorizeView Roles="Admin, Transferreport">
+            <MudNavLink Href="/TransferReport" Icon="@Icons.Filled.CompareArrows">Transfer Report</MudNavLink>
+        </AuthorizeView>
 
-        <MudNavLink Href="/TransferReport" Icon="@Icons.Filled.CompareArrows">Transfer Report</MudNavLink>
+        <AuthorizeView Roles="Admin, Expensesregister">
+            <MudNavLink Href="/Expenses" Icon="@Icons.Filled.Money">Expenses Register</MudNavLink>
+        </AuthorizeView>
+        
 
-
-        <MudNavLink Href="/Expenses" Icon="@Icons.Filled.Money">Expenses Register</MudNavLink>
-
-        <AuthorizeView Roles="Admin">
+        <AuthorizeView Roles="Admin, Addaccount, Addaccounttransaction, Addgames, Addagent, Addlocation">
             <MudNavGroup Title="System Setup" Icon="@Icons.Filled.Assessment" Color="Color.Primary" Expanded="false">
                 <MudNavLink Href="/AddAccount" Icon="@Icons.Filled.AlignVerticalBottom">Add Accounts</MudNavLink>
                 <MudNavLink Href="/AddAccountTransaction" Icon="@Icons.Filled.AlignVerticalBottom">Add Account Transaction</MudNavLink>
@@ -80,9 +87,10 @@
                 @*<MudNavLink Href="/Register" Icon="@Icons.Filled.AssignmentInd">Manage Users</MudNavLink>*@
             </MudNavGroup>
         </AuthorizeView>
-
-        <MudNavLink Href="/SendBulkSMS" Icon="@Icons.Material.Filled.SendToMobile">Bulk SMS</MudNavLink>
-
+        <AuthorizeView Roles="Admin, Bulksms">
+            <MudNavLink Href="/SendBulkSMS" Icon="@Icons.Material.Filled.SendToMobile">Bulk SMS</MudNavLink>
+        </AuthorizeView>
+        
 
         <MudNavGroup Title="Users" Icon="@Icons.Filled.AssignmentInd" Color="Color.Primary" Expanded="false">
             <AuthorizeView>
@@ -91,7 +99,7 @@
 
                 </Authorized>
             </AuthorizeView>
-            <AuthorizeView Roles="Admin">
+            <AuthorizeView Roles="Admin, Register, Manageusers">
                 <MudNavLink Href="/Register" Icon="@Icons.Filled.HowToReg">Register</MudNavLink>
                 <MudNavLink Href="/ManageUsers" Icon="@Icons.Filled.Groups">Manage Users</MudNavLink>
             </AuthorizeView>
