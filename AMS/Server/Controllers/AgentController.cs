@@ -66,6 +66,14 @@ namespace AMS.Server.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("GetAgentReports/{agentId}")]
+        public async Task<IActionResult> GetAgentReport([FromRoute]string agentId, [FromBody]DateRange period)
+        {
+            var result = await _agentService.GetAgentReport(period);
+            if (result is not null) return Ok(result.FirstOrDefault(x=>x.AgentId == agentId));
+            return BadRequest(result);
+        }
+
         [HttpPut("EditAgent")]
         public async Task<ActionResult<Result<Agent>>> EditAgent(AgentDto agentDto)
         {
