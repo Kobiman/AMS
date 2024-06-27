@@ -3,7 +3,7 @@
 <div style="margin-top:10px">
     <MudGrid>
         <MudItem xs="12">
-            <MudTable Items="AgentReport?.Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
+            <MudTable Items="Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
                 <ToolBarContent>
 
                     <MudSpacer />
@@ -40,11 +40,11 @@
                 </RowTemplate>
                 <FooterContent>
                     <MudTd></MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", AgentReport?.Details.Sum(x => x.DailySales))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", AgentReport?.Details.Sum(x => x.WinAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", AgentReport?.Details.Sum(x => x.PayinAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", AgentReport?.Details.Sum(x => x.PayoutAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", AgentReport?.Details.Sum(x => x.EndBalance))</MudTd>
+                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.DailySales))</MudTd>
+                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.WinAmount))</MudTd>
+                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.PayinAmount))</MudTd>
+                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.PayoutAmount))</MudTd>
+                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.EndBalance))</MudTd>
                 </FooterContent>
             </MudTable>
         </MudItem>
@@ -58,7 +58,8 @@
     private bool striped = false;
     private bool bordered = false;
     string? AgentId { get; set; } = string.Empty;
-    private AgentReportDto? AgentReport = new();
+    private AgentReportDto? AgentReport = new();//
+    public List<SalesDetails> Details { get; set; } = new();
     DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
     private IEnumerable<AgentDto> agents = new List<AgentDto>();
@@ -89,6 +90,7 @@
             if (response.IsSuccessStatusCode)
             {
                 AgentReport = await response.Content.ReadFromJsonAsync<AgentReportDto>();
+                Details = AgentReport!.Details.Where(x => x.EntryDate >= start && x.EntryDate <= end).ToList();
                 // DailySales = Elements.Sum(x => x.Sales);
                 // Wins = Elements.Sum(x => x.Wins);
                 // Payin = Elements.Sum(x => x.Payin);
