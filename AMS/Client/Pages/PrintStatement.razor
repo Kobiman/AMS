@@ -1,5 +1,7 @@
 ﻿@page "/PrintStatement"
-<MudText Typo="Typo.h6">Print Statement</MudText>
+<MudText Typo="Typo.h4" Align="Align.Center">VAG OBIRI LOTTERIES AGENT STATEMENT</MudText>
+<MudDivider Light="true"/>
+
 <div style="margin-top:10px">
     <MudGrid>
         <MudItem xs="12">
@@ -20,6 +22,8 @@
                     <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
                     <MudSpacer />
                     <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+                    <MudSpacer />
+                    <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
                     <MudSpacer />
                 </ToolBarContent>
                 <HeaderContent>
