@@ -18,6 +18,7 @@ namespace AMS.Shared.Dto
           string ReceiptNumber, 
           decimal PayinAmount, 
           decimal PayoutAmount, 
-          decimal ExpenseAmount
+          decimal ExpenseAmount,
+          string Game
        );
 }

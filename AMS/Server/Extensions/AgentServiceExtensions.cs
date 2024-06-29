@@ -26,14 +26,15 @@ namespace AMS.Server.Extensions
                             s.ReceiptNumber,
                             payInAmount,
                             payoutAmount,
-                            expenseAmount
+                            expenseAmount,
+                            s.GameId
                         );
             }
         }
 
-        public static List<SalesDetails> GetSalesDetails(this IGrouping<string, Sales_Payin_Payout> x)
+        public static List<SalesDetails> GetSalesDetails(this IGrouping<string, Sales_Payin_Payout> p)
         {
-            return x.Select(x => new SalesDetails
+            return p.Select(x => new SalesDetails
                            (
                                x.AccountId,
                                x.AgentId,
@@ -48,7 +49,8 @@ namespace AMS.Server.Extensions
                                0,
                                x.PayinAmount,
                                x.PayoutAmount,
-                               x.ExpenseAmount
+                               x.ExpenseAmount,
+                               x.Game
                            )).ToList();
         }
 

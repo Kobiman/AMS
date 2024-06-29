@@ -69,6 +69,7 @@ namespace AMS.Server.Services
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
             var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
+            var games = await _context.Games.Select(x => new { x.Id, x.Name }).ToDictionaryAsync(x=>x.Id,x=>x.Name);
 
             List<SalesDto2> _sales = await (from t in _context.Sales
                                                  //join w in _context.Wins on t.SalesId equals w.SalesId
@@ -88,7 +89,7 @@ namespace AMS.Server.Services
 
             List<WinsDto> wins = await (from w in _context.Wins select new WinsDto(w.WinAmount, w.SalesId)).ToListAsync();
 
-            var sales = Join(_sales, wins).ToList();
+            var sales = Join(_sales, wins, games).ToList();
 
             var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Select(x => new
             {
@@ -218,7 +219,7 @@ namespace AMS.Server.Services
             return 0;
         }
 
-        public IEnumerable<SalesDto2> Join(List<SalesDto2> sales, List<WinsDto> wins)
+        public IEnumerable<SalesDto2> Join(List<SalesDto2> sales, List<WinsDto> wins, Dictionary<string?, string?> agents)
         {
             foreach (var (s, w) in from s in sales
                                    let w = wins.Where(x => x.SalesId == s.Id)
@@ -235,7 +236,7 @@ namespace AMS.Server.Services
                       s.EntryDate,
                       s.DrawDate,
                       w.Sum(x=>x.WinAmount),
-                      s.GameId,
+                      agents.TryGetValue(s.GameId,out string name)? name: string.Empty,
                       s.ReceiptNumber,
                       s.Id
                     );
@@ -250,7 +251,7 @@ namespace AMS.Server.Services
                       s.EntryDate,
                       s.DrawDate,
                       0,
-                      s.GameId,
+                      agents.TryGetValue(s.GameId, out string name) ? name : string.Empty,
                       s.ReceiptNumber,
                       s.Id
                     );

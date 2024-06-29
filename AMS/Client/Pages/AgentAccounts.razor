@@ -10,6 +10,7 @@
                     <MudTh>Entry Date</MudTh>
                     <MudTh>Draw Date</MudTh>
                     <MudTh>Opening Balance</MudTh>
+                    <MudTh>Game</MudTh>
                     <MudTh>Sales</MudTh>
                     <MudTh>Wins</MudTh>
                     <MudTh>Payin</MudTh>
@@ -21,6 +22,7 @@
                     <MudTd>@d.EntryDate?.ToShortDateString()</MudTd>
                     <MudTd>@d.DrawDate?.ToShortDateString()</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", d.OpeningBalance)</MudTd>
+                    <MudTd>@d.Game</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", d.DailySales)</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", d.WinAmount)</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", d.PayinAmount)</MudTd>
@@ -32,6 +34,7 @@
                     <MudTd></MudTd>
                     <MudTd></MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", SharedAgentReport.Details.Sum(x => x.OpeningBalance))</MudTd>
+                    <MudTd></MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", SharedAgentReport.Details.Sum(x => x.DailySales))</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", SharedAgentReport.Details.Sum(x => x.WinAmount))</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", SharedAgentReport.Details.Sum(x => x.PayinAmount))</MudTd>

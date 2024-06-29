@@ -20,5 +20,6 @@ namespace AMS.Shared.Dto
         decimal EndBalance,
         decimal PayinAmount,
         decimal PayoutAmount,
-        decimal ExpenseAmount);
+        decimal ExpenseAmount,
+        string Game);
 }
