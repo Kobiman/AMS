@@ -190,6 +190,7 @@
     private async Task Print(string id)
     {
         var toPrint = Elements.FirstOrDefault(x => x.Id == id);
+        toPrint.Type = "Payout Receipt";
         if (toPrint != null)
         {
             var parameters = new ModalParameters();
