@@ -3,29 +3,34 @@
 <MudDivider Light="true"/>
 
 <div style="margin-top:10px">
+    <MudStack>
+        <MudStack Row="true">
+            <MudSelect T="string" Label="Select Agent" @bind-Value="AgentId" AnchorOrigin="Origin.BottomCenter"
+                       Variant="Variant.Outlined"
+                       SelectedValuesChanged="@(()=>PeriodChanged())">
+                <MudSelectItem Value="@("")"></MudSelectItem>
+                @foreach (var agent in agents.DistinctBy(x => x.Name))
+                {
+                    <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSpacer />
+            <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
+            <MudSpacer />
+            <button class="btn btn-secondary" onclick="window.print()"> PRINT <i class="fa fa-print"></i></button>
+        </MudStack>
+        <MudStack>
+            <MudText Typo="Typo.button" Align="Align.Left">Name:</MudText>@agent?.Name
+            <MudText Typo="Typo.button" Align="Align.Left">Region:</MudText>@agent?.Region
+            <MudText Typo="Typo.button" Align="Align.Left">House No.:</MudText>@agent?.HouseNo
+        </MudStack>
+    </MudStack>    
     <MudGrid>
         <MudItem xs="12">
             <MudTable Items="Details" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true">
-                <ToolBarContent>
-
-                    <MudSpacer />
-                    <MudSelect T="string" Label="Select Agent" @bind-Value="AgentId" AnchorOrigin="Origin.BottomCenter" 
-                              Variant="Variant.Outlined"
-                              SelectedValuesChanged="@(()=>PeriodChanged())">
-                        <MudSelectItem Value="@("")"></MudSelectItem>
-                        @foreach (var agent in agents.DistinctBy(x => x.Name))
-                        {
-                            <MudSelectItem T="string" Value="@agent.AgentId">@agent.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <MudSpacer />
-                    <MudDatePicker Label="From" Editable="true" @bind-Date="start" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-                    <MudSpacer />
-                    <MudDatePicker Label="To" Editable="true" @bind-Date="end" PickerClosed="PeriodChanged" Placeholder="Select Date" />
-                    <MudSpacer />
-                    <button class="btn btn-secondary" onclick="window.print()">PRINT<i class="fa fa-print"></i></button>&nbsp;
-                    <MudSpacer />
-                </ToolBarContent>
+                
                 <HeaderContent>
                     <MudTh>Entry Date</MudTh>
                     <MudTh>Draw Date</MudTh>
@@ -78,6 +83,7 @@
     public List<SalesDetails> Details { get; set; } = new();
     DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
+    private AgentDto agent = new AgentDto();
     private IEnumerable<AgentDto> agents = new List<AgentDto>();
 
     protected override async Task OnInitializedAsync()
@@ -99,6 +105,7 @@
 
     async Task PeriodChanged()
     {
+        agent = agents.FirstOrDefault(x => x.AgentId == AgentId);
         if (!string.IsNullOrEmpty(AgentId))
         {
             var dateRange = new AMS.Shared.DateRange { StartDate = start, EndDate = end };
