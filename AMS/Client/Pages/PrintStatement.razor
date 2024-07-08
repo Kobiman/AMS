@@ -55,17 +55,19 @@
                     <MudTd>@String.Format("{0:0,0.00}", d.ExpenseAmount)</MudTd>
                     <MudTd>@String.Format("{0:0,0.00}", d.EndBalance)</MudTd>
                 </RowTemplate>
+              
                 <FooterContent>
-                    <MudTd></MudTd>
-                    <MudTd></MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.OpeningBalance))</MudTd>
-                    <MudTd></MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.DailySales))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.WinAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.PayinAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.PayoutAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.ExpenseAmount))</MudTd>
-                    <MudTd>@String.Format("{0:0,0.00}", Details.Sum(x => x.EndBalance))</MudTd>
+                      
+                        <MudTd Typo="Typo.h3"><b>SUMMARY</b></MudTd>
+                        <MudTd Typo="Typo.h3"></MudTd>
+                        <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.OpeningBalance))</b></MudTd>
+                    <MudTd Typo="Typo.h3"></MudTd>
+                    <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.DailySales))</b></MudTd>
+                    <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.WinAmount))</b></MudTd>
+                    <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.PayinAmount))</b></MudTd>
+                    <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.PayoutAmount))</b></MudTd>
+                    <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.ExpenseAmount))</b></MudTd>
+                    <MudTd Typo="Typo.h3"><b>@String.Format("{0:0,0.00}", Details.Sum(x => x.EndBalance))</b></MudTd>
                 </FooterContent>
             </MudTable>
         </MudItem>
