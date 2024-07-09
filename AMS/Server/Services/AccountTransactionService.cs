@@ -215,7 +215,7 @@ namespace AMS.Server.Services
                 }
                     
                 phoneno = agent.Phone;
-                if(!string.IsNullOrEmpty(phoneno))
+                if (!string.IsNullOrEmpty(phoneno))
                     await _notificationService.SendSMS(msg, phoneno);
             }
 

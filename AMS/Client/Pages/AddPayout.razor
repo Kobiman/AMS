@@ -36,8 +36,8 @@
         <MudTextField T="string" @bind-Value="model.ReceivedFrom" Label="Received From" Variant="Variant.Text"
                       RequiredError="Received From is a required field" For="@(()=> model.ReceivedFrom)" />
 
-        <MudTextField T="string" @bind-Value="model.ReceiverPhone" Label="Receiver Phone Number" Variant="Variant.Text"
-                      RequiredError="Receiveders Phone is a required field" For="@(()=> model.ReceiverPhone)" />
+        <MudTextField T="string" @bind-Value="AgentPhoneNumber" Label="Receiver Phone Number" Variant="Variant.Text"
+                      ReadOnly="true" />
 
         <ValidationSummary />
         <div style="margin-top:15px" class="mud-card-actions">
@@ -53,6 +53,7 @@
     [Parameter] public string? SalesId { get; set; }
     [Parameter] public string? AgentId { get; set; }
     [Parameter] public string? AgentName { get; set; }
+    [Parameter] public string? AgentPhoneNumber { get; set; }
     [Parameter] public string? AreaOfOperations { get; set; }
 
     private IEnumerable<AccountDto> accounts { get; set; }
@@ -67,6 +68,7 @@
         //model.DestinationAccountType = accounts.FirstOrDefault(x => x.AccountId == model.DestinationAccountId).Type;
         model.Type = "Payout";
         model.Amount = Math.Abs(model.Amount);
+        model.ReceiverPhone = AgentPhoneNumber;
 
         var response = await Http.PostAsJsonAsync("api/AccountTransaction/Payout", model);
         if (response.IsSuccessStatusCode)
