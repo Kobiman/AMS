@@ -82,6 +82,7 @@ namespace AMS.Server.Extensions
             for (int i = 1; i < list.Count; i++)
             {
                 SalesDetails? s = list[i];
+                //NB: EndBalance = PreviousOpeningBalance + DailySales - WinAmount - PayinAmount + PayoutAmount - ExpenseAmount
                 SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount + s.PayoutAmount - s.ExpenseAmount + sales[i - 1].EndBalance };
                 sales.Add(s2);
 
