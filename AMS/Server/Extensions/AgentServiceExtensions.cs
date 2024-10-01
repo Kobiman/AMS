@@ -82,7 +82,8 @@ namespace AMS.Server.Extensions
             for (int i = 1; i < list.Count; i++)
             {
                 SalesDetails? s = list[i];
-                SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount + s.PayinAmount - s.PayoutAmount - s.ExpenseAmount + sales[i - 1].EndBalance };
+                //NB: EndBalance = PreviousOpeningBalance + DailySales - WinAmount - PayinAmount + PayoutAmount - ExpenseAmount
+                SalesDetails s2 = s with { OpeningBalance = sales[i - 1].EndBalance, EndBalance = s.DailySales - s.WinAmount - s.PayinAmount + s.PayoutAmount - s.ExpenseAmount + sales[i - 1].EndBalance };
                 sales.Add(s2);
 
             }
@@ -127,7 +128,7 @@ namespace AMS.Server.Extensions
                                     Payin = payinAmount,
                                     Payout = payoutAmount,
                                     ExpenseAmount = expenseAmount,
-                                    Balance = x.DailySales - x.WinAmount - amount,
+                                    Balance = x.DailySales - x.WinAmount - payinAmount + payoutAmount - expenseAmount,
                                     Details = x.Details.TransformDetails(),
                                 };
                             });
