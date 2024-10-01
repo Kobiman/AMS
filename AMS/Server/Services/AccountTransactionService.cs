@@ -201,23 +201,23 @@ namespace AMS.Server.Services
                 //DrawDate = addPayoutDto.DrawDate.Value
             });
             await appDbContext.SaveChangesAsync();
-            if (agent != null)
-            {
-                string msg = "";
-                // msg = $"Hello {agent.Name}, an amount of GHC {addPayoutDto.Amount} has been received as payin as at {addPayoutDto.EntryDate.Value.ToShortDateString()}";
-                if(addPayoutDto.Type=="Payin")
-                {
-                    msg = $"Hello {agent.Name}, a PAY-IN  cash of GHC {addPayoutDto.Amount} has been received on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
-                }
-                else
-                {
-                    msg = $"Hello {agent.Name}, a PAY-OUT cash of GHC {addPayoutDto.Amount} has been paid on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
-                }
+            //if (agent != null)
+            //{
+            //    string msg = "";
+            //    // msg = $"Hello {agent.Name}, an amount of GHC {addPayoutDto.Amount} has been received as payin as at {addPayoutDto.EntryDate.Value.ToShortDateString()}";
+            //    if(addPayoutDto.Type=="Payin")
+            //    {
+            //        msg = $"Hello {agent.Name}, a PAY-IN  cash of GHC {addPayoutDto.Amount} has been received on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
+            //    }
+            //    else
+            //    {
+            //        msg = $"Hello {agent.Name}, a PAY-OUT cash of GHC {addPayoutDto.Amount} has been paid on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
+            //    }
                     
-                phoneno = agent.Phone;
-                if (!string.IsNullOrEmpty(phoneno))
-                    await _notificationService.SendSMS(msg, phoneno);
-            }
+            //    phoneno = agent.Phone;
+            //    if (!string.IsNullOrEmpty(phoneno))
+            //        await _notificationService.SendSMS(msg, phoneno);
+            //}
 
                 return new AccountTransactionDto();
         }
@@ -293,6 +293,7 @@ namespace AMS.Server.Services
                 result.PayoutAmount = editPayoutDto.Type == "Payout" ? absoluteAmount : 0;
                 result.PayinAmount = editPayoutDto.Type == "Payin" ? absoluteAmount : 0;
                 result.Description = editPayoutDto.Description;
+                result.ChequeNo = editPayoutDto.ChequeNo;
                 //result.DestinationAccountId = editPayoutDto.DestinationAccountId;
                 //result.SourceAccountId = editPayoutDto.SourceAccountId;
                 result.AgentId = editPayoutDto.AgentId;
