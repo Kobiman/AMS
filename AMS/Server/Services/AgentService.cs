@@ -24,7 +24,7 @@ namespace AMS.Server.Services
         public async Task<Shared.IResult> AddAgent(Agent agent)
         {
             agent.StaffId = _authService.GetStaffID();
-            agent.LocationId = _authService.GetLocationID() == ""? 0: Convert.ToInt16(_authService.GetLocationID());
+            agent.LocationId = _authService.GetLocationID();
             var originalAccount = _context.Agents.FirstOrDefault(x => x.Name == agent.Name);
             if (originalAccount != null) return new Result(false, $"Agent with name {agent.Name} already exist.");
             _context.Agents.Add(agent);
@@ -123,7 +123,7 @@ namespace AMS.Server.Services
         {
             var toEdit = await _context.Agents.FirstOrDefaultAsync(x => x.AgentId == agent.AgentId);
             agent.StaffId = _authService.GetStaffID();
-            agent.LocationId = Convert.ToInt16(_authService.GetLocationID());
+            agent.LocationId = _authService.GetLocationID();
             //_context.Agents.Update(agent);
             toEdit.Name = agent.Name;
             toEdit.HouseNo = agent.HouseNo;

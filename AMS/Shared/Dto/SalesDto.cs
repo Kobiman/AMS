@@ -43,5 +43,6 @@ namespace AMS.Shared.Dto
         public decimal GrossSales { get; set; }
         public decimal SalesCommission { get; set; }
         public decimal SalesCommissionValue { get; set; }
+        public int LocationId { get; set; }
     }
 }

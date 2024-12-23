@@ -24,7 +24,12 @@ namespace AMS.Server.Services
         }
 
         public string GetStaffID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber);
-        public string GetLocationID() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Locality);
+        public int GetLocationID()
+        {
+            var locality = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Locality);
+            return string.IsNullOrEmpty(locality) ? 0 : Convert.ToInt16(locality);
+        }
+        public string GetUserRole() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
 
         public async Task<Result<string>> Login(string email, string password)
         {

@@ -15,7 +15,8 @@
         Task<IEnumerable<UserPageAccessDto>> GetUserPageAccess(int userId);
 
         string GetStaffID();
-        string GetLocationID();
+        int GetLocationID();
+        string GetUserRole();
 
     }
 }

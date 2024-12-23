@@ -5,6 +5,7 @@ using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Security.Principal;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 //using System.Data.Entity;
 
 namespace AMS.Server.Services
@@ -34,7 +35,7 @@ namespace AMS.Server.Services
                     EntryDate = sales.EntryDate,
                     DrawDate = sales.DrawDate,
                     NumberOfBooks = sales.NumberOfBooks,
-                    LocationId =_authService.GetLocationID() == "" ? 0 :Convert.ToInt16(_authService.GetLocationID()),
+                    LocationId = _authService.GetLocationID(),
                     AreaOfOperations = sales.AreaOfOperations,
                     SalesStaffId = _authService.GetStaffID(),
                     SalesTreatedBy = sales.SalesTreatedBy,
@@ -109,36 +110,25 @@ namespace AMS.Server.Services
 
             var users = await appDbContext.Users.ToDictionaryAsync(x => x.Id, x => x.Email);
 
-            var result = await (from t in appDbContext.Sales
-                                //join w in appDbContext.Wins on t.SalesId equals w.SalesId
+            var query = (from t in appDbContext.Sales
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                 from gme in _gme.DefaultIfEmpty()
-                                where
-                                t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
-                                && t.Description != "balance b/f"
-
                                 select new SalesDto
                                 {
                                     AgentId = t.AgentId,
                                     AccountId = t.AccountId,
                                     AgentName = x == null ? string.Empty : x.Name,
-                                    //AgentPhoneNumber = x == null ? string.Empty : x.Phone,
                                     SalesId = t.SalesId,
-                                    //WinAmount = w.WinAmount,
                                     DailySales = t.DailySales,
-                                    //OutstandingBalance = t.DailySales - w.WinAmount,
                                     Description = t.Description,
                                     EntryDate = t.EntryDate,
                                     DrawDate = t.DrawDate,
                                     GameId = t.GameId,
                                     SalesStaffId = t.SalesStaffId,
-                                    //WinsStaffId = w.StaffId,
                                     SalesTreatedBy = t.SalesTreatedBy,
                                     Approved = t.Approved == null ? false : t.Approved,
-                                    //Sheet = w.Sheet,
-                                    //NumberOfSheets = t.NumberOfBooks,
                                     SalesApprovedBy = t.SalesApprovedBy,
                                     GameName = gme == null ? string.Empty : gme.Name,
                                     NumberOfBooks = t.NumberOfBooks,
@@ -146,27 +136,26 @@ namespace AMS.Server.Services
                                     SalesCommission = t.SalesCommission,
                                     SalesCommissionValue = ((t.SalesCommission /100)*t.GrossSales),
                                     GrossSales = t.GrossSales,
-                                }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
-                                .ToListAsync();
-            return result;
+                                    LocationId = (int)t.LocationId,
+                                });
+
+            var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?  
+                         query.Where(t => t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date && t.Description != "balance b/f") :
+                         query.Where(t => t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date && t.Description != "balance b/f" && t.LocationId == _authService.GetLocationID());
+
+            return await result.OrderBy(x => x.EntryDate).ToListAsync();
         }
 
         public async Task<IEnumerable<SalesDto>> GetWinsReport(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
-
             var users = await appDbContext.Users.ToDictionaryAsync(x => x.Id, x => x.Email);
-
-            var result = await (from t in appDbContext.Sales
+            var query =  (from t in appDbContext.Sales
                                     join w in appDbContext.Wins on t.SalesId equals w.SalesId
                                 join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                 from x in gj.DefaultIfEmpty()
                                 join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                 from gme in _gme.DefaultIfEmpty()
-                                where
-                                t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date
-                                && t.Description != "balance b/f"
-
                                 select new SalesDto
                                 {
                                     AgentId = t.AgentId,
@@ -194,23 +183,24 @@ namespace AMS.Server.Services
                                     SalesCommission = t.SalesCommission,
                                     SalesCommissionValue = ((t.SalesCommission / 100) * t.GrossSales),
                                     GrossSales = t.GrossSales,
-                                }).OrderBy<SalesDto, DateTime?>(x => x.EntryDate)
-                                .ToListAsync();
-            return result;
+                                });
+
+            var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ? 
+                         query.Where(t => t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date && t.Description != "balance b/f") :
+                         query.Where(t => t.EntryDate >= startDate.Date && t.EntryDate <= endDate.Date && t.Description != "balance b/f" && t.LocationId == _authService.GetLocationID());
+
+            return await result.OrderBy(x => x.EntryDate).ToListAsync();
         }
 
         public async Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage()
         {
             var bfAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == "BALANCE B/F");
-            var result = await(from t in appDbContext.Sales
+            var query = (from t in appDbContext.Sales
                                join w in appDbContext.Wins on t.SalesId equals w.SalesId
                                join ag in appDbContext.Agents on t.AgentId equals ag.AgentId into gj
                                from x in gj.DefaultIfEmpty()
                                join ga in appDbContext.Games on t.GameId equals ga.Id into _gme
                                from gme in _gme.DefaultIfEmpty()
-                               where
-                               t.AccountId == bfAccount.AccountId
-
                                select new SalesDto
                                {
                                    AgentId = t.AgentId,
@@ -229,9 +219,12 @@ namespace AMS.Server.Services
                                    GameName = gme == null ? string.Empty : gme.Name,
                                    SalesCommission = t.SalesCommission,
                                    GrossSales = t.GrossSales,
-                               }).OrderBy(x => x.DrawDate)
-                                .ToListAsync();
-            return result;
+                               });
+            var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
+                         query.Where(t => t.AccountId == bfAccount.AccountId) :
+                         query.Where(t => t.AccountId == bfAccount.AccountId && t.LocationId == _authService.GetLocationID());
+
+            return await result.OrderBy(x => x.DrawDate).ToListAsync();
         }
 
 
