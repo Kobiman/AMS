@@ -183,6 +183,7 @@ namespace AMS.Server.Services
                                     SalesCommission = t.SalesCommission,
                                     SalesCommissionValue = ((t.SalesCommission / 100) * t.GrossSales),
                                     GrossSales = t.GrossSales,
+                                    LocationId = (int)t.LocationId
                                 });
 
             var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ? 
@@ -219,6 +220,7 @@ namespace AMS.Server.Services
                                    GameName = gme == null ? string.Empty : gme.Name,
                                    SalesCommission = t.SalesCommission,
                                    GrossSales = t.GrossSales,
+                                   LocationId = (int)t.LocationId
                                });
             var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
                          query.Where(t => t.AccountId == bfAccount.AccountId) :
