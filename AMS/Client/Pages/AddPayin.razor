@@ -1,4 +1,5 @@
-﻿@attribute [Authorize(Roles = "Admin, Payinregister")]
+﻿@using System.Net.Http.Headers
+@attribute [Authorize(Roles = "Admin, Payinregister")]
 
 @if (accounts == null)
 {
@@ -38,6 +39,8 @@ else
                           Label="Received From" Variant="Variant.Text" />
             <MudTextField T="string" @bind-Value="model.ReceiverPhone" Label="Payer Phone Number" Variant="Variant.Text"
                       RequiredError="Payer Phone is a required field" For="@(()=> model.ReceiverPhone)" />
+           @*  <InputFile OnChange="@OnInputFileChange"/> *@
+            <UploadFile OnChange="AssignFileUrl" />
             <ValidationSummary />
             <div style="margin-top:15px" class="mud-card-actions">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
@@ -60,6 +63,8 @@ else
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
+
+    private void AssignFileUrl(string imgUrl) => model.FilePath = imgUrl;
 
     private async void OnValidSubmit(EditContext context)
     {
@@ -128,5 +133,49 @@ else
         {
             games = new List<Game>();
         }
+    }
+
+    // IBrowserFile browserFile{ get; set; }
+    // private long FileSize{ get; set; }
+    // private string FileName{ get; set; }
+    // private string FileType{ get; set; }
+    // public DateTimeOffset LastModified { get; set; }
+    // const int MAXFILE_SIZE = 5000 * 1024;
+
+    // string imgUrl = "";
+    // private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    // {
+    //     browserFile = e.File;
+    //     if(browserFile != null)
+    //     {
+    //         FileSize = browserFile.Size;
+    //         FileName = browserFile.Name;
+    //         FileType = browserFile.ContentType;
+    //         LastModified = browserFile.LastModified;
+
+    //         try
+    //         {
+    //             using var content = new MultipartFormDataContent();
+    //             var fileStream = new StreamContent( browserFile.OpenReadStream(MAXFILE_SIZE));
+    //             fileStream.Headers.ContentType = new MediaTypeHeaderValue(browserFile.ContentType);
+    //             content.Add(content: fileStream, name: "file", browserFile.Name);
+
+    //             var result = await Http.PostAsync("api/AccountTransaction/UploadFile", content);
+
+    //             if (result.IsSuccessStatusCode)
+    //             {
+    //                 model.FilePath = await result.Content.ReadAsStringAsync();
+    //             }
+    //             else
+    //             {
+    //                 Snackbar.Add("Unable to load file", Severity.Warning);
+    //             }
+
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             Snackbar.Add(ex.Message, Severity.Warning);
+    //         }
+    //     }
     }
 }

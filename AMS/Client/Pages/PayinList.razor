@@ -1,6 +1,7 @@
 ﻿@page "/PayinReport"
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JS
 @using System.Security.Claims
 @attribute [Authorize(Roles = "Admin, Payinreport")]
 
@@ -33,7 +34,6 @@
             {
                 <MudTh>Action</MudTh>
             }
-
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
@@ -47,6 +47,8 @@
         <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
         <MudTd DataLabel="Received From">@context.ReceiverPhone</MudTd>
         <MudTd DataLabel="Description">@context.Description</MudTd>
+       
+
         @if(isAdmin)
             {
                 <MudTd DataLabel="Action">
@@ -56,7 +58,12 @@
                 </MudTd>
             }
 
-
+            @if (!string.IsNullOrEmpty(context.FileName))
+            {
+                <MudTd DataLabel="FileDownload">
+                    <MudFab StartIcon="@Icons.Material.Filled.Attachment" Size="Size.Small" OnClick="@(() => DownloadFile(context.FileName))" />
+                </MudTd>            
+            }
     </RowTemplate>
      <FooterContent>
         <MudTFootRow Class="bold-text">
@@ -241,6 +248,28 @@
         }
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
+    }
+
+    private async Task DownloadFile(string fileName)
+    {
+        var response = await Http.GetAsync($"/api/AccountTransaction/DownloadFile/{fileName}");
+        if (!response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("File not found", Severity.Warning);
+        }
+        else
+        {
+            try
+            {
+                var fileStream = response.Content.ReadAsStream();
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            }
+            catch(Exception ex)
+            {
+                await JS.InvokeVoidAsync("alert", ex.Message);
+            }        
+        }
     }
 
     void IDisposable.Dispose()

@@ -44,5 +44,7 @@ namespace AMS.Shared
         public string ReceivedBy { get; set; } = string.Empty;
         public string ReceivedFrom { get; set; } = string.Empty;
         public string ReceiverPhone { get; set; } = string.Empty;
+
+        public string? FilePath { get; set; } = string.Empty;
     }
 }
