@@ -1,5 +1,6 @@
 ﻿@page "/Wins_Report"
 @using System.Text.Json
+@inject AuthenticationStateProvider AuthStateProvider
 @inject MudBlazor.ISnackbar Snackbar
 @attribute [Authorize(Roles = "Admin, Winsreport")]
 
@@ -56,11 +57,11 @@
                             </HeaderContent>
                             <RowTemplate Context="d">
                                 <MudTd>@d.SheetNo</MudTd>
-                                    <MudTd>@String.Format("{0:0,0.00}", d.Amount)</MudTd>
-                                    <MudTd>@d.TreatedBy</MudTd>
-                                    <MudTd>@d.ApprovedBy</MudTd>
-                                </RowTemplate>
-                            </MudTable>
+                                <MudTd>@String.Format("{0:0,0.00}", d.Amount)</MudTd>
+                                <MudTd>@d.TreatedBy</MudTd>
+                                <MudTd>@d.ApprovedBy</MudTd>
+                            </RowTemplate>
+                        </MudTable>
                     }
                 </MudItem>
             </MudGrid>
@@ -93,6 +94,7 @@
     private bool isAdmin = false;
     public int TotalNum { get; set; }
     public decimal Wins { get; set; }
+    private int locationId;
 
     private async void OnValidSubmit(EditContext context)
     {
@@ -111,15 +113,32 @@
             model = new SalesDto();
             Snackbar.Add("Transaction Failed", Severity.Error);
         }
+    }
 
+    private async Task GetUserInfo()
+    {
+        string role = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        string locId = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value;
+        if (role.Contains("Admin"))
+        {
+            isAdmin = true;
+        }
+        if (!string.IsNullOrEmpty(locId))
+        {
+            locationId = int.Parse(locId);
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAccounts();
+        await GetUserInfo();
         await GetAgents();
         await GetGames();
         await GetSalesRecords();
+
         // model = new SalesDto();
         // model.Id = Transaction.Id;
         // model.AccountId = Transaction.AccountId;
@@ -144,7 +163,8 @@
             //    Elements = results;
             //}
             //TotalNum = Elements.Count;
-            Elements = results.Where(x => x.WinAmount > 0.0M).ToList();
+            filterLocation(results);
+            Elements = Elements.Where(x => x.WinAmount > 0.0M).ToList();
             //  Winstotal = Elements.Sum(x => x.WinAmount);
             //Wins = Elements.Sum(x => x.WinAmount);
             TotalNum = Elements.Count;
@@ -158,7 +178,8 @@
         if (response.IsSuccessStatusCode)
         {
             var results = await response.Content.ReadFromJsonAsync<List<SalesDto>>();
-            Elements = results.Where(x => x.WinAmount > 0.0M).ToList();
+            filterLocation(results);
+            Elements = Elements.Where(x => x.WinAmount > 0.0M).ToList();
             TotalNum = Elements.Count;
         }
     }
@@ -214,5 +235,19 @@
             return true;
 
         return false;
+    }
+    private void filterLocation(List<SalesDto>? results)
+    {
+        if (results != null)
+        {
+            if (isAdmin)
+            {
+                Elements = results.ToList();
+            }
+            else
+            {
+                Elements = results.Where(x => x.LocationId.Equals(locationId)).ToList();
+            }
+        }
     }
 }
