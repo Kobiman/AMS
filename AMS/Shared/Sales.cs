@@ -62,6 +62,8 @@ namespace AMS.Shared
         public string? Description { get; set; }
         public int NumberOfSheets { get; set; }
         public string? StaffId { get; set; }
+        //public int? LocationID { get; set; }
+        public int? LocationId { get; set; }
         public bool Approved { get; set; } = false;
     }
 }

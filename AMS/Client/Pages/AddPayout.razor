@@ -39,6 +39,8 @@
         <MudTextField T="string" @bind-Value="AgentPhoneNumber" Label="Receiver Phone Number" Variant="Variant.Text"
                       ReadOnly="true" />
 
+        <UploadFile OnChange="AssignFileUrl" />
+
         <ValidationSummary />
         <div style="margin-top:15px" class="mud-card-actions">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
@@ -61,6 +63,8 @@
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
+
+    private void AssignFileUrl(string imgUrl) => model.FilePath = imgUrl;
 
     private async void OnValidSubmit(EditContext context)
     {

@@ -183,7 +183,7 @@ namespace AMS.Server.Services
                                     SalesCommission = t.SalesCommission,
                                     SalesCommissionValue = ((t.SalesCommission / 100) * t.GrossSales),
                                     GrossSales = t.GrossSales,
-                                    LocationId = (int)t.LocationId
+                                    LocationId = (int)w.LocationId
                                 });
 
             var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ? 
@@ -247,6 +247,7 @@ namespace AMS.Server.Services
             //result.WinsApprovedBy = agentTransaction.WinsApprovedBy;
             //result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
             wins.StaffId = _authService.GetStaffID();
+            wins.LocationId  = _authService.GetLocationID();
             appDbContext.Wins.Add(wins);
             await appDbContext.SaveChangesAsync();
                 return await GetTransactionById(wins.SalesId);

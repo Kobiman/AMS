@@ -21,6 +21,7 @@ namespace AMS.Shared.Dto
         public DateTime EntryDate { get; set; }
         public bool Approved { get; set; } = false;
         public string StaffId { get; set; } = String.Empty;
+        public int? LocationId { get; set; }
         public string ApprovedBy { get; set; } = String.Empty;
         public string AreaOfOperations { get; set; } = string.Empty;
         public string ChequeNo { get; set; } = string.Empty;
@@ -28,5 +29,6 @@ namespace AMS.Shared.Dto
         public string ReceivedBy { get; set; } = string.Empty;
         public string ReceivedFrom { get; set; } = string.Empty;
         public string ReceiverPhone { get; set; } = string.Empty;
+        public string FileName { get; set; } = string.Empty;
     }
 }

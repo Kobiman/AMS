@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using AMS.Server;
 using Microsoft.AspNetCore.Mvc;
 using static AMS.Server.Controllers.NotificationController;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +97,11 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+//app.UseStaticFiles(new StaticFileOptions()
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+//    RequestPath = new PathString("/Uploads")
+//});
 
 app.UseRouting();
 

@@ -1,7 +1,7 @@
 ﻿@page "/PayinReport"
 @implements IDisposable
 @inject AuthenticationStateProvider AuthStateProvider
-@using System.Security.Claims
+@inject IJSRuntime JS
 @attribute [Authorize(Roles = "Admin, Payinreport")]
 
 <MudText>PAY-IN REPORT</MudText>
@@ -33,21 +33,22 @@
             {
                 <MudTh>Action</MudTh>
             }
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
+            <MudTd DataLabel="Agent">@context.Agent</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+            @*<MudTd DataLabel="Payment Type">Cheque</MudTd>*@
+            <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
+            <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.Amount)</MudTd>
+            @*<MudTh DataLabel="Received By">09876</MudTh>*@
+            <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
+            <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
+            <MudTd DataLabel="Received From">@context.ReceiverPhone</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
 
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
-        <MudTd DataLabel="Agent">@context.Agent</MudTd>
-        <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
-        @*<MudTd DataLabel="Payment Type">Cheque</MudTd>*@
-        <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}", context.Amount)</MudTd>
-        @*<MudTh DataLabel="Received By">09876</MudTh>*@
-        <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
-        <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
-        <MudTd DataLabel="Received From">@context.ReceiverPhone</MudTd>
-        <MudTd DataLabel="Description">@context.Description</MudTd>
-        @if(isAdmin)
+
+            @if(isAdmin)
             {
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Text" OnClick="@(()=>Edit(@context.Id))" Color="Color.Info" Size="Size.Small" >Edit</MudButton>
@@ -56,27 +57,32 @@
                 </MudTd>
             }
 
-
-    </RowTemplate>
-     <FooterContent>
-        <MudTFootRow Class="bold-text">
-          <MudTd>&nbsp;</MudTd>
-          <MudTd>&nbsp;</MudTd>
-          <MudTd>&nbsp;</MudTd>
-          <MudTd>&nbsp;</MudTd>
-          <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
-        </MudTFootRow>
-    </FooterContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-  </MudTable>
+            @if (!string.IsNullOrEmpty(context.FileName))
+            {
+                <MudTd DataLabel="FileDownload">
+                    <MudFab StartIcon="@Icons.Material.Filled.Attachment" Size="Size.Small" OnClick="@(() => DownloadFile(context.FileName))" />
+                </MudTd>            
+            }
+        </RowTemplate>
+        <FooterContent>
+            <MudTFootRow Class="bold-text">
+                <MudTd>&nbsp;</MudTd>
+                <MudTd>&nbsp;</MudTd>
+                <MudTd>&nbsp;</MudTd>
+                <MudTd>&nbsp;</MudTd>
+                <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalBalance)</MudTd>
+            </MudTFootRow>
+        </FooterContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 </div>
 
 
 
 
-    @code {
+@code {
     private bool dense = false;
     private bool hover = true;
     private bool striped = false;
@@ -94,11 +100,12 @@
     public decimal TotalDebit { get; set; }
     public decimal TotalBalance { get; set; }
     private bool isAdmin = false;
+    private int locationId;
 
     protected override async Task OnInitializedAsync()
     {
         accountEvents.AccountAdded += async (source, e) => await ReloadAccounts(source, e);
-        await GetRole();
+        await GetUserInfo();
         await GetRecords();
     }
     private async Task App_StateChanged(ComponentBase Source)
@@ -204,13 +211,19 @@
             }
         }
     }
-    private async Task GetRole()
+    private async Task GetUserInfo()
     {
         string role = (await AuthStateProvider.GetAuthenticationStateAsync())
         .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        string locId = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value;
         if (role.Contains("Admin"))
         {
             isAdmin = true;
+        }
+        if(!string.IsNullOrEmpty(locId))
+        {
+            locationId = int.Parse(locId);
         }
     }
     public async Task ReloadAccounts(object source, EventArgs e)
@@ -224,8 +237,8 @@
         var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayinReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
-
+            var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            filterLocation(results);
         }
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
@@ -236,11 +249,47 @@
         var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayinReport", new AMS.Shared.DateRange());
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
-
+            var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            filterLocation(results);
         }
         TotalBalance = Elements.Sum(x => x.Amount);
         TotalNum = Elements.Count();
+    }
+
+    private async Task DownloadFile(string fileName)
+    {
+        var response = await Http.GetAsync($"/api/AccountTransaction/DownloadFile/{fileName}");
+        if (!response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("File not found", Severity.Warning);
+        }
+        else
+        {
+            try
+            {
+                var fileStream = response.Content.ReadAsStream();
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            }
+            catch(Exception ex)
+            {
+                await JS.InvokeVoidAsync("alert", ex.Message);
+            }        
+        }
+    }
+    private void filterLocation(List<PayoutDto>? results)
+    {
+        if (results != null)
+        {
+            if (isAdmin)
+            {
+                Elements = results.ToList();
+            }
+            else
+            {
+                Elements = results.Where(x => x.LocationId.Equals(locationId)).ToList();
+            }
+        }
     }
 
     void IDisposable.Dispose()

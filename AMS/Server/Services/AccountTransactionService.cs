@@ -11,16 +11,19 @@ namespace AMS.Server.Services
     {
         public AccountTransactionService(ApplicationDbContext _appDbContext,
             IAuthService authService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IWebHostEnvironment evn)
         {
             appDbContext = _appDbContext;
             _authService = authService;
             _notificationService = notificationService;
+            _evn = evn;
         }
 
         private readonly ApplicationDbContext appDbContext;
         private readonly IAuthService _authService;
         private readonly INotificationService _notificationService;
+        private readonly IWebHostEnvironment _evn;
 
         public async Task<Shared.IResult> AddAccountTransaction(AddTransactionDto transactionDto)
         {
@@ -189,6 +192,7 @@ namespace AMS.Server.Services
                 Type = addPayoutDto.Type,
                 EntryDate = addPayoutDto.EntryDate.Value,
                 StaffId = _authService.GetStaffID(),
+                LocationId = _authService.GetLocationID(),
                 TreatedBy = addPayoutDto.TreatedBy,
                 ApprovedBy = addPayoutDto.ApprovedBy,
                 ReceiverPhone = addPayoutDto.ReceiverPhone,               
@@ -196,7 +200,9 @@ namespace AMS.Server.Services
                 AreaOfOperations = addPayoutDto.AreaOfOperations,
                 ChequeNo = addPayoutDto.ChequeNo,
                 ReceivedBy = addPayoutDto.ReceivedBy,
-                ReceivedFrom = addPayoutDto.ReceivedFrom
+                ReceivedFrom = addPayoutDto.ReceivedFrom,
+
+                FilePath = addPayoutDto.FilePath,
                 
                 //DrawDate = addPayoutDto.DrawDate.Value
             });
@@ -364,12 +370,14 @@ namespace AMS.Server.Services
                                     ChequeNo = p.ChequeNo,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     StaffId = p.StaffId,
+                                    LocationId = p.LocationId, 
                                     AreaOfOperations = p.AreaOfOperations,
                                     TreatedBy = p.TreatedBy,
                                     ApprovedBy = p.ApprovedBy,
                                     ReceivedBy = p.ReceivedBy,
                                     ReceivedFrom = p.ReceivedFrom,
-                                    ReceiverPhone = p.ReceiverPhone
+                                    ReceiverPhone = p.ReceiverPhone,
+                                    FileName = p.FilePath
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();
@@ -397,17 +405,54 @@ namespace AMS.Server.Services
                                     Approved = p.Approved == null? false: p.Approved,
                                     Agent = agt == null ? string.Empty : agt.Name,
                                     StaffId = p.StaffId,
+                                    LocationId = p.LocationId,
                                     ApprovedBy = p.ApprovedBy,
                                     TreatedBy = p.TreatedBy,
                                     ChequeNo = p.ChequeNo,
                                     AreaOfOperations = p.AreaOfOperations,
                                     ReceivedBy = p.ReceivedBy,
                                     ReceivedFrom = p.ReceivedFrom,
-                                    ReceiverPhone = p.ReceiverPhone
+                                    ReceiverPhone = p.ReceiverPhone,
+                                    FileName = p.FilePath
                                     //GameId = p.GameId,
                                     //GameName = gme.Name
                                 }).ToListAsync();
             return result;
+        }
+
+        public async Task<string> GetUploadFileName(IFormFile obj)
+        {
+            string? uniqueFileName = null;
+
+            if (obj != null)
+            {
+                //string uploadsFolder = "";
+                //if (obj.Type == "Payin")
+                //{
+                //    uploadsFolder = Path.Combine(_evn.WebRootPath, "Uploads","Payin");
+                //}
+                //else
+                //{
+                //    uploadsFolder = Path.Combine(_evn.WebRootPath, "Uploads","Payout");
+                //}
+                try
+                {
+                    string uploadsFolder = Path.Combine(_evn.ContentRootPath, "Uploads");
+                    uniqueFileName = Path.GetRandomFileName() + "_" + obj.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await obj.CopyToAsync(fileStream);
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    return ex.Message;
+                }
+                
+            }
+            return uniqueFileName;
         }
     }
 }

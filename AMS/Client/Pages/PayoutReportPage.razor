@@ -14,7 +14,7 @@
     <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Virtualize="true" FixedHeader="true" Filter="new Func<PayoutDto,bool>(FilterFunc1)" 
         @bind-SelectedItem="selectedItem1" CustomHeader="true" CustomFooter="true">
     <ToolBarContent>
-        
+
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged ="@(()=>CalculateSummuries(@searchString1))" IconSize="Size.Medium" Class="mt-0"></MudTextField>
          <MudSpacer />
@@ -39,22 +39,26 @@
         <MudTh>Received By</MudTh>
         <MudTh>Received From</MudTh>
         <MudTh>Receiver's Contact</MudTh>
-        @if(isAdmin){<MudTh>Description</MudTh>}
-        
+        <MudTh>Description</MudTh>
+            @if (isAdmin)
+            {
+                <MudTh>Action</MudTh>
+            }
 
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
-        <MudTd DataLabel="Agent">@context.Agent</MudTd>
-        <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
-        @*<MudTd DataLabel="Payment Type">&nbsp;</MudTd>*@
-        <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
-        <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
-        <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
-        <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
-        <MudTd DataLabel="Receiver Phone">@context.ReceiverPhone</MudTd>
-        <MudTd DataLabel="Description">@context.Description</MudTd>
-        @if (isAdmin)
+
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="EntryDate">@context.EntryDate.ToString("dd-MMM-yyyy")</MudTd>
+            <MudTd DataLabel="Agent">@context.Agent</MudTd>
+            <MudTd DataLabel="Area of Operations">@context.AreaOfOperations</MudTd>
+            @*<MudTd DataLabel="Payment Type">&nbsp;</MudTd>*@
+            <MudTd DataLabel="Cheque No.">@context.ChequeNo</MudTd>
+            <MudTd DataLabel="Amount">@String.Format("{0:0,0.00}",context.Amount)</MudTd>
+            <MudTd DataLabel="Received By">@context.ReceivedBy</MudTd>
+            <MudTd DataLabel="Received From">@context.ReceivedFrom</MudTd>
+            <MudTd DataLabel="Receiver Phone">@context.ReceiverPhone</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            @if (isAdmin)
             {
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Text" OnClick="@(()=>Edit(@context.Id))" Color="Color.Info" Size="Size.Small">Edit</MudButton>
@@ -62,25 +66,30 @@
                     <MudButton Variant="Variant.Text" OnClick="@(()=>Print(@context.Id))" Color="Color.Info" Size="Size.Small">Print</MudButton>
                 </MudTd>
             }
+            @if (!string.IsNullOrEmpty(context.FileName))
+            {
+                <MudTd DataLabel="FileDownload">
+                    <MudFab StartIcon="@Icons.Material.Filled.Attachment" Size="Size.Small" OnClick="@(() => DownloadFile(context.FileName))" />
+                </MudTd>
+            }
 
-
-    </RowTemplate>
-    <FooterContent>
-        @*<MudTFootRow Class="bold-text">*@
-          <MudTd></MudTd>
-          <MudTd></MudTd>
-          <MudTd></MudTd>
-          <MudTd></MudTd>
-          <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalAmount)</MudTd>
-        @*</MudTFootRow>*@
-    </FooterContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-  </MudTable>
+        </RowTemplate>
+        <FooterContent>
+            @*<MudTFootRow Class="bold-text">*@
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd Class="bold-text">Total: @String.Format("{0:0,0.00}",TotalAmount)</MudTd>
+            @*</MudTFootRow>*@
+        </FooterContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 </div>
 
-    @code {
+@code {
 
     private bool dense = false;
     private bool hover = true;
@@ -94,6 +103,7 @@
     private IEnumerable<PayoutDto> Elements = new List<PayoutDto>();
     private decimal TotalAmount;
     private bool isAdmin;
+    private int locationId;
     DateTime? start = DateTime.Today;
     DateTime? end = DateTime.Today;
 
@@ -112,7 +122,8 @@
         var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayoutReport", new AMS.Shared.DateRange());
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            filterLocation(results);
             TotalAmount = Elements.Sum(x => x.Amount);
         }
     }
@@ -236,9 +247,15 @@
     {
         string role = (await AuthStateProvider.GetAuthenticationStateAsync())
         .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
+        string locId = (await AuthStateProvider.GetAuthenticationStateAsync())
+        .User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value;
         if (role.Contains("Admin"))
         {
             isAdmin = true;
+        }
+        if(!string.IsNullOrEmpty(locId))
+        {
+            locationId = int.Parse(locId);
         }
     }
     async Task PeriodChanged()
@@ -247,8 +264,44 @@
         var response = await Http.PostAsJsonAsync($"/api/AccountTransaction/PayoutReport", dateRange);
         if (response.IsSuccessStatusCode)
         {
-            Elements = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            var results = await response.Content.ReadFromJsonAsync<List<PayoutDto>>();
+            filterLocation(results);
             TotalAmount = Elements.Sum(x => x.Amount);
+        }
+    }
+    private async Task DownloadFile(string fileName)
+    {
+        var response = await Http.GetAsync($"/api/AccountTransaction/DownloadFile/{fileName}");
+        if (!response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("File not found", Severity.Warning);
+        }
+        else
+        {
+            try
+            {
+                var fileStream = response.Content.ReadAsStream();
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            }
+            catch (Exception ex)
+            {
+                await JS.InvokeVoidAsync("alert", ex.Message);
+            }
+        }
+    }
+    private void filterLocation(List<PayoutDto>? results)
+    {
+        if (results != null)
+        {
+            if (isAdmin)
+            {
+                Elements = results.ToList();
+            }
+            else
+            {
+                Elements = results.Where(x => x.LocationId.Equals(locationId)).ToList();
+            }
         }
     }
 }
