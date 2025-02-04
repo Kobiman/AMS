@@ -44,5 +44,6 @@ namespace AMS.Shared.Dto
         public decimal SalesCommission { get; set; }
         public decimal SalesCommissionValue { get; set; }
         public int LocationId { get; set; }
+        public string? FilePath { get; set; }
     }
 }

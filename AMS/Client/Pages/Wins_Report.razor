@@ -28,6 +28,18 @@
             @*<PropertyColumn Property="x => x.NumberOfSheets" Title="Number Of Sheets"/>*@
             <PropertyColumn Property="x => x.WinAmount" Title="Win Amount"/>
             <PropertyColumn Property="x => x.WinsStaffId" Title="Entered By" />
+            <TemplateColumn >
+                <CellTemplate>
+                    <MudStack Row>
+                        @if (!string.IsNullOrEmpty(context.Item.FilePath))
+                        {
+                            <DownloadFile FileName="@context.Item.FilePath" />
+                        }
+                    </MudStack>
+                </CellTemplate>
+                
+            </TemplateColumn>
+
             @*<PropertyColumn Property="x => x.Description">
                 <CellTemplate>
                     @if (!isAdmin)

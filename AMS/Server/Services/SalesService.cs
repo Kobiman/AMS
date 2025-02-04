@@ -43,6 +43,7 @@ namespace AMS.Server.Services
                     //WinsStaffId = string.Empty,
                     GrossSales = sales.GrossSales,
                     SalesCommission = sales.SalesCommission,
+                    FilePath = sales.FilePath
                 }
                 );
 
@@ -137,6 +138,7 @@ namespace AMS.Server.Services
                                     SalesCommissionValue = ((t.SalesCommission /100)*t.GrossSales),
                                     GrossSales = t.GrossSales,
                                     LocationId = (int)t.LocationId,
+                                    FilePath = t.FilePath
                                 });
 
             var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?  
@@ -183,7 +185,8 @@ namespace AMS.Server.Services
                                     SalesCommission = t.SalesCommission,
                                     SalesCommissionValue = ((t.SalesCommission / 100) * t.GrossSales),
                                     GrossSales = t.GrossSales,
-                                    LocationId = (int)w.LocationId
+                                    LocationId = (int)w.LocationId,
+                                    FilePath = w.FilePath,
                                 });
 
             var result = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ? 

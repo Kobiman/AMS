@@ -59,10 +59,9 @@
 
             @if (!string.IsNullOrEmpty(context.FileName))
             {
-                <MudTd DataLabel="FileDownload">
-                    <MudFab StartIcon="@Icons.Material.Filled.Attachment" Size="Size.Small" OnClick="@(() => DownloadFile(context.FileName))" />
-                </MudTd>            
+                <DownloadFile FileName="@context.FileName" />
             }
+
         </RowTemplate>
         <FooterContent>
             <MudTFootRow Class="bold-text">
@@ -256,27 +255,7 @@
         TotalNum = Elements.Count();
     }
 
-    private async Task DownloadFile(string fileName)
-    {
-        var response = await Http.GetAsync($"/api/AccountTransaction/DownloadFile/{fileName}");
-        if (!response.IsSuccessStatusCode)
-        {
-            Snackbar.Add("File not found", Severity.Warning);
-        }
-        else
-        {
-            try
-            {
-                var fileStream = response.Content.ReadAsStream();
-                using var streamRef = new DotNetStreamReference(stream: fileStream);
-                await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
-            }
-            catch(Exception ex)
-            {
-                await JS.InvokeVoidAsync("alert", ex.Message);
-            }        
-        }
-    }
+    
     private void filterLocation(List<PayoutDto>? results)
     {
         if (results != null)

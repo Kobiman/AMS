@@ -40,6 +40,8 @@ namespace AMS.Shared
         //public int NumberOfSheets { get; set; }
         public decimal GrossSales { get; set; }
         public decimal SalesCommission { get; set; }
+
+        public string? FilePath { get; set; }
     }
 
     public class Wins
@@ -65,5 +67,7 @@ namespace AMS.Shared
         //public int? LocationID { get; set; }
         public int? LocationId { get; set; }
         public bool Approved { get; set; } = false;
+
+        public string? FilePath { get; set; }
     }
 }

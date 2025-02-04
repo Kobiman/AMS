@@ -55,7 +55,7 @@
         <MudNumericField HideSpinButtons="true" @bind-Value="model.WinAmount"
                          Label="Wins Amount" Variant="Variant.Text" ReadOnly="true" />
 
-
+        <UploadFile OnChange="AssignFileUrl" />
 
 
 
@@ -76,6 +76,8 @@
     private IEnumerable<Game>? games { get; set; }
     bool success;
     string[] errors = { };
+
+    private void AssignFileUrl(string imgUrl) => model.FilePath = imgUrl;
 
     private async void OnValidSubmit(EditContext context)
     {

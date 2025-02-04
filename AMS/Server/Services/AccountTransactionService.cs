@@ -420,39 +420,6 @@ namespace AMS.Server.Services
             return result;
         }
 
-        public async Task<string> GetUploadFileName(IFormFile obj)
-        {
-            string? uniqueFileName = null;
-
-            if (obj != null)
-            {
-                //string uploadsFolder = "";
-                //if (obj.Type == "Payin")
-                //{
-                //    uploadsFolder = Path.Combine(_evn.WebRootPath, "Uploads","Payin");
-                //}
-                //else
-                //{
-                //    uploadsFolder = Path.Combine(_evn.WebRootPath, "Uploads","Payout");
-                //}
-                try
-                {
-                    string uploadsFolder = Path.Combine(_evn.ContentRootPath, "Uploads");
-                    uniqueFileName = Path.GetRandomFileName() + "_" + obj.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await obj.CopyToAsync(fileStream);
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                    return ex.Message;
-                }
-                
-            }
-            return uniqueFileName;
-        }
+        
     }
 }

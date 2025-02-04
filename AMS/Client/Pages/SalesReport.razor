@@ -73,6 +73,10 @@
             <MudTd DataLabel="Entered By">@context.SalesStaffId</MudTd>
             @*<MudTd DataLabel="Approved By">@context.ApprovedBy</MudTd>*@
             <MudTd DataLabel="Description">@context.Description</MudTd>
+            @if (!string.IsNullOrEmpty(context.FilePath))
+            {
+                <DownloadFile FileName="@context.FilePath" />
+            }
         </RowTemplate>
         <FooterContent>
             <MudTd>&nbsp</MudTd>

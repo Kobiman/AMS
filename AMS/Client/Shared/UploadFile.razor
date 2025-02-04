@@ -2,7 +2,7 @@
 
 
 <div class="mt-3">
-    <InputFile class="my-input-file" OnChange="@OnInputFileChange"></InputFile>
+    <InputFile  class="my-input-file" OnChange="@OnInputFileChange"></InputFile>
     
 </div>
 
@@ -35,7 +35,7 @@
                 fileStream.Headers.ContentType = new MediaTypeHeaderValue(browserFile.ContentType);
                 content.Add(content: fileStream, name: "file", browserFile.Name);
 
-                var result = await Http.PostAsync("api/AccountTransaction/UploadFile", content);
+                var result = await Http.PostAsync("api/FileUpload/UploadFile", content);
 
                 if (result.IsSuccessStatusCode)
                 {

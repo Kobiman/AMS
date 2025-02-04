@@ -26,6 +26,6 @@ namespace AMS.Server.Services
         public Task<Result<AccountTransactionDto>> ApprovePayout(string payoutId);
         public Task<IEnumerable<PayoutDto>> PayoutReport(DateRange period);
         public Task<IEnumerable<PayoutDto>> PayinReport(DateRange period);
-        public Task<string> GetUploadFileName(IFormFile obj);
+        //public Task<string> GetUploadFileName(IFormFile obj);
     }
 }

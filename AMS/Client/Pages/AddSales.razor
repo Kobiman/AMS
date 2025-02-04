@@ -40,7 +40,7 @@ else{
             
             <MudNumericField HideSpinButtons="true"  @bind-Value="model.WinAmount"
             Label="Wins Amount" Variant="Variant.Text" />
-
+            <UploadFile OnChange="AssignFileUrl" />
            
 
             <ValidationSummary />
@@ -81,6 +81,7 @@ else{
         }
 
     }
+    private void AssignFileUrl(string imgUrl) => model.FilePath = imgUrl;
 
     protected override async Task OnInitializedAsync()
     {

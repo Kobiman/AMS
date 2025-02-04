@@ -18,6 +18,6 @@ namespace AMS.Server.Services
         public Task<SalesDto> GetTransactionById(string transactionID);
         //GetAdministrativeTransactionById
         public Task<Sales> GetTransaction(string transactionID);
-        public Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage();
+        public Task<IEnumerable<SalesDto>> GetOpenSalesWinsStortage();       
     }
 }

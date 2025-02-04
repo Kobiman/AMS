@@ -58,7 +58,7 @@ else
         <MudTextField T="string" @bind-Value="model.SalesApprovedBy"
                              Label="Approved By" Variant="Variant.Text" />
 
-
+            <UploadFile OnChange="AssignFileUrl" />
 
 
 
@@ -83,7 +83,7 @@ else
 
     // [Parameter]
     // public string? Id { get; set; }
-
+    private void AssignFileUrl(string imgUrl) => model.FilePath = imgUrl;
     private async void OnValidSubmit(EditContext context)
     {
         // if (!string.IsNullOrWhiteSpace(Id))
