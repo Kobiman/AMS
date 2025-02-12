@@ -2,6 +2,7 @@
 using AMS.Server.Extensions;
 using AMS.Server.Migrations;
 using AMS.Shared;
+using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,12 +14,14 @@ namespace AMS.Server.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IAuthService _authService;
+        private readonly IAccountService _accountService;
 
         public AgentService(ApplicationDbContext context,
-            IAuthService authService)
+            IAuthService authService, IAccountService accountService)
         {
             _context = context;
             _authService = authService;
+            _accountService = accountService;
         }
 
         public async Task<Shared.IResult> AddAgent(Agent agent)
@@ -29,6 +32,30 @@ namespace AMS.Server.Services
             if (originalAccount != null) return new Result(false, $"Agent with name {agent.Name} already exist.");
             _context.Agents.Add(agent);
             var result = await _context.SaveChangesAsync();
+
+            var salesAccount = new Account
+            {
+                AccountName = $"{agent.Name}_Sales",
+                Type = AccountTypes.Revenue,
+            };
+            await _accountService.AddAccount(salesAccount);
+
+            var receivableAccount = new Account
+            {
+                AccountName = $"{agent.Name}_Receivable",
+                Type = AccountTypes.Asset,
+                SubType = "Current Assets",
+            };
+            await _accountService.AddAccount(receivableAccount);
+
+            var payableAccount = new Account
+            {
+                AccountName = $"{agent.Name}_Payable",
+                Type = AccountTypes.Liability,
+                SubType = "Current Liabilities",
+            };
+            await _accountService.AddAccount(payableAccount);
+
             if (result > 0) return new Result(true, "Agent saved successfully.");
             return new Result(false, "Operation failled.");
         }

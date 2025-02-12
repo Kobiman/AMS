@@ -23,6 +23,8 @@ namespace AMS.Server.Services
 
         public async Task<SalesDto> AddSales(SalesDto sales)
         {
+            var agent = await appDbContext.Agents.FirstOrDefaultAsync(x => x.AgentId == sales.AgentId);
+            if (agent == null) return null;
             var result = await appDbContext.Sales.AddAsync(
                 new Sales { 
                     AgentId = sales.AgentId,
@@ -47,25 +49,40 @@ namespace AMS.Server.Services
                 }
                 );
 
-            var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+            //var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
 
-            var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
+            //var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
+            //await appDbContext.AccountTransactions.AddAsync(
+            //    new AccountTransaction
+            //    {
+            //        Amount = Increase.Amount,
+            //        Credit = Increase.Credit,
+            //        Debit = Increase.Debit,
+            //        Description = sales.Description,
+            //        AccountId = cachAccount?.AccountId
+            //    });
+
+           
+            var agentSalesAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Sales");
+            var journalEntryRule1 = new JournalEntryRules(sales.DailySales, AccountTypes.Revenue, JournalEntryRules.Increase);
             await appDbContext.AccountTransactions.AddAsync(
                 new AccountTransaction
                 {
-                    Amount = Increase.Amount,
-                    Credit = Increase.Credit,
-                    Debit = Increase.Debit,
-                    Description = sales.Description,
-                    AccountId = cachAccount?.AccountId
-                });
+                    AccountId = agentSalesAccount.AccountId,
+                    Amount = journalEntryRule1.Amount,
+                    Credit = journalEntryRule1.Amount,
+                    Description = sales.Description
+                }
+                );
 
+            var agentReceivableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Receivable");
+            var journalEntryRule2 = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
             await appDbContext.AccountTransactions.AddAsync(
                 new AccountTransaction
                 {
-                    AccountId = sales.AccountId,
-                    Amount = sales.DailySales,
-                    Credit = sales.DailySales,
+                    AccountId = agentReceivableAccount.AccountId,
+                    Amount = journalEntryRule2.Amount,
+                    Credit = journalEntryRule2.Amount,
                     Description = sales.Description
                 }
                 );
