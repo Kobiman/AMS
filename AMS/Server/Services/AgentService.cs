@@ -40,6 +40,13 @@ namespace AMS.Server.Services
             };
             await _accountService.AddAccount(salesAccount);
 
+            var expenseAccount = new Account
+            {
+                AccountName = $"{agent.Name}_Expenditure",
+                Type = AccountTypes.Expense,
+            };
+            await _accountService.AddAccount(expenseAccount);
+
             var receivableAccount = new Account
             {
                 AccountName = $"{agent.Name}_Receivable",

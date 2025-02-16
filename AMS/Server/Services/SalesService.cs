@@ -1,4 +1,5 @@
 ﻿using AMS.Server.Data;
+using AMS.Server.Migrations;
 using AMS.Shared;
 using AMS.Shared.Dto;
 using AMS.Shared.Enums;
@@ -49,19 +50,6 @@ namespace AMS.Server.Services
                 }
                 );
 
-            //var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
-
-            //var Increase = new JournalEntryRules(sales.DailySales, AccountTypes.Asset, JournalEntryRules.Increase);
-            //await appDbContext.AccountTransactions.AddAsync(
-            //    new AccountTransaction
-            //    {
-            //        Amount = Increase.Amount,
-            //        Credit = Increase.Credit,
-            //        Debit = Increase.Debit,
-            //        Description = sales.Description,
-            //        AccountId = cachAccount?.AccountId
-            //    });
-
            
             var agentSalesAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Sales");
             var journalEntryRule1 = new JournalEntryRules(sales.DailySales, AccountTypes.Revenue, JournalEntryRules.Increase);
@@ -70,7 +58,7 @@ namespace AMS.Server.Services
                 {
                     AccountId = agentSalesAccount.AccountId,
                     Amount = journalEntryRule1.Amount,
-                    Credit = journalEntryRule1.Amount,
+                    Credit = journalEntryRule1.Credit,
                     Description = sales.Description
                 }
                 );
@@ -82,7 +70,7 @@ namespace AMS.Server.Services
                 {
                     AccountId = agentReceivableAccount.AccountId,
                     Amount = journalEntryRule2.Amount,
-                    Credit = journalEntryRule2.Amount,
+                    Debit = journalEntryRule2.Debit,
                     Description = sales.Description
                 }
                 );
@@ -250,27 +238,40 @@ namespace AMS.Server.Services
         }
 
 
-        public async Task<SalesDto> AddWins(Wins wins)
+        public async Task<SalesDto> AddWins(Shared.Wins wins)
         {
-            //result.WinAmount = wins.WinAmount;
-            //result.Sheet = wins.Sheet;
-            //result.NumberOfSheets = wins.NumberOfSheets;
-            //result.Description = wins.Description;
-            //result.AccountId = wins.AccountId;
-            //result.AgentId = wins.AgentId;
-            //result.DailySales = wins.DailySales;
-            //result.EntryDate = DateTime.Today;
-            ////result.GameId = agentTransaction.GameId;
-            //result.AccountId = wins.AccountId;
-            //result.WinsStaffId = _authService.GetStaffID();
-            //result.WinsTreatedBy = agentTransaction.WinsTreatedBy;
-            //result.WinsApprovedBy = agentTransaction.WinsApprovedBy;
-            //result.LocationId = _authService.GetLocationID() == "" ? 0 : Convert.ToInt16(_authService.GetLocationID());
+            var agent = await appDbContext.Agents.FirstOrDefaultAsync(x => x.AgentId == wins.AgentId);
+            if (agent == null) return null;
             wins.StaffId = _authService.GetStaffID();
             wins.LocationId  = _authService.GetLocationID();
             appDbContext.Wins.Add(wins);
+            
+
+            var agent_ExpenseAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Expenditure");
+            var journalEntryRule1 = new JournalEntryRules(wins.WinAmount, AccountTypes.Expense, JournalEntryRules.Increase);
+            await appDbContext.AccountTransactions.AddAsync(
+                new AccountTransaction
+                {
+                    AccountId = agent_ExpenseAccount.AccountId,
+                    Amount = journalEntryRule1.Amount,
+                    Debit = journalEntryRule1.Debit,
+                    Description = wins.Description
+                }
+                );
+
+            var agent_PayableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Payable");
+            var journalEntryRule2 = new JournalEntryRules(wins.WinAmount, AccountTypes.Liability, JournalEntryRules.Increase);
+            await appDbContext.AccountTransactions.AddAsync(
+                new AccountTransaction
+                {
+                    AccountId = agent_PayableAccount.AccountId,
+                    Amount = journalEntryRule2.Amount,
+                    Credit = journalEntryRule2.Credit,
+                    Description = wins.Description
+                }
+                );
             await appDbContext.SaveChangesAsync();
-                return await GetTransactionById(wins.SalesId);
+            return await GetTransactionById(wins.SalesId);
         }
         public async Task<SalesDto> ApproveSales(string SalesId)
         {

@@ -1,4 +1,5 @@
 ﻿using AMS.Server.Data;
+using AMS.Server.Migrations;
 using AMS.Shared;
 using AMS.Shared.Dto;
 using AMS.Shared.Enums;
@@ -188,7 +189,6 @@ namespace AMS.Server.Services
                 DestinationAccountId = addPayoutDto.DestinationAccountId,
                 SourceAccountId = addPayoutDto.SourceAccountId,
                 AgentId = addPayoutDto.AgentId,
-                //GameId = addPayoutDto.GameId,
                 Type = addPayoutDto.Type,
                 EntryDate = addPayoutDto.EntryDate.Value,
                 StaffId = _authService.GetStaffID(),
@@ -203,27 +203,62 @@ namespace AMS.Server.Services
                 ReceivedFrom = addPayoutDto.ReceivedFrom,
 
                 FilePath = addPayoutDto.FilePath,
-                
-                //DrawDate = addPayoutDto.DrawDate.Value
             });
-            await appDbContext.SaveChangesAsync();
-            //if (agent != null)
-            //{
-            //    string msg = "";
-            //    // msg = $"Hello {agent.Name}, an amount of GHC {addPayoutDto.Amount} has been received as payin as at {addPayoutDto.EntryDate.Value.ToShortDateString()}";
-            //    if(addPayoutDto.Type=="Payin")
-            //    {
-            //        msg = $"Hello {agent.Name}, a PAY-IN  cash of GHC {addPayoutDto.Amount} has been received on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
-            //    }
-            //    else
-            //    {
-            //        msg = $"Hello {agent.Name}, a PAY-OUT cash of GHC {addPayoutDto.Amount} has been paid on {addPayoutDto.EntryDate.Value.ToShortDateString()} Thanks";
-            //    }
-                    
-            //    phoneno = agent.Phone;
-            //    if (!string.IsNullOrEmpty(phoneno))
-            //        await _notificationService.SendSMS(msg, phoneno);
-            //}
+
+            if(addPayoutDto.Type == "Payout")
+            {
+                var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+                var journalEntryRule1 = new JournalEntryRules(absoluteAmount, AccountTypes.Asset, JournalEntryRules.Decrease);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = cachAccount.AccountId,
+                        Amount = journalEntryRule1.Amount,
+                        Credit = journalEntryRule1.Credit,
+                        Description = addPayoutDto.Description
+                    }
+                    );
+
+                var agent_PayableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Payable");
+                var journalEntryRule2 = new JournalEntryRules(absoluteAmount, AccountTypes.Liability, JournalEntryRules.Decrease);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = agent_PayableAccount.AccountId,
+                        Amount = journalEntryRule2.Amount,
+                        Debit = journalEntryRule2.Debit,
+                        Description = addPayoutDto.Description
+                    }
+                    );
+            }
+            else if (addPayoutDto.Type == "Payin")
+            {
+                var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+                var journalEntryRule1 = new JournalEntryRules(absoluteAmount, AccountTypes.Asset, JournalEntryRules.Increase);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = cachAccount.AccountId,
+                        Amount = journalEntryRule1.Amount,
+                        Debit = journalEntryRule1.Debit,
+                        Description = addPayoutDto.Description
+                    }
+                    );
+
+                var agent_PayableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Receivable");
+                var journalEntryRule2 = new JournalEntryRules(absoluteAmount, AccountTypes.Asset, JournalEntryRules.Decrease);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = agent_PayableAccount.AccountId,
+                        Amount = journalEntryRule2.Amount,
+                        Credit = journalEntryRule2.Amount,
+                        Description = addPayoutDto.Description
+                    }
+                    );
+            }
+
+                await appDbContext.SaveChangesAsync();
 
                 return new AccountTransactionDto();
         }

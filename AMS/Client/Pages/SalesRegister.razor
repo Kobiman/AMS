@@ -13,14 +13,13 @@ else
         <DataAnnotationsValidator />
         <MudDatePicker Editable="true" @bind-Date="model.EntryDate" Placeholder="Entry Date" />
         <MudDatePicker Editable="true" @bind-Date="model.DrawDate" Placeholder="Draw Date" />
-        <MudSelect T="string" Label="Select Account" @bind-Value="model.AccountId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
+        @* <MudSelect T="string" Label="Select Account" @bind-Value="model.AccountId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined">
            
-                @*.Where(x=>x.AccountName=="Daily Sales")*@
             @foreach(var account in accounts)
             {
                 <MudSelectItem T="string" Value="@account.AccountId">@account.AccountName</MudSelectItem>
             }
-        </MudSelect>
+        </MudSelect> *@
 
             <MudSelect T="string" Label="Select Agent" @bind-Value="model.AgentId" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined"
                         SelectedValuesChanged="@(()=>SetSalesCommission(model.AgentId,model.GameId))">
