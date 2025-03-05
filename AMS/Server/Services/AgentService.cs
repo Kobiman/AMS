@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Security.Principal;
 
 namespace AMS.Server.Services
 {
@@ -102,55 +104,33 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
-            var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
-            var games = await _context.Games.Select(x => new { x.Id, x.Name }).ToDictionaryAsync(x=>x.Id,x=>x.Name);
+            var agents = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
+                          await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name) :
+                          await _context.Agents.Where(x => x.LocationId == _authService.GetLocationID()).Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
 
-            List<SalesDto2> _sales = await (from t in _context.Sales
-                                                 //join w in _context.Wins on t.SalesId equals w.SalesId
-                                                 select new SalesDto2
-                                                 (
-                                                     t.AccountId,
-                                                     t.AgentId,
-                                                     t.DailySales,
-                                                     t.Description,
-                                                     t.EntryDate,
-                                                     t.DrawDate,
-                                                     0,
-                                                     t.GameId,
-                                                     t.ReceiptNumber,
-                                                     t.SalesId
-                                                 )).ToListAsync();
+            var games = await _context.Games.Select(x => new { x.Id, x.Name }).ToDictionaryAsync(x => x.Id, x => x.Name);
 
-            List<WinsDto> wins = await (from w in _context.Wins select new WinsDto(w.WinAmount, w.SalesId)).ToListAsync();
+            List<SalesDto2> _sales = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
+                                          await (from t in _context.Sales
+                                                 select CreateSalesDto(t)).ToListAsync() :
+                                          await (from t in _context.Sales.Where(x => x.LocationId == _authService.GetLocationID())
+                                                 select CreateSalesDto(t)).ToListAsync();
+
+            List<WinsDto> wins = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
+                                  await (from w in _context.Wins select new WinsDto(w.WinAmount, w.SalesId)).ToListAsync() :
+                                  await (from w in _context.Wins.Where(x => x.LocationId == _authService.GetLocationID()) select new WinsDto(w.WinAmount, w.SalesId)).ToListAsync();
 
             var sales = Join(_sales, wins, games).ToList();
 
-            var payout_payin = await _context.Payouts.OrderBy(x => x.EntryDate).Select(x => new
-            {
-                x.AgentId,
-                x.GameId,
-                x.PayinAmount,
-                x.PayoutAmount,
-                x.Amount,
-                x.Type,
-                x.SalesId,
-                x.EntryDate
-            })
-            .Select(x => new PayinPayout
-            (
-                x.AgentId,
-                x.GameId,
-                x.PayinAmount,
-                x.PayoutAmount,
-                x.Amount,
-                x.Type,
-                x.SalesId,
-                x.EntryDate
-            )).ToListAsync();
+            var payout_payin = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
+                               await _context.Payouts.OrderBy(x => x.EntryDate)
+                               .Select(x => CreatePayInPayOut(x)).ToListAsync() :
+                               await _context.Payouts.Where(x => x.LocationId == _authService.GetLocationID()).OrderBy(x => x.EntryDate)
+                               .Select(x => CreatePayInPayOut(x)).ToListAsync();
 
             var expenses = await _context.AgentExpenses.ToListAsync();
 
-            return sales.GetAgentReport(agents, payout_payin, expenses);//.Where(x => x.EntryDate >= startDate.Date && x.EntryDate <= endDate.Date)
+            return sales.GetAgentReport(agents, payout_payin, expenses);
         }
 
         public async Task<Result<Agent>> EditAgent(Agent agent)
@@ -253,7 +233,7 @@ namespace AMS.Server.Services
             return 0;
         }
 
-        public IEnumerable<SalesDto2> Join(List<SalesDto2> sales, List<WinsDto> wins, Dictionary<string?, string?> agents)
+        private IEnumerable<SalesDto2> Join(List<SalesDto2> sales, List<WinsDto> wins, Dictionary<string?, string?> agents)
         {
             foreach (var (s, w) in from s in sales
                                    let w = wins.Where(x => x.SalesId == s.Id)
@@ -292,6 +272,36 @@ namespace AMS.Server.Services
             }
         }
 
+        private static SalesDto2 CreateSalesDto(Sales t)
+        {
+            return new SalesDto2
+                                                             (
+                                                                 t.AccountId,
+                                                                 t.AgentId,
+                                                                 t.DailySales,
+                                                                 t.Description,
+                                                                 t.EntryDate,
+                                                                 t.DrawDate,
+                                                                 0,
+                                                                 t.GameId,
+                                                                 t.ReceiptNumber,
+                                                                 t.SalesId
+                                                             );
+        }
 
+        private static PayinPayout CreatePayInPayOut(Payout x)
+        {
+            return new PayinPayout
+                                           (
+                                               x.AgentId,
+                                               x.GameId,
+                                               x.PayinAmount,
+                                               x.PayoutAmount,
+                                               x.Amount,
+                                               x.Type,
+                                               x.SalesId,
+                                               x.EntryDate
+                                           );
+        }
     }
 }
