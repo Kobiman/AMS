@@ -104,9 +104,7 @@ namespace AMS.Server.Services
         public async Task<IEnumerable<AgentReportDto>> GetAgentReport(DateRange period)
         {
             period.GetDates(out DateTime startDate, out DateTime endDate);
-            var agents = _authService.GetUserRole() == Shared.Enums.UserRoles.Admin ?
-                          await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name) :
-                          await _context.Agents.Where(x => x.LocationId == _authService.GetLocationID()).Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
+            var agents = await _context.Agents.Select(x => new { x.Name, x.AgentId }).ToDictionaryAsync(x => x.AgentId, x => x.Name);
 
             var games = await _context.Games.Select(x => new { x.Id, x.Name }).ToDictionaryAsync(x => x.Id, x => x.Name);
 
