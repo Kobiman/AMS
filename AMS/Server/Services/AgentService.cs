@@ -1,6 +1,5 @@
 ﻿using AMS.Client.Pages;
 using AMS.Server.Extensions;
-using AMS.Server.Migrations;
 using AMS.Shared;
 using AMS.Shared.Enums;
 using Microsoft.EntityFrameworkCore;

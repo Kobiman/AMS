@@ -1,5 +1,4 @@
 ﻿using AMS.Server.Data;
-using AMS.Server.Migrations;
 using AMS.Shared;
 using AMS.Shared.Dto;
 using AMS.Shared.Enums;
