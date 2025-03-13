@@ -251,7 +251,7 @@ namespace AMS.Server.Services
                     {
                         AccountId = agent_PayableAccount.AccountId,
                         Amount = journalEntryRule2.Amount,
-                        Credit = journalEntryRule2.Amount,
+                        Credit = journalEntryRule2.Credit,
                         Description = addPayoutDto.Description
                     }
                     );
@@ -264,6 +264,7 @@ namespace AMS.Server.Services
 
         public async Task<Result> AddAgentExpense(AddAgentExpenseDto addExpenseDto)
         {
+            var agent = await appDbContext.Agents.FirstOrDefaultAsync(x => x.AgentId == addExpenseDto.AgentId);
 
             appDbContext.AgentExpenses.Add(new AgentExpense
             {
@@ -276,6 +277,29 @@ namespace AMS.Server.Services
             });
             if(await appDbContext.SaveChangesAsync() > 0)
             {
+                var cachAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName.ToUpper() == "Cash-Checking Account".ToUpper());
+                var journalEntryRule1 = new JournalEntryRules(addExpenseDto.Amount, AccountTypes.Asset, JournalEntryRules.Decrease);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = cachAccount.AccountId,
+                        Amount = journalEntryRule1.Amount,
+                        Credit = journalEntryRule1.Credit,
+                        Description = addExpenseDto.Description
+                    }
+                    );
+
+                var agent_PayableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Receivable");
+                var journalEntryRule2 = new JournalEntryRules(addExpenseDto.Amount, AccountTypes.Asset, JournalEntryRules.Increase);
+                await appDbContext.AccountTransactions.AddAsync(
+                    new AccountTransaction
+                    {
+                        AccountId = agent_PayableAccount.AccountId,
+                        Amount = journalEntryRule2.Amount,
+                        Debit = journalEntryRule2.Debit,
+                        Description = addExpenseDto.Description
+                    }
+                    );
                 return new Result(true, "Saved Successfully");
             }
 
