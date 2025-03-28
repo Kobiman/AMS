@@ -1,0 +1,78 @@
+﻿@using System.Text.Json
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div style="width: @(Width); height: @(Height); margin: @(Margin);">
+    <canvas @ref="chartCanvas" id="@(chartId)"></canvas>
+</div>
+
+@code {
+    private string chartId = Guid.NewGuid().ToString();
+    private ElementReference chartCanvas;
+
+    [Parameter]
+    public List<DisplayTotals> TotalsData { get; set; } = new();
+
+    [Parameter]
+    public string Width { get; set; } = "200%";
+
+    [Parameter]
+    public string Height { get; set; } = "600px";
+
+    [Parameter]
+    public string Margin { get; set; } = "auto";
+
+    [Parameter]
+    public string Title { get; set; } = "Financial Distribution";
+
+    [Parameter]
+    public ChartsType ChartType { get; set; } = ChartsType.PayIn;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (TotalsData != null && TotalsData.Any())
+        {
+            await Task.Delay(100);
+            await CreatePieChart();
+        }
+    }
+
+    private async Task CreatePieChart()
+    {
+        try
+        {
+            //var labels = TotalsData.Select(t => t.Location ?? "Unknown").ToList();
+            List<string> labels = new List<string>()
+            {
+                "Payin",
+                "Payout",
+                "Unpaid Wins"
+            };
+            var values = new List<double>()
+            {
+                TotalsData.Sum(t => Convert.ToDouble(t.PayIn)),
+                TotalsData.Sum(t => Convert.ToDouble(t.PayOut)),
+                TotalsData.Sum(t => Convert.ToDouble(t.UnpaidWins)),
+            };
+
+
+            await JSRuntime.InvokeVoidAsync("createPieChart",
+                chartId,
+                labels,
+                values,
+                "Financial Distribution");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Pie Chart creation error: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("eval", $"if(window.chartRegistry['{chartId}']) {{ window.chartRegistry['{chartId}'].destroy(); delete window.chartRegistry['{chartId}']; }}");
+    }
+}
+
+
+

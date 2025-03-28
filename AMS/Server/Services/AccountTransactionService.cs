@@ -220,15 +220,19 @@ namespace AMS.Server.Services
 
                 var agent_PayableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Payable");
                 var journalEntryRule2 = new JournalEntryRules(absoluteAmount, AccountTypes.Liability, JournalEntryRules.Decrease);
-                await appDbContext.AccountTransactions.AddAsync(
-                    new AccountTransaction
-                    {
-                        AccountId = agent_PayableAccount.AccountId,
-                        Amount = journalEntryRule2.Amount,
-                        Debit = journalEntryRule2.Debit,
-                        Description = addPayoutDto.Description
-                    }
-                    );
+                if(agent_PayableAccount is not null)
+                {
+                   await appDbContext.AccountTransactions.AddAsync(
+                   new AccountTransaction
+                   {
+                       AccountId = agent_PayableAccount.AccountId,
+                       Amount = journalEntryRule2.Amount,
+                       Debit = journalEntryRule2.Debit,
+                       Description = addPayoutDto.Description
+                   }
+                   );
+                }
+               
             }
             else if (addPayoutDto.Type == "Payin")
             {
@@ -246,15 +250,19 @@ namespace AMS.Server.Services
 
                 var agent_PayableAccount = await appDbContext.Accounts.FirstOrDefaultAsync(x => x.AccountName == $"{agent.Name}_Receivable");
                 var journalEntryRule2 = new JournalEntryRules(absoluteAmount, AccountTypes.Asset, JournalEntryRules.Decrease);
-                await appDbContext.AccountTransactions.AddAsync(
-                    new AccountTransaction
-                    {
-                        AccountId = agent_PayableAccount.AccountId,
-                        Amount = journalEntryRule2.Amount,
-                        Credit = journalEntryRule2.Credit,
-                        Description = addPayoutDto.Description
-                    }
-                    );
+                if (agent_PayableAccount != null)
+                {
+
+                    await appDbContext.AccountTransactions.AddAsync(
+                        new AccountTransaction
+                        {
+                            AccountId = agent_PayableAccount.AccountId,
+                            Amount = journalEntryRule2.Amount,
+                            Credit = journalEntryRule2.Credit,
+                            Description = addPayoutDto.Description
+                        }
+                        );
+                }
             }
 
                 await appDbContext.SaveChangesAsync();

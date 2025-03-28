@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -44,6 +45,8 @@
     <script src="_content/Blazored.Modal/blazored.modal.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="printDiv.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="addCharts.js" type="text/javascript"></script>
     <script type="text/javascript">
         window.downloadFileFromStream = async (fileName, contentStreamReference) => {
             const arrayBuffer = await contentStreamReference.arrayBuffer();
@@ -55,8 +58,8 @@
             anchorElement.click();
             anchorElement.remove();
             URL.revokeObjectURL(url);
-        }
-    </script>
+        };
+    </script>  
 </body>
 
 </html>

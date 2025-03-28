@@ -1,0 +1,92 @@
+﻿@using System.Text.Json
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div style="width: @(Width); height: @(Height); margin: @(Margin);">
+    <canvas @ref="chartCanvas" id="@(chartId)"></canvas>
+</div>
+
+@code {
+    private ElementReference chartCanvas;
+    private string chartId = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public List<DisplayTotals> TotalsData { get; set; } = new();
+
+    [Parameter]
+    public string Width { get; set; } = "100%";
+
+    [Parameter]
+    public string Height { get; set; } = "300px";
+
+    [Parameter]
+    public string Margin { get; set; } = "auto";
+
+    [Parameter]
+    public string Title { get; set; } = "Financial Totals by Location";
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (TotalsData != null && TotalsData.Any())
+        {
+            Console.WriteLine($"Data count: {TotalsData.Count}");
+            foreach (var item in TotalsData)
+            {
+                Console.WriteLine($"Location: {item.Location}, PayIn: {item.PayIn}, PayOut: {item.PayOut}, UnpaidWins: {item.UnpaidWins}");
+            }
+            await Task.Delay(100);
+            await CreateChart();
+        }
+        else
+        {
+            Console.WriteLine("No data or data is null");
+        }
+    }
+
+    private async Task CreateChart()
+    {
+        try
+        {
+            var locations = TotalsData
+                .Select(t => t.Location ?? "Unknown")
+                .ToList();
+
+            var payInValues = TotalsData
+                .Select(t => Convert.ToDouble(t.PayIn))
+                .ToList();
+            var payOutValues = TotalsData
+                .Select(t => Convert.ToDouble(t.PayOut))
+                .ToList();
+            var unpaidWinsValues = TotalsData
+                .Select(t => Convert.ToDouble(t.UnpaidWins))
+                .ToList();
+
+            // Pass the ID instead of the canvas reference
+            await JSRuntime.InvokeVoidAsync("createChartWithCanvasId",
+                chartId,
+                locations,
+                payInValues,
+                payOutValues,
+                unpaidWinsValues,
+                Title);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Chart creation error: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("eval", $"if(window.chartRegistry['{chartId}']) {{ window.chartRegistry['{chartId}'].destroy(); delete window.chartRegistry['{chartId}']; }}");
+    }
+}
+
+
+
+
+
+
+

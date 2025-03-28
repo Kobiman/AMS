@@ -15,6 +15,7 @@ using AMS.Server;
 using Microsoft.AspNetCore.Mvc;
 using static AMS.Server.Controllers.NotificationController;
 using Microsoft.Extensions.FileProviders;
+using AMS.Server.Services.Dashboard;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.AddTransient<IAuditService, AuditService>();
 builder.Services.AddTransient<ILocationService, LocationService>();
 builder.Services.AddTransient<IFileUploadService, FileUploadService>();
 builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
 builder.Services.AddControllersWithViews();
 //options => {
 //    options.Filters.Add(typeof(AuditFilterAttribute));

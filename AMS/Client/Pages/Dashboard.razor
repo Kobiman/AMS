@@ -1,98 +1,83 @@
-﻿@page "/Dashboard"
+﻿@page "/Dash"
+@inject IJSRuntime JS
 
-<MudText Typo="Typo.h4">DASHBOARD</MudText>
+<h1 class="display-4 text-center text-primary font-weight-bold p-4 bg-light rounded shadow-sm">
+    Dashboard
+</h1>
 
-<MudGrid>
+@if(!IsProcessing)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card bg-c-blue order-card">
+                    <div class="card-block">
+                        <h6 class="m-b-20">Payin</h6>
+                        <h2 class="text-right"><i class="fa fa-cart-plus f-left"></i><span>GH<span>&#8373;</span> @Totals.PayIn.ToString("#,###.00")</span></h2>
 
+                    </div>
+                </div>
+            </div>
 
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.CurrencyBitcoin" Color="Color.Primary"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
+            <div class="col-md-4">
+                <div class="card bg-c-green order-card">
+                    <div class="card-block">
+                        <h6 class="m-b-20">Payout</h6>
+                        <h2 class="text-right"><i class="fa fa-rocket f-left"></i><span>GH<span>&#8373;</span> @Totals.PayOut.ToString("#,###.00")</span></h2>
+                    </div>
+                </div>
+            </div>
 
-
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.CurrencyBitcoin" Color="Color.Secondary"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.CurrencyBitcoin" Color="Color.Success"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.GraphicEq" Color="Color.Surface"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
-        </MudPaper>
-    </MudItem>
-
-</MudGrid>
-<hr />
-<MudGrid>
+            <div class="col-md-4">
+                <div class="card bg-c-yellow order-card">
+                    <div class="card-block">
+                        <h6 class="m-b-20">Unpaid Wins</h6>
+                        <h2 class="text-right"><span>GH<span>&#8373;</span> @Totals.UnpaidWins.ToString("#,###.00")</span></h2>
+                    </div>
+                </div>
+            </div>
 
 
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.CurrencyBitcoin" Color="Color.Primary"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
+        </div>
 
+        <div class="row">
+            <_BarChartComponent 
+                    TotalsData="ChartValues"
+                    Width="100%"
+                    Height="250px"
+                    Title="Location Financial Overview"
+                />
+        </div>
+    </div>
 
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.CurrencyBitcoin" Color="Color.Secondary"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.CurrencyBitcoin" Color="Color.Success"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <p>  <MudIcon Icon="@Icons.Material.Filled.GraphicEq" Color="Color.Surface"></MudIcon></p>
-            <MudText>
-                <p>00.00</p>
-                <p>Total Book Sales</p>
-            </MudText>
-        </MudPaper>
-    </MudItem>
-
-</MudGrid>
-<br/>
-
-<MudText Typo="Typo.h5">Sales/Wins Monthly Performance</MudText>
-@code {
-
+  
 }
 
+
+@code {
+    private bool IsProcessing { get; set; } = true;
+    private ElementReference chartCanvas;
+    private DisplayTotals Totals { get; set; } = new();
+    private List<DisplayTotals> ChartValues { get; set; } = new List<DisplayTotals>();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var output = await Http.GetFromJsonAsync<DisplayTotals>("api/dashboard");
+            if (output is not null)
+            {
+                Totals = output;
+            }
+            ChartValues = await Http.GetFromJsonAsync<List<DisplayTotals>>("api/dashboard/ChartValues") ?? new List<DisplayTotals>();
+            IsProcessing = false;
+            StateHasChanged();
+		}
+	}
+
+	
+
+
+
+}
